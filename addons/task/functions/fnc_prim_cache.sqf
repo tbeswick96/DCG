@@ -25,16 +25,22 @@ _strength = [TASK_UNIT_MIN,TASK_UNIT_MAX] call EFUNC(main,setStrength);
 _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
-	_position = [EGVAR(main,center),EGVAR(main,range),"meadow"] call EFUNC(main,findRuralPos);
+	_position = [EGVAR(main,center),EGVAR(main,range),"meadow"] call EFUNC(main,findPosRural);
 };
 
 if (_position isEqualTo []) exitWith {
 	[TASK_TYPE,0] call FUNC(select);
 };
 
-_base = [_position,0.86 + random 1] call EFUNC(main,spawnBase);
+_base = [_position,0.47 + random 0.3] call EFUNC(main,spawnBase);
 _bRadius = _base select 0;
 _bNodes = _base select 3;
+
+if (_bNodes isEqualTo []) exitWith {
+	(_base select 2) call EFUNC(main,cleanup);
+	[TASK_TYPE,0] call FUNC(select);
+};
+
 _posCache = selectRandom _bNodes;
 _posCache = _posCache select 0;
 
@@ -43,7 +49,7 @@ for "_i" from 0 to 1 do {
 	_cache setDir random 360;
 	_cache setVectorUp surfaceNormal getPos _cache;
 	_caches pushBack _cache;
-	_cache addEventHandler ["HandleDamage", {
+/*	_cache addEventHandler ["HandleDamage", {
 		_ret = 0;
 		if ((_this select 4) isKindof "PipeBombBase") then {
 			_ret = 1;
@@ -52,7 +58,7 @@ for "_i" from 0 to 1 do {
 		};
 
 		_ret
-	}];
+	}];*/
 };
 
 _grp = [_position,0,_strength,EGVAR(main,enemySide),false,1] call EFUNC(main,spawnGroup);
@@ -65,7 +71,7 @@ _grp = [_position,0,_strength,EGVAR(main,enemySide),false,1] call EFUNC(main,spa
 	[_grp,_bRadius,_strength]
 ] call CBA_fnc_waitUntilAndExecute;
 
-_vehPos = [_position,50,100,8,0] call EFUNC(main,findPosSafe);
+_vehPos = [_position,100,200,8,0] call EFUNC(main,findPosSafe);
 
 if !(_vehPos isEqualTo _position) then {
 	_vehGrp = [_vehPos,1,1,EGVAR(main,enemySide),false,1,true] call EFUNC(main,spawnGroup);
@@ -84,7 +90,7 @@ _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,fin
 _taskDescription = format ["An enemy camp housing an ammunitions cache has been spotted near %1. These supplies are critical to the opposition's efforts. Destroy the cache and weaken the enemy.", mapGridPosition _taskPos];
 [true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"destroy"] call EFUNC(main,setTask);
 
-TASK_DEBUG(getpos (_caches select 0));
+TASK_DEBUG(_posCache);
 
 // PUBLISH TASK
 TASK_PUBLISH(_position);
@@ -97,14 +103,14 @@ TASK_PUBLISH(_position);
 	if (TASK_GVAR isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "CANCELED"] call EFUNC(main,setTaskState);
-		((units _grp) + (units _vehGrp) + _caches + _base) call EFUNC(main,cleanup);
-		[TASK_TYPE] call FUNC(select);
+		((units _grp) + (units _vehGrp) + [vehicle leader _vehGrp] + _caches + _base) call EFUNC(main,cleanup);
+		[TASK_TYPE,30] call FUNC(select);
 	};
 
 	if ({alive _x} count _caches isEqualTo 0) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "SUCCEEDED"] call EFUNC(main,setTaskState);
-		((units _grp) + (units _vehGrp) + _caches + _base) call EFUNC(main,cleanup);
+		((units _grp) + (units _vehGrp) + [vehicle leader _vehGrp] + _caches + _base) call EFUNC(main,cleanup);
 		TASK_APPROVAL(_posCache,TASK_AV);
 		TASK_EXIT;
 	};

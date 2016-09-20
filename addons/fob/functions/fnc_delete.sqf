@@ -26,17 +26,8 @@ __________________________________________________________________*/
 	if (_ret) then {
 		GVAR(UID) = "";
 
-		[false] call FUNC(recon);
-
-		{
-			{_x call EFUNC(main,cleanup)} forEach (curatorEditableObjects GVAR(curator));
-			unassignCurator GVAR(curator);
-			deleteVehicle GVAR(anchor);
-		} remoteExecCall [QUOTE(BIS_fnc_call), 2, false];
-
-		{
-			deleteLocation GVAR(location);
-		} remoteExecCall [QUOTE(BIS_fnc_call), 0, false];
+		missionNamespace setVariable [PVEH_DELETE,true];
+		publicVariableServer PVEH_DELETE;
 
 		[CONFIRMED_HINT,true] call EFUNC(main,displayText);
 	};

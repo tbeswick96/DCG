@@ -57,23 +57,18 @@ if (count _this isEqualTo 1) exitWith {
 			FORMAT_SETUP
 		],"true","",player,1,ACTIONPATH] call EFUNC(main,setAction);
 
-		[{
-			params ["_args","_idPFH"];
-			_args params ["_time"];
-
-			if !(GVAR(response) isEqualTo -1) exitWith {
-				[_idPFH] call CBA_fnc_removePerFrameHandler;
-			};
-			if (diag_tickTime > _time) exitWith {
-				[_idPFH] call CBA_fnc_removePerFrameHandler;
+		[
+			{
 				if (GVAR(response) isEqualTo -1) then { // unit did not answer request
 					[player,1,GVAR(ID1)] call EFUNC(main,removeAction);
 					[player,1,GVAR(ID2)] call EFUNC(main,removeAction);
 					missionNamespace setVariable [PVEH_REQUEST,[player,GVAR(response)]];
 					publicVariableServer PVEH_REQUEST;
 				};
-			};
-		}, 1, [diag_tickTime + 60]] call CBA_fnc_addPerFrameHandler;
+			},
+			[],
+			60
+		] call CBA_fnc_waitAndExecute;
 	}] remoteExecCall [QUOTE(BIS_fnc_call), owner (getAssignedCuratorUnit GVAR(curator))];
 };
 
@@ -92,9 +87,11 @@ if ((_this select 1) isEqualTo 1) then { // if current curator unit accepts requ
 		{
 			GVAR(UID) = getPlayerUID (_this select 0);
 			(owner (_this select 0)) publicVariableClient QGVAR(UID);
+			(owner (_this select 0)) publicVariableClient QUOTE(RECON);
 			remoteExecCall [QFUNC(curatorEH), owner (_this select 0), false];
 			[(curatorEditableObjects GVAR(curator)),owner (_this select 0)] call EFUNC(main,setOwner); // set object locality to new unit, otherwise non local objects lag when edited
-		}
+		},
+		[_this select 0]
 	] call CBA_fnc_waitUntilAndExecute;
 };
 
@@ -104,25 +101,35 @@ if ((_this select 1) isEqualTo 1) then { // if current curator unit accepts requ
 	};
 
 	if ((_this select 1) isEqualTo 1) exitWith {
-		 _entry = [TITLE, KEY_ID] call CBA_fnc_getKeybind;
+		 _entry = [ADDON_TITLE, BUILD_ID] call CBA_fnc_getKeybind;
 
 		if (!isNil "_entry") then {
-			_keyStr = "";
-			_key = (_entry select 5) select 0;
-			_modifiers = (_entry select 5) select 1;
+			private _keyStr = "";
+			private _key = call compile (keyName ((_entry select 5) select 0));
+			private _modifiers = (_entry select 5) select 1;
+			private _modArr = [];
 
 			if (_modifiers select 0) then {
-				_keyStr = "SHIFT";
+				_modArr pushBack "SHIFT";
 			};
 			if (_modifiers select 1) then {
-				_keyStr = "+CTRL";
+				_modArr pushBack "CTRL";
 			};
 			if (_modifiers select 2) then {
-				_keyStr = "+ALT";
+				_modArr pushBack "ALT";
 			};
-			_keyStr = format ["%1+%2", _keyStr, text (keyName _key)];
 
-			[format ["%1 accepts your request. Press [%2] to start building %3.",(_this select 0), _keyStr, GVAR(name)],true] call EFUNC(main,displayText);
+			_keyStr = _modArr joinString " ";
+			_keyStr = format ["%1 + %2", _keyStr,_key];
+
+			private _format = format ["
+			%2 accepts your request \n \n
+			Press [%1] to start building. \n
+			Regional approval is affected by FOB readiness. \n
+			Aerial reconnaissance online.
+			",_keyStr,(_this select 0)];
+
+			[_format,true] call EFUNC(main,displayText);
 		};
 	};
 

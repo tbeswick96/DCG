@@ -12,7 +12,7 @@ Return:
 none
 __________________________________________________________________*/
 #define TASK_SECONDARY
-#define TASK_NAME 'Find Intel'
+#define TASK_NAME 'Find Map Intel'
 #define INTEL_CLASS QUOTE(ItemMap)
 #define UNITCOUNT 6
 #include "script_component.hpp"
@@ -25,7 +25,7 @@ _classes = [];
 _vehicle = objNull;
 
 if (_position isEqualTo []) then {
-	_position = [EGVAR(main,center),EGVAR(main,range),"house",false] call EFUNC(main,findRuralPos);
+	_position = [EGVAR(main,center),EGVAR(main,range),"house",false] call EFUNC(main,findPosRural);
 };
 
 if (_position isEqualTo []) exitWith {
@@ -45,11 +45,11 @@ call {
 };
 
 _position = _position select 1;
-_vehPos = [_position,5,30,8,0] call EFUNC(main,findPosSafe);
+_vehPos = [_position,5,30,7,0] call EFUNC(main,findPosSafe);
 
 if !(_position isEqualTo _vehPos) then {
 	_vehicle = (selectRandom _classes) createVehicle [0,0,0];
-	_vehicle setPosASL _vehPos;
+	[_vehicle] call EFUNC(main,setPosSafe);
 };
 
 _grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,1] call EFUNC(main,spawnGroup);
@@ -75,7 +75,7 @@ _grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,1] call EFUNC(main,spa
 TASK_DEBUG(_position);
 
 // SET TASK
-_taskDescription = format["Spotted enemy fireteam at %1. ambush them and search bodies for map.", mapGridPosition _position];
+_taskDescription = format["Aerial reconnaissance spotted an enemy fireteam at %1. This is an opportunity to gain the upper hand. Ambush the unit and search the enemy combatants for intel.", mapGridPosition _position];
 [true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"search"] call EFUNC(main,setTask);
 
 // PUBLISH TASK
@@ -90,7 +90,7 @@ TASK_PUBLISH(_position);
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "CANCELED"] call EFUNC(main,setTaskState);
 		((units _grp) + [_vehicle]) call EFUNC(main,cleanup);
-		[TASK_TYPE] call FUNC(select);
+		[TASK_TYPE,30] call FUNC(select);
 	};
 
 	if !(INTEL_CLASS in (assignedItems (leader _grp))) exitWith {

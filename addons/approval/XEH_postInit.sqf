@@ -5,13 +5,15 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 #define DEBUG_VAR(LOC) format ["%1_%2_debug",ADDON,LOC]
 
-if (!isServer || !isMultiplayer) exitWith {};
+if !(CHECK_INIT) exitWith {};
 
 if (GVAR(enable) isEqualTo 0) exitWith {
 	LOG_DEBUG("Addon is disabled.");
 };
 
+PVEH_QUESTION addPublicVariableEventHandler {[_this select 1] call FUNC(question)};
 PVEH_HINT addPublicVariableEventHandler {[_this select 1] call FUNC(hint)};
+PVEH_AVADD addPublicVariableEventHandler {(_this select 1) call EFUNC(approval,addValue);};
 
 [{
 	if (DOUBLES(PREFIX,main)) exitWith {
@@ -33,20 +35,25 @@ PVEH_HINT addPublicVariableEventHandler {[_this select 1] call FUNC(hint)};
 			} count EGVAR(main,locations);
 		};
 
-		[
-			{!isNull player && {alive player}},
-			{
+		{
+			[
+				{!isNull player && {alive player}},
 				{
-					_x call EFUNC(main,setAction);
-				} forEach [
-					[QUOTE(ADDON),"Approval","",QUOTE(true),""],
-					[QUOTE(DOUBLES(ADDON,hint)),"Check Approval in Region",format ["%1 = player; publicVariableServer '%1'", PVEH_HINT],QUOTE(true),"",player,1,ACTIONPATH],
-					[QUOTE(DOUBLES(ADDON,question)),"Question Nearby Person",QUOTE(call FUNC(question)),QUOTE(true),"",player,1,ACTIONPATH]
-				];
-			}
-		] remoteExecCall [QUOTE(CBA_fnc_waitUntilAndExecute), 0, true];
+					{
+						_x call EFUNC(main,setAction);
+					} forEach [
+						[QUOTE(ADDON),"Approval","",QUOTE(true),""],
+						[QUOTE(DOUBLES(ADDON,hint)),HINT_NAME,HINT_CODE,QUOTE(true),"",player,1,ACTIONPATH],
+						[QUOTE(DOUBLES(ADDON,question)),QUESTION_NAME,QUESTION_CODE,QUOTE(true),"",player,1,ACTIONPATH]
+					];
+				}
+			] call CBA_fnc_waitUntilAndExecute;
 
-		call FUNC(handleHostile);
+			[ADDON_TITLE, HINT_KEYID, HINT_NAME, compile HINT_CODE, ""] call CBA_fnc_addKeybind;
+			[ADDON_TITLE, QUESTION_KEYID, QUESTION_NAME, compile QUESTION_CODE, ""] call CBA_fnc_addKeybind;
+		} remoteExecCall [QUOTE(BIS_fnc_call),0,true];
+
+		[FUNC(handleHostile), [], GVAR(hostileCooldown)] call CBA_fnc_waitAndExecute;
 
 		if (CHECK_DEBUG) then {
 			[{
@@ -65,4 +72,3 @@ PVEH_HINT addPublicVariableEventHandler {[_this select 1] call FUNC(hint)};
 }, 0, []] call CBA_fnc_addPerFrameHandler;
 
 ADDON = true;
-

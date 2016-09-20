@@ -24,10 +24,10 @@ __________________________________________________________________*/
 #define CHANCE_AIR_CITY 0.25
 #define SNIPER_CITY 2
 #define STATIC_CITY 2
-#define CHANCE_VEH_VILLAGE 0.15
-#define CHANCE_AIR_VILLAGE 0.10
-#define SNIPER_VILLAGE 1
-#define STATIC_VILLAGE 1
+#define CHANCE_VEH_VILL 0.15
+#define CHANCE_AIR_VILL 0.10
+#define SNIPER_VILL 1
+#define STATIC_VILL 1
 #define WRECKS ["a3\structures_f\wrecks\Wreck_Car2_F.p3d","a3\structures_f\wrecks\Wreck_Car3_F.p3d","a3\structures_f\wrecks\Wreck_Car_F.p3d","a3\structures_f\wrecks\Wreck_Offroad2_F.p3d","a3\structures_f\wrecks\Wreck_Offroad_F.p3d","a3\structures_f\wrecks\Wreck_Truck_dropside_F.p3d","a3\structures_f\wrecks\Wreck_Truck_F.p3d","a3\structures_f\wrecks\Wreck_UAZ_F.p3d","a3\structures_f\wrecks\Wreck_Van_F.p3d","a3\structures_f\wrecks\Wreck_Ural_F.p3d"]
 
 _this params ["_name","_center","_size","_type",["_data",nil]];
@@ -39,7 +39,7 @@ private _objArray = [];
 private _officerPool = [];
 private _unitPool = [];
 private _taskType = "";
-private _taskID = format ["lib_%1", diag_tickTime];
+private _taskID = format ["L_%1", diag_tickTime];
 
 if !([_center,1,0] call EFUNC(main,isPosSafe)) then {
 	for "_i" from 1 to _size step 2 do {
@@ -49,6 +49,8 @@ if !([_center,1,0] call EFUNC(main,isPosSafe)) then {
 } else {
 	_position = _center;
 };
+
+_position = ASLtoAGL _position;
 
 call {
 	if (EGVAR(main,enemySide) isEqualTo EAST) exitWith {
@@ -123,21 +125,21 @@ call {
 	_count = ceil (((GVAR(infCountVillage) * (count allPlayers)) min 150) max 20);
 	if (isNil "_data") then {
 		PREP_INF(_position,_count,_size);
-		PREP_VEH(_position,ceil GVAR(vehCountVillage),_size,CHANCE_VEH_VILLAGE);
-		PREP_AIR(_position,ceil GVAR(airCountVillage),CHANCE_AIR_VILLAGE);
+		PREP_VEH(_position,ceil GVAR(vehCountVillage),_size,CHANCE_VEH_VILL);
+		PREP_AIR(_position,ceil GVAR(airCountVillage),CHANCE_AIR_VILL);
 	} else {
 		PREP_INF(_position,ceil (_data select 0),_size);
 		PREP_VEH(_position,ceil (_data select 1),_size,1);
 		PREP_AIR(_position,ceil (_data select 2),1);
 	};
 	PREP_GARRISON(_position,ceil (_count / 1.5),_size,_unitPool);
-	PREP_STATIC(_position,STATIC_VILLAGE,_size,_objArray);
-	PREP_SNIPER(_position,SNIPER_VILLAGE,_size);
+	PREP_STATIC(_position,STATIC_VILL,_size,_objArray);
+	PREP_SNIPER(_position,SNIPER_VILL,_size);
 };
 
 GVAR(locations) pushBack _town;
 
-[true,_taskID,[format ["Enemy forces have occupied %1! Liberate the settlement!",_name],format ["Liberate %1", _taskType],""],ASLtoAGL _position,false,true,"rifle"] call EFUNC(main,setTask);
+[true,_taskID,[format ["Enemy forces have occupied %1! Liberate the settlement!",_name],format ["Liberate %1", _taskType],""],_position,false,true,"rifle"] call EFUNC(main,setTask);
 
 [{
 	params ["_args","_idPFH"];
@@ -148,6 +150,8 @@ GVAR(locations) pushBack _town;
 		_args call FUNC(handleOccupied);
 	};
 }, 10, [_town,_objArray,_officer,_taskID]] call CBA_fnc_addPerFrameHandler;
+
+EGVAR(civilian,blacklist) pushBack _name; // stop civilians from spawning in town
 
 if (CHECK_DEBUG) then {
 	private _mrk = createMarker [format["%1_%2_debug",QUOTE(ADDON),_name],_position];

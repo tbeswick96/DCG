@@ -6,22 +6,24 @@ __________________________________________________________________*/
 dcg_settings_done = false;
 dcg_serverSettings_done = false;
 
-if (!isServer) exitWith {};
-
 ADDON = false;
+
+PREP(init); // do not change
+call FUNC(init); // do not change
+
+if (!(GVAR(enable)) || {!isServer}) exitWith {};
 
 PREP(armory);
 PREP(arsenal);
 PREP(createLocation);
 PREP(cleanup);
-PREP(findHousePos);
+PREP(findPosHouse);
 PREP(replaceString);
-PREP(findOverwatchPos);
+PREP(findPosOverwatch);
 PREP(findPosGrid);
 PREP(findPosSafe);
-PREP(findRuralPos);
+PREP(findPosRural);
 PREP(getNearPlayers);
-//PREP(getPlayers);
 PREP(saveData);
 PREP(saveDataClient);
 PREP(deleteDataClient);
@@ -62,6 +64,9 @@ PREP(spawnSniper);
 PREP(spawnStatic);
 
 GVAR(locations) = [];
+GVAR(locals) = [];
+GVAR(hills) = [];
+GVAR(marines) = [];
 GVAR(baseLocation) = locationNull;
 GVAR(range) = worldSize*0.5;
 GVAR(center) = [GVAR(range),GVAR(range),0];
@@ -77,14 +82,13 @@ publicVariable QFUNC(armory);
 publicVariable QFUNC(arsenal);
 publicVariable QFUNC(createLocation);
 publicVariable QFUNC(cleanup);
-publicVariable QFUNC(findHousePos);
+publicVariable QFUNC(findPosHouse);
 publicVariable QFUNC(replaceString);
-publicVariable QFUNC(findOverwatchPos);
+publicVariable QFUNC(findPosOverwatch);
 publicVariable QFUNC(findPosGrid);
 publicVariable QFUNC(findPosSafe);
-publicVariable QFUNC(findRuralPos);
+publicVariable QFUNC(findPosRural);
 publicVariable QFUNC(getNearPlayers);
-//publicVariable QFUNC(getPlayers);
 publicVariable QFUNC(loadInventory);
 publicVariable QFUNC(log);
 publicVariable QFUNC(saveDataClient);
@@ -113,7 +117,6 @@ publicVariable QFUNC(inBuilding);
 publicVariable QFUNC(inLOS);
 publicVariable QFUNC(isPosSafe);
 publicVariable QFUNC(setPosSafe);
-
 
 publicVariable QGVAR(range);
 publicVariable QGVAR(center);

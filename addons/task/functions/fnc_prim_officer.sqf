@@ -24,7 +24,7 @@ _strength = [TASK_UNIT_MIN,TASK_UNIT_MAX] call EFUNC(main,setStrength);
 _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
-	_position = [EGVAR(main,center),EGVAR(main,range),"meadow"] call EFUNC(main,findRuralPos);
+	_position = [EGVAR(main,center),EGVAR(main,range),"meadow"] call EFUNC(main,findPosRural);
 };
 
 call {
@@ -45,14 +45,14 @@ if (_position isEqualTo []) exitWith {
 	[TASK_TYPE,0] call FUNC(select);
 };
 
-_base = [_position,0.9 + random 1] call EFUNC(main,spawnBase);
+_base = [_position,0.65 + random 1] call EFUNC(main,spawnBase);
 _bRadius = _base select 0;
 
-_officer = (createGroup EGVAR(main,enemySide)) createUnit [selectRandom _classes, _position, [], 0, "NONE"];
+_officer = (createGroup EGVAR(main,enemySide)) createUnit [selectRandom _classes, ASLtoAGL _position, [], 0, "NONE"];
 removeFromRemainsCollector [_officer];
 [[_officer],_bRadius] call EFUNC(main,setPatrol);
 
-_grp = [_position,0,_strength,EGVAR(main,enemySide)] call EFUNC(main,spawnGroup);
+_grp = [_position,0,_strength,EGVAR(main,enemySide),false,2] call EFUNC(main,spawnGroup);
 
 [
 	{count units (_this select 0) >= (_this select 2)},
@@ -62,13 +62,23 @@ _grp = [_position,0,_strength,EGVAR(main,enemySide)] call EFUNC(main,spawnGroup)
 	[_grp,_bRadius,_strength]
 ] call CBA_fnc_waitUntilAndExecute;
 
-_vehPos = [_position,50,100,8,0] call EFUNC(main,findPosSafe);
+_vehPos = [_position,100,200,8,0] call EFUNC(main,findPosSafe);
+
 if !(_vehPos isEqualTo _position) then {
 	_vehGrp = [_vehPos,1,1,EGVAR(main,enemySide),false,1,true] call EFUNC(main,spawnGroup);
 	[
 		{{_x getVariable [QUOTE(EGVAR(main,spawnDriver)),false]} count (units (_this select 0)) > 0},
 		{
 			[units (_this select 0),((_this select 1)*4 min 300) max 100] call EFUNC(main,setPatrol);
+		},
+		[_vehGrp,_bRadius]
+	] call CBA_fnc_waitUntilAndExecute;
+} else {
+	_vehGrp = [_vehPos,2,1,EGVAR(main,enemySide),false,1] call EFUNC(main,spawnGroup);
+	[
+		{{_x getVariable [QUOTE(EGVAR(main,spawnDriver)),false]} count (units (_this select 0)) > 0},
+		{
+			[units (_this select 0),1200] call EFUNC(main,setPatrol);
 		},
 		[_vehGrp,_bRadius]
 	] call CBA_fnc_waitUntilAndExecute;
@@ -92,15 +102,15 @@ TASK_PUBLISH(_position);
 	if (TASK_GVAR isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "CANCELED"] call EFUNC(main,setTaskState);
-		((units _grp) + [_officer] + _base + (units _vehGrp)) call EFUNC(main,cleanup);
-		[TASK_TYPE] call FUNC(select);
+		((units _grp) + [_officer] + _base + (units _vehGrp) + [vehicle leader _vehGrp]) call EFUNC(main,cleanup);
+		[TASK_TYPE,30] call FUNC(select);
 	};
 
 	if !(alive _officer) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "SUCCEEDED"] call EFUNC(main,setTaskState);
 		TASK_APPROVAL(_position,TASK_AV);
-		((units _grp) + [_officer] + _base + (units _vehGrp)) call EFUNC(main,cleanup);
+		((units _grp) + [_officer] + _base + (units _vehGrp) + [vehicle leader _vehGrp]) call EFUNC(main,cleanup);
 		TASK_EXIT;
 	};
 }, TASK_SLEEP, [_taskID,_officer,_grp,_vehGrp,(_base select 2),_position]] call CBA_fnc_addPerFrameHandler;
