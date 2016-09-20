@@ -3,6 +3,8 @@ Author:
 Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
+dcg_settings_done = false;
+dcg_serverSettings_done = false;
 
 if (!isServer) exitWith {};
 
@@ -36,7 +38,6 @@ PREP(removeParticle);
 PREP(saveInventory);
 PREP(setAction);
 PREP(setSettings);
-PREP(setSettingsFromConfig);
 PREP(exportSettings);
 PREP(exportBase);
 PREP(shuffle);
@@ -60,7 +61,6 @@ PREP(spawnReinforcements);
 PREP(spawnSniper);
 PREP(spawnStatic);
 
-GVAR(settings) = [];
 GVAR(locations) = [];
 GVAR(baseLocation) = locationNull;
 GVAR(range) = worldSize*0.5;

@@ -34,8 +34,8 @@ call {
 	if (_side isEqualTo EAST) exitWith {
 		_unit = selectRandom GVAR(unitPoolEast);
 		_static1 = "Land_Cargo_Patrol_V1_F";
-		_static2 = "O_HMG_01_high_F";
-		_static3 = "O_Mortar_01_F";
+		_static2 = selectRandom GVAR(staticPoolEast);
+		_static3 = selectRandom GVAR(mortarPoolEast);
 	};
 	if (_side isEqualTo WEST) exitWith {
 		_unit = selectRandom GVAR(unitPoolWest);

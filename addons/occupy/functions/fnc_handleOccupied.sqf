@@ -17,8 +17,7 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 #define INTERVAL 30
 #define SURRENDER_VAR format ["%1_%2_surrendered",PREFIX,_name]
-#define SURRENDER_CHANCE 0.3
-#define REINFORCE_CHANCE 0.1
+#define SURRENDER_CHANCE 0.1
 #define ENTITY ["Man","LandVehicle","Air","Ship"]
 #define ENEMYMAX_MULTIPLIER 0.5
 
@@ -43,10 +42,8 @@ private _maxCount = 0;
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 	};
 
-	if (random 1 < REINFORCE_CHANCE) exitWith {
-		[_idPFH] call CBA_fnc_removePerFrameHandler;
-		[_town select 1,EGVAR(main,enemySide),_town select 2] spawn EFUNC(main,spawnReinforcements);
-	};
+	[_idPFH] call CBA_fnc_removePerFrameHandler;
+	[_town select 1,EGVAR(main,enemySide),_town select 2] spawn EFUNC(main,spawnReinforcements);
 }, 60, [_town]] call CBA_fnc_addPerFrameHandler;
 
 [{

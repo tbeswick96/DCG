@@ -64,7 +64,7 @@ call {
 };
 
 private _grp = createGroup EGVAR(main,enemySide);
-private _officer = _grp createUnit [selectRandom _unitPool, _position, [], 0, "NONE"];
+private _officer = _grp createUnit [selectRandom _officerPool, _position, [], 0, "NONE"];
 _officer setVariable [QUOTE(DOUBLES(ADDON,officer)),true,true];
 SET_UNITVAR(_officer);
 [[_officer],_size*0.5] call EFUNC(main,setPatrol);
@@ -87,8 +87,9 @@ for "_i" from 0 to (ceil random 3) do {
 call {
 	if (_type isEqualTo "NameCityCapital") exitWith {
 		_taskType = "Capital";
+		_count = ceil (((GVAR(infCountCapital) * (count allPlayers)) min 150) max 20);
 		if (isNil "_data") then {
-			PREP_INF(_position,ceil GVAR(infCountCapital),_size);
+			PREP_INF(_position,_count,_size);
 			PREP_VEH(_position,ceil GVAR(vehCountCapital),_size,CHANCE_VEH_CAP);
 			PREP_AIR(_position,ceil GVAR(airCountCapital),CHANCE_AIR_CAP);
 		} else {
@@ -96,15 +97,16 @@ call {
 			PREP_VEH(_position,ceil (_data select 1),_size,1);
 			PREP_AIR(_position,ceil (_data select 2),1);
 		};
-		PREP_GARRISON(_position,15,_size,_unitPool);
+		PREP_GARRISON(_position,ceil (_count / 1.5),_size,_unitPool);
 		PREP_STATIC(_position,STATIC_CAP,_size,_objArray);
 		PREP_SNIPER(_position,SNIPER_CAP,_size);
 	};
 
 	if (_type isEqualTo "NameCity") exitWith {
 		_taskType = "City";
+		_count = ceil (((GVAR(infCountCity) * (count allPlayers)) min 150) max 20);
 		if (isNil "_data") then {
-			PREP_INF(_position,ceil GVAR(infCountCity),_size);
+			PREP_INF(_position,_count,_size);
 			PREP_VEH(_position,ceil GVAR(vehCountCity),_size,CHANCE_VEH_CITY);
 			PREP_AIR(_position,ceil GVAR(airCountCity),CHANCE_AIR_CITY);
 		} else {
@@ -112,14 +114,15 @@ call {
 			PREP_VEH(_position,ceil (_data select 1),_size,1);
 			PREP_AIR(_position,ceil (_data select 2),1);
 		};
-		PREP_GARRISON(_position,10,_size,_unitPool);
+		PREP_GARRISON(_position,ceil (_count / 1.5),_size,_unitPool);
 		PREP_STATIC(_position,STATIC_CITY,_size,_objArray);
 		PREP_SNIPER(_position,SNIPER_CITY,_size);
 	};
 
 	_taskType = "Village";
+	_count = ceil (((GVAR(infCountVillage) * (count allPlayers)) min 150) max 20);
 	if (isNil "_data") then {
-		PREP_INF(_position,ceil GVAR(infCountVillage),_size);
+		PREP_INF(_position,_count,_size);
 		PREP_VEH(_position,ceil GVAR(vehCountVillage),_size,CHANCE_VEH_VILLAGE);
 		PREP_AIR(_position,ceil GVAR(airCountVillage),CHANCE_AIR_VILLAGE);
 	} else {
@@ -127,7 +130,7 @@ call {
 		PREP_VEH(_position,ceil (_data select 1),_size,1);
 		PREP_AIR(_position,ceil (_data select 2),1);
 	};
-	PREP_GARRISON(_position,5,_size,_unitPool);
+	PREP_GARRISON(_position,ceil (_count / 1.5),_size,_unitPool);
 	PREP_STATIC(_position,STATIC_VILLAGE,_size,_objArray);
 	PREP_SNIPER(_position,SNIPER_VILLAGE,_size);
 };

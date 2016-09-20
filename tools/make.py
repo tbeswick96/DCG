@@ -68,12 +68,12 @@ release_dir = ""
 module_root_parent = ""
 # optionals_root = ""
 key_name = "dcg"
-key = ""
+key = "UKSF_Tim"
 dssignfile = ""
 prefix = "dcg"
 pbo_name_prefix = "dcg_"
 signature_blacklist = []
-importantFiles = ["mod.cpp", "README.md", "LICENSE","AUTHORS.txt"]
+importantFiles = []
 versionFiles = ["README.md", "mod.cpp"]
 
 ciBuild = False # Used for CI builds
@@ -1025,9 +1025,9 @@ See the make.cfg file for additional build options.
             print_error("Cannot create release directory")
             raise
 
-    if not os.path.isdir(os.path.join(release_dir, project, "keys")):
+    if not os.path.isdir(os.path.join(release_dir, "keys")):
         try:
-            os.makedirs(os.path.join(release_dir, project, "keys"))
+            os.makedirs(os.path.join(release_dir, "keys"))
         except:
             print_error("Cannot create release directory")
             raise
@@ -1077,7 +1077,7 @@ See the make.cfg file for additional build options.
                     print("Removing any old signature keys...")
                     purge(os.path.join(module_root, release_dir, project, "addons"), "^.*\.bisign$","*.bisign")
                     # purge(os.path.join(module_root, release_dir, project, "optionals"), "^.*\.bisign$","*.bisign")
-                    purge(os.path.join(module_root, release_dir, project, "keys"), "^.*\.bikey$","*.bikey")
+                    purge(os.path.join(module_root, release_dir, "keys"), "^.*\.bikey$","*.bikey")
                 else:
                     print_error("Failed to create key!")
 
@@ -1090,13 +1090,13 @@ See the make.cfg file for additional build options.
                 print("Copying public key to release directory.")
 
                 try:
-                    os.makedirs(os.path.join(module_root, release_dir, project, "keys"))
+                    os.makedirs(os.path.join(module_root, release_dir, "keys"))
                 except:
                     pass
 
                 # Use biKeyNameAbrev to attempt to minimize problems from this BI Bug REFERENCE: http://feedback.arma3.com/view.php?id=22133
                 biKeyNameAbrev = key_name.split("-")[0]
-                shutil.copyfile(os.path.join(private_key_path, key_name + ".bikey"), os.path.join(module_root, release_dir, project, "keys", "{}.bikey".format(biKeyNameAbrev)))
+                shutil.copyfile(os.path.join(private_key_path, key_name + ".bikey"), os.path.join(module_root, release_dir, "keys", "{}.bikey".format(biKeyNameAbrev)))
 
             except:
                 print_error("Could not copy key to release directory.")
@@ -1364,8 +1364,6 @@ See the make.cfg file for additional build options.
 
 
     finally:
-        copy_dir(os.path.join(module_root_parent, "missions"),os.path.join(release_dir, project, "missions"))
-        copy_dir(os.path.join(module_root_parent, "userconfig"),os.path.join(release_dir, project, "userconfig"))
         copy_important_files(module_root_parent,os.path.join(release_dir, project))
         # cleanup_optionals(optionals_modules)
         if not version_update:
