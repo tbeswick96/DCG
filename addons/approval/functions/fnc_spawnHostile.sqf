@@ -15,7 +15,7 @@ __________________________________________________________________*/
 #define BOMBS ["R_TBG32V_F","HelicopterExploSmall"]
 #define BOMB_RANGE 15
 #define SOUNDPATH "A3\Sounds_F\sfx\Beep_Target.wss"
-#define TYPEMAX 2
+#define TYPEMAX 10
 #define REBEL_COUNT 8
 
 private ["_grp","_unit","_wp","_driver","_unitPool","_tempGrp","_vest","_weapon","_mags","_y","_cond"];
@@ -43,7 +43,7 @@ if ({[_hostilePos,_x] call EFUNC(main,inLOS)} count _nearPlayers > 0) exitWith {
 };
 
 call {
-	if (_type isEqualTo 0) exitWith {
+	if (_type < 8) exitWith {
 		_unitPool = [];
 		_tempGrp = createGroup EGVAR(main,enemySide);
 
@@ -92,7 +92,7 @@ call {
 		] call CBA_fnc_waitUntilAndExecute;
 	};
 
-	if (_type isEqualTo 1) exitWith {
+	if (_type isEqualTo 9) exitWith {
 		if (EGVAR(civilian,drivers) isEqualTo []) exitWith {
 			LOG_DEBUG("No drivers available to turn hostile.");
 		};
@@ -161,7 +161,7 @@ call {
 		};
 	};
 
-	if (_type isEqualTo 2) exitWith {
+	if (_type isEqualTo 10) exitWith {
 		_grp = createGroup CIVILIAN;
 		(selectRandom EGVAR(main,unitPoolCiv)) createUnit [_hostilePos, _grp];
 
