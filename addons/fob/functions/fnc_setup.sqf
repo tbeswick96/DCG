@@ -37,20 +37,7 @@ call {
 	};
 };
 
-call {
-	if (EGVAR(main,playerSide) isEqualTo WEST) exitWith {
-		_type = "B_cargoNet_01_ammo_F";
-	};
-	if (EGVAR(main,playerSide) isEqualTo EAST) exitWith {
-		_type = "O_cargoNet_01_ammo_F"
-	};
-	if (EGVAR(main,playerSide) isEqualTo INDEPENDENT) exitWith {
-		_type = "I_cargoNet_01_ammo_F"
-	};
-	_type = "B_cargoNet_01_ammo_F";
-};
-
-GVAR(anchor) = _type createVehicle _pos;
+GVAR(anchor) = "Land_ClutterCutter_large_F" createVehicle _pos;
 publicVariable QGVAR(anchor);
 GVAR(anchor) allowDamage false;
 clearWeaponCargoGlobal GVAR(anchor);
@@ -59,10 +46,6 @@ clearItemCargoGlobal GVAR(anchor);
 clearBackpackCargoGlobal GVAR(anchor);
 
 {
-	if (CHECK_ADDON_1("ace_cargo")) then {
-		[GVAR(anchor), false] call ace_cargo_fnc_makeLoadable;
-	};
-
  	[getPos GVAR(anchor),"NameCity",GVAR(range),GVAR(name),QGVAR(location)] call EFUNC(main,createLocation);
 } remoteExecCall [QUOTE(BIS_fnc_call),0,GVAR(anchor)];
 
