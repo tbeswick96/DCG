@@ -109,16 +109,16 @@
 #define CACHE_DISABLE_VAR QUOTE(TRIPLES(PREFIX,cache,disableCaching))
 #define CACHE_DISABLE(GRP,BOOL) GRP setVariable [CACHE_DISABLE_VAR,BOOL,true]
 
-#define COST_MAN 1
-#define COST_CAR 2.5
-#define COST_TANK 5
-#define COST_AIR 7
-#define COST_SHIP 2.5
-#define COST_AMMO 0.1
-#define COST_STRUCT 3
-#define COST_ITEM 0.1
-#define COST_FORT 0.075
-#define COST_SIGN 0.1
+#define COST_MAN 0.01
+#define COST_CAR 0.025
+#define COST_TANK 0.05
+#define COST_AIR 0.07
+#define COST_SHIP 0.025
+#define COST_AMMO 0.001
+#define COST_STRUCT 0.03
+#define COST_ITEM 0.001
+#define COST_FORT 0.00075
+#define COST_SIGN 0.001
 
 #define PVEH_AVADD QEGVAR(approval,pveh_add)
 #define AV_VAR(LOC) format ["%1_approval_%2",PREFIX,LOC]

@@ -63,7 +63,6 @@ clearBackpackCargoGlobal GVAR(anchor);
 		[GVAR(anchor), false] call ace_cargo_fnc_makeLoadable;
 	};
 
- 	[GVAR(anchor)] call EFUNC(main,armory);
  	[getPos GVAR(anchor),"NameCity",GVAR(range),GVAR(name),QGVAR(location)] call EFUNC(main,createLocation);
 } remoteExecCall [QUOTE(BIS_fnc_call),0,GVAR(anchor)];
 
