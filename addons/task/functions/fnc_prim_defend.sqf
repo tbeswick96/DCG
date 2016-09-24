@@ -27,7 +27,7 @@ GVAR(defend_enemies) = [];
 _vehPos = [];
 
 if (_position isEqualTo []) then {
-	_position = [EGVAR(main,center),EGVAR(main,range),"house"] call EFUNC(main,findPosRural);
+	_position = [EGVAR(main,center),EGVAR(main,range),"house",0,true] call EFUNC(main,findPos);
 	if !(_position isEqualTo []) then {
 		_position = _position select 1;
 	};
@@ -59,9 +59,10 @@ call {
 	_type = "B_Truck_01_ammo_F";
 };
 
-_truck = _type createVehicle _vehPos;
+_truck = _type createVehicle [0,0,0];
 _truck lock 3;
 _truck setDir random 360;
+_truck setPosASL _vehPos;
 _truck allowDamage false;
 _driver = (createGroup CIVILIAN) createUnit ["C_man_w_worker_F", [0,0,0], [], 0, "NONE"];
 _driver moveInDriver _truck;

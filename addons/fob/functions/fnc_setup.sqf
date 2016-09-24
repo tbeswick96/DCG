@@ -37,7 +37,8 @@ call {
 	};
 };
 
-GVAR(anchor) = "Land_ClutterCutter_large_F" createVehicle _pos;
+GVAR(anchor) = "Land_ClutterCutter_large_F" createVehicle [0,0,0];
+GVAR(anchor) setPos _pos;
 publicVariable QGVAR(anchor);
 GVAR(anchor) allowDamage false;
 clearWeaponCargoGlobal GVAR(anchor);

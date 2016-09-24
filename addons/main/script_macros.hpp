@@ -81,6 +81,7 @@
 #define DATA_SAVEVAR QUOTE(DOUBLES(MAIN_ADDON,saveData))
 #define DATA_SAVEPVEH QUOTE(DOUBLES(MAIN_ADDON,saveDataPVEH))
 #define DATA_DELETEPVEH QUOTE(DOUBLES(MAIN_ADDON,deleteDataPVEH))
+#define DATA_OBJVAR QUOTE(DOUBLES(MAIN_ADDON,saveObject))
 #define DATA_SETVAR(VAR1) profileNamespace setVariable [DATA_SAVEVAR,VAR1]
 #define DATA_GETVAR profileNamespace getVariable [DATA_SAVEVAR,[]]
 #define DATA_MISSION_ID ([toUpper worldName, toUpper missionName] joinString "_")
@@ -97,7 +98,7 @@
 
 #define ACTIONPATH ['ACE_SelfActions',QUOTE(DOUBLES(PREFIX,actions)),QUOTE(ADDON)]
 
-#define CHECK_INIT ((EGVAR(main,enable)) && {isServer} && {isMultiplayer})
+#define CHECK_INIT ((EGVAR(main,enable) isEqualTo 1) && {isServer} && {isMultiplayer})
 #define CHECK_DEBUG (EGVAR(main,debug) isEqualTo 1)
 #define CHECK_MARKER(MARKER) (getMarkerColor MARKER != '')
 #define CHECK_ADDON_1(PATCH) (isClass (configfile >> 'CfgPatches' >> PATCH))
@@ -121,7 +122,7 @@
 #define COST_SIGN 0.001
 
 #define PVEH_AVADD QEGVAR(approval,pveh_add)
-#define AV_VAR(LOC) format ["%1_approval_%2",PREFIX,LOC]
+#define AV_VAR(LOC) [QUOTE(PREFIX),"approval",LOC] joinString "_"
 #define AV_MIN 0
 #define AV_MAX 100
 #define AV_CAR ((AV_MAX*0.005)*EGVAR(approval,multiplier))
