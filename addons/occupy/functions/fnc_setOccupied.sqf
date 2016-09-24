@@ -89,7 +89,7 @@ for "_i" from 0 to (ceil random 3) do {
 call {
 	if (_type isEqualTo "NameCityCapital") exitWith {
 		_taskType = "Capital";
-		_count = ceil (((GVAR(infCountCapital) * (count allPlayers)) min 150) max 20);
+		_count = ceil (((GVAR(infCountCapital) * (count allPlayers)) min 150) max 40);
 		if (isNil "_data") then {
 			PREP_INF(_position,_count,_size);
 			PREP_VEH(_position,ceil GVAR(vehCountCapital),_size,CHANCE_VEH_CAP);
@@ -106,7 +106,7 @@ call {
 
 	if (_type isEqualTo "NameCity") exitWith {
 		_taskType = "City";
-		_count = ceil (((GVAR(infCountCity) * (count allPlayers)) min 150) max 20);
+		_count = ceil (((GVAR(infCountCity) * (count allPlayers)) min 150) max 40);
 		if (isNil "_data") then {
 			PREP_INF(_position,_count,_size);
 			PREP_VEH(_position,ceil GVAR(vehCountCity),_size,CHANCE_VEH_CITY);
@@ -122,7 +122,7 @@ call {
 	};
 
 	_taskType = "Village";
-	_count = ceil (((GVAR(infCountVillage) * (count allPlayers)) min 150) max 20);
+	_count = ceil (((GVAR(infCountVillage) * (count allPlayers)) min 150) max 40);
 	if (isNil "_data") then {
 		PREP_INF(_position,_count,_size);
 		PREP_VEH(_position,ceil GVAR(vehCountVillage),_size,CHANCE_VEH_VILL);

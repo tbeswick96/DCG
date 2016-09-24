@@ -45,8 +45,7 @@ if !([player modelToWorld [0,3,0],10,0,0.3] call EFUNC(main,isPosSafe)) exitWith
 		private _format = format ["
 		%2 Deployed \n \n
 		Press [%1] to start building. \n
-		Regional approval is affected by FOB readiness. \n
-		Aerial reconnaissance online.
+		Regional approval is affected by FOB readiness.
 		",_keyStr, GVAR(name)];
 
 		[_format,true] call EFUNC(main,displayText);

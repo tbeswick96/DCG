@@ -81,5 +81,3 @@ if !(isNull _unit) then {
 		[_unit]
 	] call CBA_fnc_waitUntilAndExecute;
 };
-
-[true,getPosASL GVAR(anchor)] call FUNC(recon);

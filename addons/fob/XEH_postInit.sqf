@@ -20,7 +20,6 @@ PVEH_DELETE addPublicVariableEventHandler {
 	{_x call EFUNC(main,cleanup)} forEach (curatorEditableObjects GVAR(curator));
 	[getPosASL GVAR(anchor),AV_FOB*-1] call EFUNC(approval,addValue);
 	unassignCurator GVAR(curator);
-	[false] call FUNC(recon);
 	deleteVehicle GVAR(anchor);
 
 	{
@@ -59,7 +58,6 @@ addMissionEventHandler ["HandleDisconnect",{
 			[ADDON_TITLE, REQUEST_ID, REQUEST_NAME, {REQUEST_KEYCODE}, ""] call CBA_fnc_addKeybind;
 			[ADDON_TITLE, DISMANTLE_ID, DISMANTLE_NAME, {DISMANTLE_KEYCODE}, ""] call CBA_fnc_addKeybind;
 			[ADDON_TITLE, PATROL_ID, PATROL_NAME, {PATROL_KEYCODE}, ""] call CBA_fnc_addKeybind;
-			[ADDON_TITLE, RECON_ID, RECON_NAME, {RECON_KEYCODE}, ""] call CBA_fnc_addKeybind;
 			[ADDON_TITLE, BUILD_ID, BUILD_NAME, {BUILD_KEYCODE}, "", [DIK_DOWN, [true, false, false]]] call CBA_fnc_addKeybind;
 
 			player addEventHandler ["Respawn",{

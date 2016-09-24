@@ -8,7 +8,6 @@
 #define PVEH_REQUEST QGVAR(pveh_request)
 #define PVEH_REASSIGN QGVAR(pveh_reassign)
 #define FOB_MED ["Land_Medevac_house_V1_F", "Land_Medevac_HQ_V1_F","B_Slingload_01_Medevac_F"]
-#define RECON GVAR(reconUAV)
 
 #define SET_PATROL \
 	{ \
@@ -57,22 +56,6 @@
 #define PATROL_KEYCODE \
 	if (PATROL_COND) then { \
 		PATROL_STATEMENT \
-	}
-
-#define RECON_ID QUOTE(DOUBLES(ADDON,recon))
-#define RECON_NAME "FOB Aerial Recon"
-#define RECON_STATEMENT \
-	if (((UAVControl RECON) select 0) isEqualTo player) then { \
-		objNull remoteControl gunner RECON; \
-		player switchCamera "internal"; \
-	} else { \
-		player remoteControl gunner RECON; \
-		RECON switchCamera "internal"; \
-	}
-#define RECON_COND player isEqualTo (getAssignedCuratorUnit GVAR(curator)) && {!isNull RECON}
-#define RECON_KEYCODE \
-	if (RECON_COND) then { \
-		RECON_STATEMENT \
 	}
 
 #define BUILD_ID QUOTE(DOUBLES(ADDON,build))

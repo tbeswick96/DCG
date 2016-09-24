@@ -87,7 +87,6 @@ if ((_this select 1) isEqualTo 1) then { // if current curator unit accepts requ
 		{
 			GVAR(UID) = getPlayerUID (_this select 0);
 			(owner (_this select 0)) publicVariableClient QGVAR(UID);
-			(owner (_this select 0)) publicVariableClient QUOTE(RECON);
 			remoteExecCall [QFUNC(curatorEH), owner (_this select 0), false];
 			[(curatorEditableObjects GVAR(curator)),owner (_this select 0)] call EFUNC(main,setOwner); // set object locality to new unit, otherwise non local objects lag when edited
 		},
@@ -125,8 +124,7 @@ if ((_this select 1) isEqualTo 1) then { // if current curator unit accepts requ
 			private _format = format ["
 			%2 accepts your request \n \n
 			Press [%1] to start building. \n
-			Regional approval is affected by FOB readiness. \n
-			Aerial reconnaissance online.
+			Regional approval is affected by FOB readiness.
 			",_keyStr,(_this select 0)];
 
 			[_format,true] call EFUNC(main,displayText);

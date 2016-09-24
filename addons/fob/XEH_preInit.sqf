@@ -17,7 +17,6 @@ PREP(getChildren);
 PREP(getCuratorCost);
 PREP(canDeploy);
 PREP(curatorEH);
-PREP(recon);
 
 GVAR(location) = locationNull;
 GVAR(UID) = "";
