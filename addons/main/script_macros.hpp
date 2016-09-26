@@ -122,7 +122,7 @@
 #define COST_SIGN 0.001
 
 #define PVEH_AVADD QEGVAR(approval,pveh_add)
-#define AV_VAR(LOC) [QUOTE(PREFIX),"approval",LOC] joinString "_"
+#define AV_VAR(LOC) ([QUOTE(PREFIX),"approval",LOC] joinString "_")
 #define AV_MIN 0
 #define AV_MAX 100
 #define AV_CAR ((AV_MAX*0.005)*EGVAR(approval,multiplier))

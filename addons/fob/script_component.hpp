@@ -3,6 +3,8 @@
 #include "\d\dcg\addons\main\script_mod.hpp"
 #include "\d\dcg\addons\main\script_macros.hpp"
 
+#define COST_MULTIPIER 0.5
+
 #define PVEH_DEPLOY QGVAR(pveh_deploy)
 #define PVEH_DELETE QGVAR(pveh_delete)
 #define PVEH_REQUEST QGVAR(pveh_request)
@@ -34,7 +36,7 @@
 #define REQUEST_ID QUOTE(DOUBLES(ADDON,request))
 #define REQUEST_NAME "Request Control of FOB"
 #define REQUEST_STATEMENT call FUNC(request)
-#define REQUEST_COND !(GVAR(location) isEqualTo locationNull) && {!(player isEqualTo (getAssignedCuratorUnit GVAR(curator)))}
+#define REQUEST_COND !(GVAR(location) isEqualTo locationNull) && {!(player isEqualTo (getAssignedCuratorUnit GVAR(curator)))} && {GVAR(requestReady) isEqualTo 1}
 #define REQUEST_KEYCODE \
 	if (REQUEST_COND) then { \
 		REQUEST_STATEMENT \
@@ -66,7 +68,7 @@
 	} else { \
 		findDisplay 312 closeDisplay 2; \
 	}
-#define BUILD_COND player isEqualTo (getAssignedCuratorUnit GVAR(curator)) && {isNull (objectParent player)} && {cameraOn isEqualTo player}
+#define BUILD_COND player isEqualTo (getAssignedCuratorUnit GVAR(curator)) && {isNull (objectParent player)} && {cameraOn isEqualTo player} && {!(visibleMap)}
 #define BUILD_KEYCODE \
 	if (BUILD_COND) then { \
 		BUILD_STATEMENT \
