@@ -4,8 +4,8 @@ class CfgPatches {
 		weapons[] = {};
 		requiredVersion = REQUIRED_VERSION;
 		requiredAddons[] = {"cba_common","cba_xeh"};
-		author = "SENSEI";
-		name = DOUBLES(PREFIX,ADDON);
+		author = AUTHOR_NAME;
+		name = COMPONENT_NAME;
 		url = URL;
 		VERSION_CONFIG;
 	};
