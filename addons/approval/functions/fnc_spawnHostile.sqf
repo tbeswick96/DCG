@@ -60,7 +60,8 @@ call {
 		(selectRandom _unitPool) createUnit [[0,0,0], _tempGrp];
 		_vest = vest (leader _tempGrp);
 		_weapon = currentWeapon (leader _tempGrp);
-		_mags = magazines (leader _tempGrp);
+		_mag = currentMagazine (leader _tempGrp);
+		_mags = [_mag, _mag, _mag, _mag, _mag, "HandGrenade", "HandGrenade", "HandGrenade", "SmokeShell", "SmokeShell", "SmokeShell"];
 
 		deleteVehicle (leader _tempGrp);
 

@@ -62,8 +62,6 @@ _settings = [
 	["dcg_task_cooldown", 180],
 	["dcg_task_primaryTasks", ["dcg_task_fnc_prim_vip","dcg_task_fnc_prim_cache","dcg_task_fnc_prim_officer","dcg_task_fnc_prim_arty","dcg_task_fnc_prim_defend"]],
 	["dcg_task_secondaryTasks", ["dcg_task_fnc_sec_deliver","dcg_task_fnc_sec_repair","dcg_task_fnc_sec_officer","dcg_task_fnc_sec_intel01","dcg_task_fnc_sec_intel02"]],
-	["dcg_task_primaryBlacklist", []],
-	["dcg_task_secondaryBlacklist", []],
 	["dcg_transport_enable", 1],
 	["dcg_transport_maxCount", 3],
 	["dcg_transport_cooldown", 180],
