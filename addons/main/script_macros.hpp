@@ -110,17 +110,6 @@
 #define CACHE_DISABLE_VAR QUOTE(TRIPLES(PREFIX,cache,disableCaching))
 #define CACHE_DISABLE(GRP,BOOL) GRP setVariable [CACHE_DISABLE_VAR,BOOL,true]
 
-#define COST_MAN 0.01
-#define COST_CAR 0.025
-#define COST_TANK 0.05
-#define COST_AIR 0.07
-#define COST_SHIP 0.025
-#define COST_AMMO 0.001
-#define COST_STRUCT 0.03
-#define COST_ITEM 0.001
-#define COST_FORT 0.00075
-#define COST_SIGN 0.001
-
 #define PVEH_AVADD QEGVAR(approval,pveh_add)
 #define AV_VAR(LOC) ([QUOTE(PREFIX),"approval",LOC] joinString "_")
 #define AV_MIN 0
@@ -131,7 +120,8 @@
 #define AV_SHIP ((AV_MAX*0.005)*EGVAR(approval,multiplier))
 #define AV_MAN ((AV_MAX*0.001)*EGVAR(approval,multiplier))
 #define AV_CIV ((AV_MAX*0.01)*EGVAR(approval,multiplier))
-#define AV_FOB ((AV_MAX*0.0025)*EGVAR(approval,multiplier))
+#define AV_FOB ((AV_MAX*0.01)*EGVAR(approval,multiplier))
+#define AV_PB ((AV_MAX*0.005)*EGVAR(approval,multiplier))
 #define AV_VILLAGE ((AV_MAX*0.05)*EGVAR(approval,multiplier))
 #define AV_CITY ((AV_MAX*0.1)*EGVAR(approval,multiplier))
 #define AV_CAPITAL ((AV_MAX*0.15)*EGVAR(approval,multiplier))

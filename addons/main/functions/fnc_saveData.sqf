@@ -28,7 +28,7 @@ private _data = [];
 {
 	if (!(_x isKindOf "Man") && {!(_x isKindOf "Logic")}) then {
 		if (_x getVariable [DATA_OBJVAR,false]) then {
-			_data pushBack [typeOf _x,getPosASL _x,getDir _x,vectorUp _x];
+			_data pushBack [false,typeOf _x,getPosASL _x,getDir _x,vectorUp _x];
 		};
 	};
 } foreach (allMissionObjects "All");
@@ -68,35 +68,48 @@ if (CHECK_ADDON_2(occupy)) then {
 };
 
 if (CHECK_ADDON_2(fob)) then {
-	private ["_data","_dataObj","_refund"];
+	private ["_data","_dataObj"];
 	_data = [];
 
 	if !(EGVAR(fob,location) isEqualTo locationNull) then {
+		{_x addCuratorEditableObjects [allMissionObjects "all", true]} forEach allCurators;
 		_data pushBack (locationPosition EGVAR(fob,location));
-		_data pushBack (curatorPoints EGVAR(fob,curator));
-		_dataObj = [];
-		_refund = 0;
 		{
-			if (!(_x isKindOf "Man") && {!(_x isKindOf "Logic")} && {count crew _x isEqualTo 0}) then {
-				if((_x distance2D EGVAR(fob,anchor)) < EGVAR(fob,range) + 50) then {
-					_dataObj pushBack [typeOf _x,getPosASL _x,getDir _x,vectorUp _x];
-				};
+			if(!(_x isEqualTo objNull)) then {
+				_data pushBack [(position _x), GETVAR(_x,EGVAR(fob,pbname),"")];
 			} else {
-				call {
-					if (_x isKindOf "Man") exitWith {
-						_refund = _refund + abs(COST_MAN*EGVAR(fob,deletingMultiplier));
-					};
-					if (_x isKindOf "Car") exitWith {
-						_refund = _refund + abs(COST_CAR*EGVAR(fob,deletingMultiplier));
-					};
-					if (_x isKindOf "Tank") exitWith {
-						_refund = _refund + abs(COST_TANK*EGVAR(fob,deletingMultiplier));
-					};
-					if (_x isKindOf "Air") exitWith {
-						_refund = _refund + abs(COST_AIR*EGVAR(fob,deletingMultiplier));
-					};
-					if (_x isKindOf "Ship") exitWith {
-						_refund = _refund + abs(COST_SHIP*EGVAR(fob,deletingMultiplier));
+				_data pushBack [[], ""];
+			};
+		} forEach (EGVAR(fob,pbanchors));
+		_dataObj = [];
+		{
+			if (!(_x isKindOf "Land_PenBlack_F") && !(_x isKindOf "Logic")) then {
+				private _inRange = (_x distance2D EGVAR(fob,anchor)) <= EGVAR(fob,range);
+				if(!_inRange) then {
+					private _obj = _x;
+					{
+						if(!(isNull _x)) then {
+							if((_x distance2D _obj) <= EGVAR(fob,pbrange)) then {
+								_inRange = true;
+							};
+						};
+					} forEach (EGVAR(fob,pbanchors));
+				};
+
+				if(_inRange) then {
+					diag_log format ["%1, %2", (typeOf _x), isPlayer _x];
+					if(_x isKindOf "Man") then {
+						if(!(isPlayer _x)) then {
+							private _waypoints = [];
+							{
+								if(_forEachIndex > 0) then {
+									_waypoints pushBack [_x select 1, waypointPosition _x, waypointName _x, waypointBehaviour _x, waypointCombatMode _x, waypointFormation _x, waypointSpeed _x, waypointType _x];
+								};
+							} forEach (waypoints (group _x));
+							_dataObj pushBack [true,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,_waypoints];
+						};
+					} else {
+						_dataObj pushBack [false,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,[],getWeaponCargo _x,getMagazineCargo _x,getItemCargo _x,getBackpackCargo _x];
 					};
 				};
 			};
@@ -104,9 +117,6 @@ if (CHECK_ADDON_2(fob)) then {
 		} count (curatorEditableObjects EGVAR(fob,curator));
 
 		_data pushBack _dataObj;
-		_refund = ((_data select 1) + _refund) min 1;
-		_data set [1,_refund];
-		//_data pushBack [EGVAR(fob,AVBonus)];
 	};
 
 	PUSHBACK_DATA(fob,_data);

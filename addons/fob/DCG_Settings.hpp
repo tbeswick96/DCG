@@ -11,9 +11,21 @@ class DOUBLES(PREFIX,settings) {
     class GVAR(name) {
         typeName = "STRING";
         typeDetail = "";
-        value = "FOB Butterfly";
+        value = "FOB Saturn";
     };
     class GVAR(range) {
+        typeName = "SCALAR";
+        typeDetail = "";
+        value = 200;
+    };
+    class GVAR(pbnames) {
+        typeName = "ARRAY";
+        typeDetail = "";
+		value[] = {
+            {"PB Venus","PB Mercury","PB Mars"}
+        };
+    };
+    class GVAR(pbrange) {
         typeName = "SCALAR";
         typeDetail = "";
         value = 100;

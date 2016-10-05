@@ -7,7 +7,6 @@ setup fob on server
 
 Arguments:
 0: unit to assign to curator or position <OBJECT,ARRAY>
-1: curator points <NUMBER>
 
 Return:
 none
@@ -17,18 +16,16 @@ __________________________________________________________________*/
 if !(isServer) exitWith {};
 
 params [
-	["_center",objNull,[objNull,[]]],
-	["_points",1,[0]]
+	["_center",objNull,[objNull,[]]]
 ];
 
 private _unit = objNull;
 private _pos = [];
-private _type = "";
 
 call {
 	if (_center isEqualType objNull) exitWith {
 		_unit = _center;
-		_pos = _center modelToWorld [0,4,0];
+		_pos = _center modelToWorld [0,0,0];
 	};
 
 	if (_center isEqualType []) exitWith {
@@ -37,14 +34,10 @@ call {
 	};
 };
 
-GVAR(anchor) = "Land_ClutterCutter_large_F" createVehicle [0,0,0];
+GVAR(anchor) = "Land_PenBlack_F" createVehicle [0,0,0];
 GVAR(anchor) setPos _pos;
 publicVariable QGVAR(anchor);
 GVAR(anchor) allowDamage false;
-clearWeaponCargoGlobal GVAR(anchor);
-clearMagazineCargoGlobal GVAR(anchor);
-clearItemCargoGlobal GVAR(anchor);
-clearBackpackCargoGlobal GVAR(anchor);
 
 {
  	[getPos GVAR(anchor),"NameCity",GVAR(range),GVAR(name),QGVAR(location)] call EFUNC(main,createLocation);
@@ -52,19 +45,7 @@ clearBackpackCargoGlobal GVAR(anchor);
 
 GVAR(respawnPos) = [missionNamespace,GVAR(anchor) modelToWorld [0,-4,0],GVAR(name)] call BIS_fnc_addRespawnPosition;
 
-/*removeAllCuratorAddons GVAR(curator);*/
 GVAR(curator) addCuratorAddons activatedAddons;
-GVAR(curator) addCuratorPoints _points;
-GVAR(curator) setCuratorCoef ["Place", GVAR(placingMultiplier)];
-GVAR(curator) setCuratorCoef ["Delete", GVAR(deletingMultiplier)];
-GVAR(curator) setCuratorWaypointCost 0;
-GVAR(curator) addCuratorEditingArea [0,getPos GVAR(anchor),GVAR(range)];
-GVAR(curator) addCuratorCameraArea [0,getPos GVAR(anchor),GVAR(range)];
-GVAR(curator) setCuratorCameraAreaCeiling 40;
-[GVAR(curator),"object",["UnitPos","Rank","Lock"]] call BIS_fnc_setCuratorAttributes;
-
-/*GVAR(AVBonus) = round(AV_FOB);
-publicVariable QGVAR(AVBonus);*/
 
 if !(isNull _unit) then {
 	[getPosASL GVAR(anchor),AV_FOB] call EFUNC(approval,addValue);

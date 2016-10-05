@@ -16,7 +16,7 @@ _settings = [
 	["dcg_main_init", ["ALL"]],
 	["dcg_main_debug", 0],
 	["dcg_main_loadData", true],
-	["dcg_main_baseName", "MOB Tiger"],
+	["dcg_main_baseName", "MOB Jupiter"],
 	["dcg_main_baseRadius", (worldSize * 0.055)],
 	["dcg_main_baseSafezone", true],
 	["dcg_main_blacklistLocations", []],
@@ -78,10 +78,10 @@ _settings = [
 	["dcg_civilian_vehMaxCount", 8],
 	["dcg_civilian_vehCooldown", 180],
 	["dcg_fob_enable", 1],
-	["dcg_fob_name", "FOB Butterfly"],
-	["dcg_fob_placingMultiplier", -0.005],
-	["dcg_fob_deletingMultiplier", 0.005],
-	["dcg_fob_range", 200]
+	["dcg_fob_name", "FOB Saturn"],
+	["dcg_fob_range", 200],
+	["dcg_fob_pbnames", ["PB Venus", "PB Mercury", "PB Mars"]],
+	["dcg_fob_pbrange", 100]
 ];
 
 {

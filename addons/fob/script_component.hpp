@@ -3,13 +3,12 @@
 #include "\d\dcg\addons\main\script_mod.hpp"
 #include "\d\dcg\addons\main\script_macros.hpp"
 
-#define COST_MULTIPIER 0.5
-
 #define PVEH_DEPLOY QGVAR(pveh_deploy)
 #define PVEH_DELETE QGVAR(pveh_delete)
 #define PVEH_REQUEST QGVAR(pveh_request)
 #define PVEH_REASSIGN QGVAR(pveh_reassign)
-#define FOB_MED ["Land_Medevac_house_V1_F", "Land_Medevac_HQ_V1_F","B_Slingload_01_Medevac_F"]
+#define PVEH_DEPLOYPB QGVAR(pveh_deploypb)
+#define PVEH_DELETEPB QGVAR(pveh_deletepb)
 
 #define SET_PATROL \
 	{ \
@@ -28,37 +27,21 @@
 #define DEPLOY_NAME "Deploy FOB"
 #define DEPLOY_STATEMENT call FUNC(deploy)
 #define DEPLOY_COND call FUNC(canDeploy)
-#define DEPLOY_KEYCODE \
-	if (DEPLOY_COND) then { \
-		DEPLOY_STATEMENT \
-	}
 
 #define REQUEST_ID QUOTE(DOUBLES(ADDON,request))
 #define REQUEST_NAME "Request Control of FOB"
 #define REQUEST_STATEMENT call FUNC(request)
 #define REQUEST_COND !(GVAR(location) isEqualTo locationNull) && {!(player isEqualTo (getAssignedCuratorUnit GVAR(curator)))} && {GVAR(requestReady) isEqualTo 1}
-#define REQUEST_KEYCODE \
-	if (REQUEST_COND) then { \
-		REQUEST_STATEMENT \
-	}
 
 #define DISMANTLE_ID QUOTE(DOUBLES(ADDON,dismantle))
 #define DISMANTLE_NAME "Dismantle FOB"
 #define DISMANTLE_STATEMENT call FUNC(delete)
 #define DISMANTLE_COND player isEqualTo (getAssignedCuratorUnit GVAR(curator)) && {cameraOn isEqualTo player}
-#define DISMANTLE_KEYCODE \
-	if (DISMANTLE_COND) then { \
-		DISMANTLE_STATEMENT \
-	}
 
 #define PATROL_ID QUOTE(DOUBLES(ADDON,patrol))
 #define PATROL_NAME "Set FOB Groups on Patrol"
 #define PATROL_STATEMENT SET_PATROL
 #define PATROL_COND player isEqualTo (getAssignedCuratorUnit GVAR(curator))
-#define PATROL_KEYCODE \
-	if (PATROL_COND) then { \
-		PATROL_STATEMENT \
-	}
 
 #define BUILD_ID QUOTE(DOUBLES(ADDON,build))
 #define BUILD_NAME "Build FOB"
@@ -69,8 +52,13 @@
 		findDisplay 312 closeDisplay 2; \
 	}
 #define BUILD_COND player isEqualTo (getAssignedCuratorUnit GVAR(curator)) && {isNull (objectParent player)} && {cameraOn isEqualTo player} && {!(visibleMap)}
-#define BUILD_KEYCODE \
-	if (BUILD_COND) then { \
-		BUILD_STATEMENT \
-	}
 
+#define PB_DEPLOY_ID QUOTE(DOUBLES(ADDON,deployPB))
+#define PB_DEPLOY_NAME "Deploy PB"
+#define PB_DEPLOY_STATEMENT call FUNC(deployPB)
+#define PB_DEPLOY_COND call FUNC(canDeployPB)
+
+#define PB_DISMANTLE_ID QUOTE(DOUBLES(ADDON,deletePB))
+#define PB_DISMANTLE_NAME "Dismantle PB"
+#define PB_DISMANTLE_STATEMENT call FUNC(deletePB)
+#define PB_DISMANTLE_COND call FUNC(canDeletePB)
