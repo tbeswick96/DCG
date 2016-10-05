@@ -8,7 +8,7 @@ __________________________________________________________________*/
 if !(CHECK_INIT) exitWith {};
 
 if (GVAR(enable) isEqualTo 0) exitWith {
-	LOG_DEBUG("Addon is disabled.");
+	INFO("Addon is disabled.");
 };
 
 unassignCurator GVAR(curator);
@@ -53,7 +53,7 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 };
 
 [{
-	if (DOUBLES(PREFIX,main) && {time > 0}) exitWith {
+	if (DOUBLES(PREFIX,main)) exitWith {
 		[_this select 1] call CBA_fnc_removePerFrameHandler;
 
 		_data = QUOTE(ADDON) call EFUNC(main,loadDataAddon);

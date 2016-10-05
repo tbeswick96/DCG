@@ -30,7 +30,7 @@ GVAR(anchor) = objNull;
 GVAR(side) = createCenter sideLogic;
 GVAR(group) = createGroup GVAR(side);
 GVAR(curator) = GVAR(group) createUnit ["ModuleCurator_F",[0,0,0], [], 0, "FORM"];
-LOG_DEBUG_1("Creating curator %1.",GVAR(curator));
+INFO_1("Creating curator %1.",GVAR(curator));
 GVAR(pbanchors) = [objNull,objNull,objNull];
 
 publicVariable QFUNC(request);
