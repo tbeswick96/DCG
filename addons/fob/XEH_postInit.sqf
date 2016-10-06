@@ -95,40 +95,47 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 							_waypoint setWaypointSpeed _speed;
 							_waypoint setWaypointType _type;
 						} forEach _waypoints;
+					} else {
+						_man disableAI "MOVE";
 					};
+					_man allowDamage false;
+					_man addEventHandler ["Fired", {(_this select 0) setVehicleAmmo 1}];
 				} else {
 					_veh = _type createVehicle [0,0,0];
 					_veh setDir _dir;
 					_veh setPosASL _pos;
 					_veh setVectorUp _vectorUp;
 
-					if(count (_weapons select 0) > 0) then {
-						clearWeaponCargoGlobal _veh;
-						{
-							_count = (_weapons select 1) select _forEachIndex;
-							_veh addWeaponCargoGlobal [_x, _count];
-						} forEach (_weapons select 0);
-					};
-					if(count (_magazines select 0) > 0) then {
-						clearMagazineCargoGlobal _veh;
-						{
-							_count = (_magazines select 1) select _forEachIndex;
-							_veh addMagazineCargoGlobal [_x, _count];
-						} forEach (_magazines select 0);
-					};
-					if(count (_items select 0) > 0) then {
-						clearItemCargoGlobal _veh;
-						{
-							_count = (_items select 1) select _forEachIndex;
-							_veh addItemCargoGlobal [_x, _count];
-						} forEach (_items select 0);
-					};
-					if(count (_backpacks select 0) > 0) then {
-						clearBackpackCargoGlobal _veh;
-						{
-							_count = (_backpacks select 1) select _forEachIndex;
-							_veh addBackpackCargoGlobal [_x, _count];
-						} forEach (_backpacks select 0);
+					[_veh, _weapons, _magazines, _items, _backpacks] spawn {
+						params ["_veh", "_weapons", "_magazines", "_items", "_backpacks"];
+						if(count (_weapons select 0) > 0) then {
+							clearWeaponCargoGlobal _veh;
+							{
+								_count = (_weapons select 1) select _forEachIndex;
+								_veh addWeaponCargoGlobal [_x, _count];
+							} forEach (_weapons select 0);
+						};
+						if(count (_magazines select 0) > 0) then {
+							clearMagazineCargoGlobal _veh;
+							{
+								_count = (_magazines select 1) select _forEachIndex;
+								_veh addMagazineCargoGlobal [_x, _count];
+							} forEach (_magazines select 0);
+						};
+						if(count (_items select 0) > 0) then {
+							clearItemCargoGlobal _veh;
+							{
+								_count = (_items select 1) select _forEachIndex;
+								_veh addItemCargoGlobal [_x, _count];
+							} forEach (_items select 0);
+						};
+						if(count (_backpacks select 0) > 0) then {
+							clearBackpackCargoGlobal _veh;
+							{
+								_count = (_backpacks select 1) select _forEachIndex;
+								_veh addBackpackCargoGlobal [_x, _count];
+							} forEach (_backpacks select 0);
+						};
 					};
 				};
 				false

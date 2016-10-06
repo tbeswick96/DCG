@@ -38,6 +38,7 @@ GVAR(anchor) = "Land_PenBlack_F" createVehicle [0,0,0];
 GVAR(anchor) setPos _pos;
 publicVariable QGVAR(anchor);
 GVAR(anchor) allowDamage false;
+GVAR(anchor) enableSimulation false;
 
 {
  	[getPos GVAR(anchor),"NameCity",GVAR(range),GVAR(name),QGVAR(location)] call EFUNC(main,createLocation);
