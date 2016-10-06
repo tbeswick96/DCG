@@ -162,7 +162,7 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 
 		if (EGVAR(main,baseSafezone)) then {
 			[{
-				private _radius = (([GVAR(anchor)] call EFUNC(approval,getValue)) * 25 min 750) max 2500;
+				private _radius = ((([GVAR(anchor)] call EFUNC(approval,getValue)) * 25) min 750) max 2500;
 				diag_log _radius;
 				{
 					if (side _x isEqualTo GVAR(enemySide) && {!isPlayer _x}) then {
