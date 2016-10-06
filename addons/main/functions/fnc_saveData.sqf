@@ -99,7 +99,7 @@ if (CHECK_ADDON_2(fob)) then {
 				if(_inRange) then {
 					diag_log format ["%1, %2", (typeOf _x), isPlayer _x];
 					if(_x isKindOf "Man") then {
-						if(!(isPlayer _x)) then {
+						if(!(isPlayer _x) && alive _x) then {
 							private _waypoints = [];
 							{
 								if(_forEachIndex > 0) then {
