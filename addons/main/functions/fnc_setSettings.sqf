@@ -86,7 +86,7 @@ _settings = [
 
 {
 	_x params ["_name", "_value"];
-	missionNamespace setVariable [_name,_value];
+	missionNamespace setVariable [_name,_value,true];
 } forEach _settings;
 
 dcg_settings_done = true;

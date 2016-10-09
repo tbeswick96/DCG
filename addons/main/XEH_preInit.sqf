@@ -124,5 +124,6 @@ publicVariable QGVAR(markerCleanup);
 publicVariable QGVAR(objectCleanup);
 publicVariable QGVAR(actions);
 
+call FUNC(setParams);
 call FUNC(setSettings);
 call FUNC(loadData);
