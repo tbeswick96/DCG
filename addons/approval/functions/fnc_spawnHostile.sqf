@@ -57,11 +57,11 @@ call {
 			_unitPool = EGVAR(main,unitPoolInd);
 		};
 
-		(selectRandom _unitPool) createUnit [[0,0,0], _tempGrp];
+		"GENFOR_R" createUnit [[0,0,0], _tempGrp];
 		_vest = vest (leader _tempGrp);
 		_weapon = currentWeapon (leader _tempGrp);
 		_mag = currentMagazine (leader _tempGrp);
-		_mags = [_mag, _mag, _mag, _mag, _mag, "HandGrenade", "HandGrenade", "HandGrenade", "SmokeShell", "SmokeShell", "SmokeShell"];
+		_mags = [_mag, _mag, _mag, _mag, _mag, "HandGrenade", "HandGrenade", "SmokeShell", "SmokeShell"];
 
 		deleteVehicle (leader _tempGrp);
 
@@ -75,10 +75,13 @@ call {
 				_grp = [units _grp] call EFUNC(main,setSide);
 
 				{
-					_y = _x;
-					_y addVest _vest;
-					_y addWeapon _weapon;
-					{_y addMagazine _x} forEach _mags;
+					[_x, _vest, _weapon, _mags] spawn {
+						params ["_x", "_vest", "_weapon", "_mags"];
+						_y = _x;
+						_y addVest _vest;
+						_y addWeapon _weapon;
+						{_y addMagazine _x} forEach _mags;
+					};
 				} forEach units _grp;
 
 				_wp = _grp addWaypoint [_pos,0];

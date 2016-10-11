@@ -159,19 +159,6 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 				};
 			}];
 		} remoteExecCall [QUOTE(BIS_fnc_call),0,true];
-
-		if (EGVAR(main,baseSafezone)) then {
-			[{
-				private _radius = ((([GVAR(anchor)] call EFUNC(approval,getValue)) * 25) min 750) max 2500;
-				diag_log _radius;
-				{
-					if (side _x isEqualTo GVAR(enemySide) && {!isPlayer _x}) then {
-						deleteVehicle (vehicle _x);
-						deleteVehicle _x;
-					};
-				} forEach (locationPosition GVAR(location) nearEntities [["Man","LandVehicle","Ship","Air"], _radius]);
-			}, 60, []] call CBA_fnc_addPerFrameHandler;
-		};
 	};
 }, 0, []] call CBA_fnc_addPerFrameHandler;
 

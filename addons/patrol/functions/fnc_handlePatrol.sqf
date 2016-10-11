@@ -40,9 +40,11 @@ __________________________________________________________________*/
 
 			if ({CHECK_DIST2D(_player,(_x select 0),(_x select 1))} count GVAR(blacklist) isEqualTo 0) then { // check if player is in a blacklist array
 				_posArray = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,6] call EFUNC(main,findPosGrid);
-				{ // remove positions in blacklist, that are near players or that players can see
+				{ // remove positions in blacklist, that are near players or that players can see, or are within an approval based distance from the FOB
 					_y = _x;
+					private _distance = ((([EGVAR(fob,anchor)] call EFUNC(approval,getValue)) * 10) max 500) min 1000;
 					if ({CHECK_DIST2D(_y,(_x select 0),(_x select 1))} count GVAR(blacklist) > 0 ||
+						EGVAR(fob,anchor) distance2D _y > _distance ||
 					    {count ([_y,100] call EFUNC(main,getNearPlayers)) > 0} /*||
 						{[_y,_player] call EFUNC(main,inLOS)}*/ ||
 						{{[_y,_x] call EFUNC(main,inLOS)} count _players > 0}) then {
