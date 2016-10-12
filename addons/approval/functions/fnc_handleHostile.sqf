@@ -11,7 +11,7 @@ Return:
 none
 __________________________________________________________________*/
 #include "script_component.hpp"
-
+/*
 [{
 	private _HCs = entities "HeadlessClient_F";
 	private _players = allPlayers - _HCs;
@@ -23,4 +23,4 @@ __________________________________________________________________*/
 			[_player] call FUNC(spawnHostile);
 		};
 	};
-}, GVAR(hostileCooldown), []] call CBA_fnc_addPerFrameHandler;
+}, GVAR(hostileCooldown), []] call CBA_fnc_addPerFrameHandler;*/

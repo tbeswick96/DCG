@@ -50,7 +50,7 @@ PVEH_AVADD addPublicVariableEventHandler {(_this select 1) call EFUNC(approval,a
 			[ADDON_TITLE, QUESTION_KEYID, QUESTION_NAME, compile QUESTION_CODE, ""] call CBA_fnc_addKeybind;
 		} remoteExecCall [QUOTE(BIS_fnc_call),0,true];
 
-		[FUNC(handleHostile), [], GVAR(hostileCooldown)] call CBA_fnc_waitAndExecute;
+		//[FUNC(handleHostile), [], GVAR(hostileCooldown)] call CBA_fnc_waitAndExecute;
 
 		if (CHECK_DEBUG) then {
 			[{
