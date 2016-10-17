@@ -18,6 +18,11 @@ class DOUBLES(PREFIX,settings) {
         typeDetail = "";
         value = 200;
     };
+    class GVAR(whitelist) {
+        typeName = "ARRAY";
+        typeDetail = "";
+        value[] = {"ALL"};
+    };
     class GVAR(pbnames) {
         typeName = "ARRAY";
         typeDetail = "";

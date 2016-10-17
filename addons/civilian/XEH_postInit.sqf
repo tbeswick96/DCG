@@ -3,8 +3,11 @@ Author:
 Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
-#define EXPRESSIONS [["(1 - forest) * (2 + meadow) * (1 - sea) * (1 - houses) * (1 - hills)","meadow"],["(2 + forest) * (1 - sea) * (1 - houses)","forest"],["(2 + hills) * (1 - sea)","hills"],["(2 + houses) * (1 - sea)","houses"]]
-#define THRESHOLD ceil(EGVAR(main,range)*0.002)
+#define LOCATIONS_TYPE ["Alsatian_Random_F","Fin_random_F","Cock_random_F","Hen_random_F"]
+#define LOCALS_TYPE ["Sheep_random_F","Rabbit_F"]
+#define HILLS_TYPE ["Sheep_random_F","Goat_random_F"]
+#define LIMIT 8
+#define INTERATIONS 3
 
 if !(CHECK_INIT) exitWith {};
 
@@ -12,68 +15,68 @@ if (GVAR(enable) isEqualTo 0) exitWith {
 	INFO("Addon is disabled.");
 };
 
-[{
-	if (DOUBLES(PREFIX,main)) exitWith {
-		[_this select 1] call CBA_fnc_removePerFrameHandler;
-
-		call FUNC(handleVehicle);
-
-		_locations = [];
-		_posArray = [];
+[
+	{DOUBLES(PREFIX,main)},
+	{
+		_locations = EGVAR(main,locations) select {!(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius)))};
 
 		{
-			if !(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius))) then {
-				_locations pushBack _x;
-			};
+			_mrk = createMarker [LOCATION_ID(_x select 0),_x select 1];
+			_mrk setMarkerColor "ColorCivilian";
+			_mrk setMarkerShape "ELLIPSE";
+			_mrk setMarkerBrush "Solid";
+			_mrk setMarkerSize [GVAR(spawnDist),GVAR(spawnDist)];
+			[_mrk] call EFUNC(main,setDebugMarker);
+
 			false
-		} count EGVAR(main,locations);
+		} count _locations;
 
-		if (CHECK_DEBUG) then {
-			private "_mrk";
-			{
-				_mrk = createMarker [LOCVAR(_x select 0),_x select 1];
-				_mrk setMarkerColor "ColorCivilian";
-				_mrk setMarkerShape "ELLIPSE";
-				_mrk setMarkerBrush "SolidBorder";
-				_mrk setMarkerAlpha 0.5;
-				_mrk setMarkerSize [GVAR(spawnDist),GVAR(spawnDist)];
-			} forEach _locations;
-		};
+		[FUNC(handleUnit), 15, [_locations]] call CBA_fnc_addPerFrameHandler;
 
-		[_locations] call FUNC(handleUnit);
+		_animalList = [];
 
-		[{
-			params ["_args","_idPFH"];
-			_args params ["_posArray"];
+		_locations = _locations select {!(CHECK_DIST2D(_x select 1,locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius)))};
+		_locals = _locals select {!(CHECK_DIST2D(_x select 1,locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius)))};
+		_hills = _hills select {!(CHECK_DIST2D(_x select 0,locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius)))};
 
-			if (count _posArray > THRESHOLD) exitWith {
-				[_idPFH] call CBA_fnc_removePerFrameHandler;
-				if (CHECK_DEBUG) then {
-					{
-						_pos = _x select 0;
-						_mrk = createMarker [format["%1_animal_%2",QUOTE(ADDON),_pos],_pos];
-						_mrk setMarkerColor "ColorBlack";
-						_mrk setMarkerShape "ELLIPSE";
-						_mrk setMarkerBrush "SolidBorder";
-						_mrk setMarkerAlpha 0.5;
-						_mrk setMarkerSize [GVAR(spawnDist),GVAR(spawnDist)];
-					} forEach _posArray;
-				};
+		_locations = [EGVAR(main,locations),(count EGVAR(main,locations))*INTERATIONS] call EFUNC(main,shuffle);
+		_locals = [EGVAR(main,locals),(count EGVAR(main,locals))*INTERATIONS] call EFUNC(main,shuffle);
+		_hills = [EGVAR(main,hills),(count EGVAR(main,hills))*INTERATIONS] call EFUNC(main,shuffle);
 
-				[_posArray] call FUNC(handleAnimal);
-			};
+		{
+			if (_forEachIndex >= LIMIT) exitWith {};
 
-			_selected = selectRandom EXPRESSIONS;
-			_expression = _selected select 0;
-			_str = _selected select 1;
-			_pos = [EGVAR(main,center),0,EGVAR(main,range)] call EFUNC(main,findPosSafe);
-			_ret = selectBestPlaces [_pos,5000,_expression,70,1];
-			_pos = _ret select 0 select 0;
-			if (!(_ret isEqualTo []) && {!(CHECK_DIST2D(_pos,locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius)))} && {!(surfaceIsWater _pos)} && {{CHECK_DIST2D(_pos,(_x select 0),GVAR(spawnDist))} count _posArray isEqualTo 0}) then {
-				_posArray pushBack [_pos,_str];
-			};
-		}, 0.1, [_posArray]] call CBA_fnc_addPerFrameHandler;
-	};
-}, 0, []] call CBA_fnc_addPerFrameHandler;
+			_animalList pushBack [_x select 1,LOCATIONS_TYPE];
+		} forEach _locations;
+
+		{
+			if (_forEachIndex >= LIMIT) exitWith {};
+
+			_animalList pushBack [_x select 1,LOCALS_TYPE];
+		} forEach _locals;
+
+		{
+			if (_forEachIndex >= LIMIT) exitWith {};
+
+			_animalList pushBack [_x select 0,HILLS_TYPE];
+		} forEach _hills;
+
+		{
+			_pos = _x select 0;
+			_mrk = createMarker [format["%1_animal_%2",QUOTE(PREFIX),_pos],_pos];
+			_mrk setMarkerColor "ColorBlack";
+			_mrk setMarkerShape "ELLIPSE";
+			_mrk setMarkerBrush "Solid";
+			_mrk setMarkerSize [GVAR(spawnDist),GVAR(spawnDist)];
+			[_mrk] call EFUNC(main,setDebugMarker);
+
+			false
+		} count _animalList;
+
+		[FUNC(handleAnimal), 15, [_animalList]] call CBA_fnc_addPerFrameHandler;
+
+		[FUNC(handleVehicle), GVAR(vehCooldown), []] call CBA_fnc_addPerFrameHandler;
+	}
+] call CBA_fnc_waitUntilAndExecute;
 
 ADDON = true;

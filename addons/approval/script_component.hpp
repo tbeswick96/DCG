@@ -16,3 +16,6 @@
 #define QUESTION_CODE QUOTE(SETMVAR(PVEH_QUESTION,player); publicVariableServer QUOTE(PVEH_QUESTION))
 #define QUESTION_KEYID QUOTE(DOUBLES(ADDON,question))
 #define QUESTION_NAME "Question Nearby Person"
+
+#define LOCATION_DEBUG_ID(LNAME) ([QUOTE(COMPONENT),LNAME,"debug"] joinString "_")
+#define LOCATION_DEBUG_TEXT(LNAME) (format ["AV: %1", missionNamespace getVariable [AV_LOCATION_ID(LNAME),AV_MAX*0.1]])
