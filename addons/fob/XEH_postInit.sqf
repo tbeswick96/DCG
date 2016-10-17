@@ -73,7 +73,7 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 			};
 
 			{
-				_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []]];
+				_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []], ["_vars", []], ["_varValues", []]];
 				if(_isMan) then {
 					_side = switch(getNumber (configFile >> "CfgVehicles" >> _type >> "side")) do {
 						case 0: {east};
@@ -82,13 +82,13 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 						case 3: {civilian};
 						default {sideUnknown};
 					};
-					_man = (createGroup _side) createUnit [_type, [0,0,0], [], 0, "NONE"];
-					_man setDir _dir;
-					_man setPosASL _pos;
+					_veh = (createGroup _side) createUnit [_type, [0,0,0], [], 0, "NONE"];
+					_veh setDir _dir;
+					_veh setPosASL _pos;
 					if(count _waypoints > 1) then {
 						{
 							_x params ["_index", "_pos", "_name", "_behaviour", "_combatMode", "_formation", "_speed", "_type"];
-							_waypoint = (group _man) addWaypoint [_pos, 0, _index, _name];
+							_waypoint = (group _veh) addWaypoint [_pos, 0, _index, _name];
 							_waypoint setWaypointBehaviour _behaviour;
 							_waypoint setWaypointCombatMode _combatMode;
 							_waypoint setWaypointFormation _formation;
@@ -96,10 +96,10 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 							_waypoint setWaypointType _type;
 						} forEach _waypoints;
 					} else {
-						_man disableAI "MOVE";
+						_veh disableAI "MOVE";
 					};
-					_man allowDamage false;
-					_man addEventHandler ["Fired", {(_this select 0) setVehicleAmmo 1}];
+					_veh allowDamage false;
+					_veh addEventHandler ["Fired", {(_this select 0) setVehicleAmmo 1}];
 				} else {
 					_veh = _type createVehicle [0,0,0];
 					_veh setDir _dir;
@@ -138,6 +138,10 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 						};
 					};
 				};
+
+				{
+					_veh setVariable [_x, _varValues select _forEachIndex, true];
+				} forEach _vars;
 				false
 			} count (_data select 4);
 		};
