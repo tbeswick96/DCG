@@ -33,7 +33,6 @@ addMissionEventHandler ["HandleDisconnect",{
 	false
 }];
 
-<<<<<<< HEAD
 PVEH_DEPLOYPB addPublicVariableEventHandler {[_this select 1, ""] call FUNC(setupPB)};
 PVEH_DELETEPB addPublicVariableEventHandler {
 	private _anchor = objNull;
@@ -74,7 +73,7 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 			};
 
 			{
-				_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []], ["_vars", []], ["_varValues", []]];
+				_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []]];
 				if(_isMan) then {
 					_side = switch(getNumber (configFile >> "CfgVehicles" >> _type >> "side")) do {
 						case 0: {east};
@@ -83,13 +82,13 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 						case 3: {civilian};
 						default {sideUnknown};
 					};
-					_veh = (createGroup _side) createUnit [_type, [0,0,0], [], 0, "NONE"];
-					_veh setDir _dir;
-					_veh setPosASL _pos;
+					_man = (createGroup _side) createUnit [_type, [0,0,0], [], 0, "NONE"];
+					_man setDir _dir;
+					_man setPosASL _pos;
 					if(count _waypoints > 1) then {
 						{
 							_x params ["_index", "_pos", "_name", "_behaviour", "_combatMode", "_formation", "_speed", "_type"];
-							_waypoint = (group _veh) addWaypoint [_pos, 0, _index, _name];
+							_waypoint = (group _man) addWaypoint [_pos, 0, _index, _name];
 							_waypoint setWaypointBehaviour _behaviour;
 							_waypoint setWaypointCombatMode _combatMode;
 							_waypoint setWaypointFormation _formation;
@@ -97,10 +96,10 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 							_waypoint setWaypointType _type;
 						} forEach _waypoints;
 					} else {
-						_veh disableAI "MOVE";
+						_man disableAI "MOVE";
 					};
-					_veh allowDamage false;
-					_veh addEventHandler ["Fired", {(_this select 0) setVehicleAmmo 1}];
+					_man allowDamage false;
+					_man addEventHandler ["Fired", {(_this select 0) setVehicleAmmo 1}];
 				} else {
 					_veh = _type createVehicle [0,0,0];
 					_veh setDir _dir;
@@ -139,10 +138,6 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 						};
 					};
 				};
-
-				{
-					_veh setVariable [_x, _varValues select _forEachIndex, true];
-				} forEach _vars;
 				false
 			} count (_data select 4);
 		};
@@ -161,43 +156,10 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 						[],
 						5
 					] call CBA_fnc_waitAndExecute;
-=======
-[
-	{DOUBLES(PREFIX,main)},
-	{
-		_data = QUOTE(ADDON) call EFUNC(main,loadDataAddon);
-
-		[_data] call FUNC(handleLoadData);
-
-		[[],{
-			if (hasInterface) then {
-				if (toUpper (GVAR(whitelist) select 0) isEqualTo "ALL" || {player in GVAR(whitelist)}) then {
-	 				[QUOTE(ADDON),"Forward Operating Base","",QUOTE(true),QUOTE(call FUNC(getChildren))] call EFUNC(main,setAction);
->>>>>>> masterdcg
 				};
-
-	 			[ADDON_TITLE, DEPLOY_ID, DEPLOY_NAME, {DEPLOY_KEYCODE}, ""] call CBA_fnc_addKeybind;
-	 			[ADDON_TITLE, REQUEST_ID, REQUEST_NAME, {REQUEST_KEYCODE}, ""] call CBA_fnc_addKeybind;
-	 			[ADDON_TITLE, DISMANTLE_ID, DISMANTLE_NAME, {DISMANTLE_KEYCODE}, ""] call CBA_fnc_addKeybind;
-	 			[ADDON_TITLE, PATROL_ID, PATROL_NAME, {PATROL_KEYCODE}, ""] call CBA_fnc_addKeybind;
-	 			[ADDON_TITLE, RECON_ID, RECON_NAME, {RECON_KEYCODE}, ""] call CBA_fnc_addKeybind;
-	 			[ADDON_TITLE, BUILD_ID, BUILD_NAME, {BUILD_KEYCODE}, "", [DIK_DOWN, [true, false, false]]] call CBA_fnc_addKeybind;
-
-	 			player addEventHandler ["Respawn",{
-	 				if ((getPlayerUID (_this select 0)) isEqualTo GVAR(UID)) then {
-	 					[
-	 						{
-	 							missionNamespace setVariable [PVEH_REASSIGN,player];
-	 							publicVariableServer PVEH_REASSIGN;
-	 						},
-	 						[],
-	 						5
-	 					] call CBA_fnc_waitAndExecute;
-	 				};
-	 			}];
-			};
- 		}] remoteExecCall [QUOTE(BIS_fnc_call),0,true];
-	}
-] call CBA_fnc_waitUntilAndExecute;
+			}];
+		} remoteExecCall [QUOTE(BIS_fnc_call),0,true];
+	};
+}, 0, []] call CBA_fnc_addPerFrameHandler;
 
 ADDON = true;
