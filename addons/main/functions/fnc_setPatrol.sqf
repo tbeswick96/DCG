@@ -137,7 +137,7 @@ if (_units isEqualTo []) exitWith {false};
         };
 
         if (isNull (objectParent _x)) exitWith { // if unit is on foot
-            _x forceSpeed (_x getSpeed "SLOW");
+            _x forceWalk true;
             private _houses = (getposATL _x) nearObjects ["house",_range min 1000];
 
             [{
@@ -146,7 +146,7 @@ if (_units isEqualTo []) exitWith {false};
 
                 if (!alive _unit || {_unit getVariable [PATROL_VAR,-1] isEqualTo 0}) exitWith {
                     [_idPFH] call CBA_fnc_removePerFrameHandler;
-                    _unit forceSpeed (_unit getSpeed "AUTO");
+                    _unit forceWalk false;
                     LOG_2("%1 exiting patrol at %2.", _type, getPosASL _unit);
                 };
 

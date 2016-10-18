@@ -27,9 +27,9 @@ _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
 	if (toLower worldName in EGVAR(main,simpleWorlds)) then {
-		_position = [EGVAR(fob,anchor),6000,"meadow",10] call EFUNC(main,findPos);
+		_position = [(position EGVAR(fob,anchor)),6000,"meadow",10] call EFUNC(main,findPos);
 	} else {
-		_position = [EGVAR(fob,anchor),6000,"house"] call EFUNC(main,findPos);
+		_position = [(position EGVAR(fob,anchor)),6000,"house"] call EFUNC(main,findPos);
 		if !(_position isEqualTo []) then {
 			_position = (_position select 1);
 		};

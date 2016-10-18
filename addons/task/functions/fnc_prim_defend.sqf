@@ -27,7 +27,7 @@ GVAR(defend_enemies) = [];
 _vehPos = [];
 
 if (_position isEqualTo []) then {
-	_position = [EGVAR(fob,anchor),6000,"house",0,true] call EFUNC(main,findPos);
+	_position = [(position EGVAR(fob,anchor)),6000,"house",0,true] call EFUNC(main,findPos);
 	if !(_position isEqualTo []) then {
 		_position = _position select 1;
 	};

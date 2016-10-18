@@ -25,7 +25,7 @@ _strength = [TASK_UNIT_MIN,TASK_UNIT_MAX] call EFUNC(main,setStrength);
 _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
-	_position = [EGVAR(fob,anchor),6000,"meadow",10] call EFUNC(main,findPos);
+	_position = [(position EGVAR(fob,anchor)),6000,"meadow",10] call EFUNC(main,findPos);
 };
 
 if (_position isEqualTo []) exitWith {

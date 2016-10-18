@@ -29,6 +29,8 @@ if !(GVAR(groups) isEqualTo []) then {
 	};
 };
 
+{deleteGroup _x} foreach allGroups;
+
 if (count GVAR(groups) <= GVAR(groupsMaxCount)) then {
 	_HCs = entities "HeadlessClient_F";
 	_players = allPlayers - _HCs;
