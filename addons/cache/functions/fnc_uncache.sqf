@@ -22,9 +22,10 @@ if (!isPlayer _unit && {_unit getVariable [UNIT_CACHED,false]}) then {
 	_unit enableAI "ALL";
 	if (isNull objectParent _unit) then {
 		detach _unit;
-		if !(CHECK_VECTORDIST(getPosASL _unit,getPosASL (leader _unit),500)) then {
-			_unit setPos [getPos _unit select 0,getPos _unit select 1,0];
-		};
+		_pos = getPosATL _unit;
+		_x = random [(_pos select 0) - 5, _pos select 0, (_pos select 0) + 5];
+		_y = random [(_pos select 1) - 5, _pos select 1, (_pos select 1) + 5];
+		_unit setPosATL [_x, _y, 0];
 	};
 	LOG_3("Uncaching %1 (%2) at %3.",_unit,typeof _unit,getPos _unit);
 };

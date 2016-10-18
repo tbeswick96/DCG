@@ -22,7 +22,7 @@ if (!isPlayer _unit && {!("driver" in assignedVehicleRole _unit)}) then {
 	_unit disableAI "ALL";
 	[_unit] call FUNC(addEventhandler);
 	if (isNull objectParent _unit && {isNull objectParent (leader _unit)}) then {
-		_unit attachTo [leader _unit];
+		_unit attachTo [leader _unit, [0,-1,0]];
 	};
 	LOG_3("Caching %1 (%2) at %3.",_unit,typeof _unit,getPos _unit);
 };

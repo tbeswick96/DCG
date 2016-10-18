@@ -30,7 +30,7 @@ if (_position isEqualTo []) then {
 			_position = [];
 		};
 	} else {
-		_position = [EGVAR(main,center),EGVAR(main,range),"forest",0,true] call EFUNC(main,findPos);
+		_position = [EGVAR(fob,anchor),6000,"forest",0,true] call EFUNC(main,findPos);
 	};
 };
 

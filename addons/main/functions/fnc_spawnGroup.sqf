@@ -107,13 +107,16 @@ if (_type isEqualTo 0) exitWith {
 		[{
 			params ["_args","_idPFH"];
 			_args params ["_grp","_unitPool","_veh","_count"];
+			[{
+				params ["_grp","_unitPool","_veh","_count","_idPFH"];
 
-			if (count crew _veh >= _count) exitWith {
-				[_idPFH] call CBA_fnc_removePerFrameHandler;
-			};
+				if (count crew _veh >= _count) exitWith {
+					[_idPFH] call CBA_fnc_removePerFrameHandler;
+				};
 
-			_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
-			_unit moveInCargo _veh;
+				_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
+				_unit moveInCargo _veh;
+			}, [_grp,_unitPool,_veh,_count,_idPFH], 10] call CBA_fnc_waitAndExecute;			
 		}, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh)]] call CBA_fnc_addPerFrameHandler;
 	};
 

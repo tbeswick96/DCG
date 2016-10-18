@@ -10,7 +10,7 @@ Arguments:
 Return:
 none
 __________________________________________________________________*/
-#include "script_component.hpp"
+waitUntil {dcg_settings_done};
 
 _settings = [
 	["dcg_main_init", ["ALL"]],
@@ -22,7 +22,7 @@ _settings = [
 	["dcg_main_blacklistLocations", []],
 	["dcg_main_simpleWorlds", ["Chernarus", "Chernarus_Summer"]],
 	["dcg_main_unitPoolEast", ["Inegal_F","Inegal_C","Inegal_O","Inegal_MED","Inegal_MG","Inegal_Mark","Inegal_AA","Inegal_ATE","Inegal_ATJ","Inegal_FAC","Inegal_FDF_S","Inegal_FDF_V","Inegal_FDF_B","Inegal_FDF_Sh","Inegal_FDF_A","Inegal_FDF_Se","Inegal_Diablerie_S","Inegal_Diablerie_C","Inegal_Diablerie_G","Inegal_Diablerie_Su","Inegal_Diablerie_B","Inegal_Diablerie_Sh","Inegal_Diablerie_A","Inegal_Diablerie_Se","Inegal_Recrues_C","Inegal_Recrues_L","Inegal_Recrues_R","Inegal_Crew_HP","Inegal_Crew_HC","Inegal_Crew_C","Inegal_Crew_P"]],
-	["dcg_main_vehPoolEast", ["Inegal_LandRover_Unarmed","Inegal_LandRover_MG","Inegal_LandRover_GL","Inegal_LandRover_FDF_Unarmed","Inegal_LandRover_FDF_MG","Inegal_LandRover_FDF_GL","Inegal_VAB_Unarmed","Inegal_VAB_HMG","Inegal_VAB_GMG","Inegal_VAB_D_Unarmed","Inegal_VAB_D_HMG","Inegal_VAB_D_GMG","Inegal_LandRover_Unarmed","Inegal_LandRover_MG","Inegal_LandRover_GL","Inegal_LandRover_FDF_Unarmed","Inegal_LandRover_FDF_MG","Inegal_LandRover_FDF_GL","Inegal_VAB_Unarmed","Inegal_VAB_HMG","Inegal_VAB_GMG","Inegal_VAB_D_Unarmed","Inegal_VAB_D_HMG","Inegal_VAB_D_GMG","Inegal_APC_VBCI","Inegal_TRM_Covered","Inegal_TRM_Open","Inegal_TRM_D_Covered","Inegal_TRM_D_Open","Inegal_TRM_R_Covered","Inegal_TRM_R_Open","Inegal_TRM_Ammo","Inegal_TRM_Repair","Inegal_TRM_Fuel","Inegal_Tank_Leclerc"]],
+	["dcg_main_vehPoolEast", ["Inegal_LandRover_Unarmed","Inegal_LandRover_MG","Inegal_LandRover_GL","Inegal_LandRover_FDF_Unarmed","Inegal_LandRover_FDF_MG","Inegal_LandRover_FDF_GL","Inegal_VAB_Unarmed","Inegal_VAB_HMG","Inegal_VAB_GMG","Inegal_VAB_D_Unarmed","Inegal_VAB_D_HMG","Inegal_VAB_D_GMG","Inegal_LandRover_Unarmed","Inegal_LandRover_MG","Inegal_LandRover_GL","Inegal_LandRover_FDF_Unarmed","Inegal_LandRover_FDF_MG","Inegal_LandRover_FDF_GL","Inegal_VAB_Unarmed","Inegal_VAB_HMG","Inegal_VAB_GMG","Inegal_VAB_D_Unarmed","Inegal_VAB_D_HMG","Inegal_VAB_D_GMG","Inegal_APC_VBCI","Inegal_TRM_Covered","Inegal_TRM_Open","Inegal_TRM_D_Covered","Inegal_TRM_D_Open","Inegal_TRM_R_Covered","Inegal_TRM_R_Open","Inegal_Tank_Leclerc"]],
 	["dcg_main_airPoolEast", ["Inegal_Heli_AW101", "Inegal_Heli_AH6", "Inegal_Heli_MH6", "Inegal_Heli_FDF_MH6", "Inegal_Heli_D_MH6", "Inegal_Jet_L159"]],
 	["dcg_main_sniperPoolEast", ["Inegal_Mark", "Inegal_FDF_Sh", "Inegal_Diablerie_As", "Inegal_Sniper"]],
 	["dcg_main_officerPoolEast", ["Inegal_O", "Inegal_Diablerie_G", "Inegal_FDF_V"]],
@@ -60,11 +60,6 @@ _settings = [
 	["dcg_respawn_enable", 1],
 	["dcg_task_enable", 1],
 	["dcg_task_cooldown", 180],
-	["dcg_task_primaryTasks", ["dcg_task_fnc_prim_vip","dcg_task_fnc_prim_cache","dcg_task_fnc_prim_officer","dcg_task_fnc_prim_arty","dcg_task_fnc_prim_defend"]],
-	["dcg_task_secondaryTasks", ["dcg_task_fnc_sec_deliver","dcg_task_fnc_sec_repair","dcg_task_fnc_sec_officer","dcg_task_fnc_sec_intel01","dcg_task_fnc_sec_intel02"]],
-	["dcg_transport_enable", 1],
-	["dcg_transport_maxCount", 3],
-	["dcg_transport_cooldown", 180],
 	["dcg_approval_enable", 1],
 	["dcg_approval_multiplier", 1],
 	["dcg_approval_hostileCooldown", 180],
@@ -80,14 +75,15 @@ _settings = [
 	["dcg_fob_enable", 1],
 	["dcg_fob_name", "FOB Saturn"],
 	["dcg_fob_range", 200],
-	["dcg_fob_pbnames", ["PB Venus", "PB Mercury", "PB Mars"]],
-	["dcg_fob_pbrange", 100]
+	["dcg_fob_pbnames", ["PB Venus","PB Mercury","PB Mars"]],
+	["dcg_fob_pbrange", 50]
 ];
 
 {
 	_x params ["_name", "_value"];
 	missionNamespace setVariable [_name,_value,true];
+	publicVariable _name;
 } forEach _settings;
 
-dcg_settings_done = true;
-publicVariable "dcg_settings_done";
+dcg_serverSettings_done = true;
+publicVariable "dcg_serverSettings_done";
