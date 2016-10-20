@@ -76,8 +76,8 @@ TASK_DEBUG(getPos _officer);
 
 // SET TASK
 _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe));
-_taskDescription = format ["A low ranking enemy officer has been spotted near %1. Find and eliminate the officer.",mapGridPosition _taskPos];
-[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"kill"] call EFUNC(main,setTask);
+_taskDescription = format ["A low ranking enemy officer has been spotted near %1. Find and eliminate the officer.",mapGridPosition _position];
+[true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"kill"] call EFUNC(main,setTask);
 
 // PUBLISH TASK
 TASK_PUBLISH(_position);

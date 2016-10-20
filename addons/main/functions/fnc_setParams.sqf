@@ -14,6 +14,9 @@ __________________________________________________________________*/
 
 if !(isServer) exitWith {};
 
+waitUntil {!(isNil "dcg_settings_done")};
+waitUntil {dcg_settings_done};
+
 {
     private _pname = configName ((missionConfigFile >> "Params") select _ForEachIndex);
     private _pval = paramsArray select _ForEachIndex;

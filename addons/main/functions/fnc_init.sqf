@@ -37,4 +37,6 @@ private _fnc_parseConfigForInit = {
 // server config
 [configFile >> QUOTE(DOUBLES(PREFIX,serverSettings))] call _fnc_parseConfigForInit;
 
+call FUNC(setSettings);
+
 publicVariable QGVAR(enable);

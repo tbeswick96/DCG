@@ -85,7 +85,7 @@ Examples:
     In order to turn on full debugging for a single file,
     (begin example)
         // Top of individual script file.
-        #define DEBUG_MODE_FULL
+        // #define DEBUG_MODE_FULL
         #include "script_component.hpp"
     (end)
 
@@ -109,7 +109,7 @@ Examples:
     (begin example)
         // Top of addons\main\script_macros.hpp
         #ifndef DEBUG_MODE_FULL
-        #define DEBUG_MODE_FULL
+        // #define DEBUG_MODE_FULL
         #endif
         #include "\x\cba\addons\main\script_macros_common.hpp"
     (end)

@@ -81,7 +81,7 @@ TASK_DEBUG(_position);
 _taskPos = ASLToAGL ([_position,40,80] call EFUNC(main,findPosSafe));
 _taskDescription = format["A few days ago an informant didn't show for a meeting. He was suppose to hand off a GPS device with vital intel on the enemy's whereabouts. Recently, UAV reconnaissance spotted activity near %1. Search the site for the informant and retrieve the GPS.", mapGridPosition _position];
 
-[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"search"] call EFUNC(main,setTask);
+[true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"search"] call EFUNC(main,setTask);
 
 // PUBLISH TASK
 TASK_PUBLISH(_position);

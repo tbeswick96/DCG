@@ -28,7 +28,8 @@ if !(_data isEqualTo []) exitWith {
 private _locations = [];
 
 {
-	if !(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius))) then {
+	if (!(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius))) &&
+		(EGVAR(fob,anchor) distance2D (_x select 1) <= 6000)) then {
 		_locations pushBack _x;
 	};
 } forEach EGVAR(main,locations);

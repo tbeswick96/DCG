@@ -151,7 +151,7 @@ GVAR(locations) pushBack _town;
 	};
 }, 10, [_town,_objArray,_officer,_taskID]] call CBA_fnc_addPerFrameHandler;
 
-EGVAR(civilian,blacklist) pushBack _name; // stop civilians from spawning in town
+//EGVAR(civilian,blacklist) pushBack _name; // stop civilians from spawning in town
 
 private _mrk = createMarker [format["%1_%2_debug",QUOTE(ADDON),_name],_position];
 _mrk setMarkerShape "ELLIPSE";

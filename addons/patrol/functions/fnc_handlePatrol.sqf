@@ -29,8 +29,6 @@ if !(GVAR(groups) isEqualTo []) then {
 	};
 };
 
-{deleteGroup _x} foreach allGroups;
-
 if (count GVAR(groups) <= GVAR(groupsMaxCount)) then {
 	_HCs = entities "HeadlessClient_F";
 	_players = allPlayers - _HCs;
@@ -38,20 +36,19 @@ if (count GVAR(groups) <= GVAR(groupsMaxCount)) then {
 	if !(_players isEqualTo []) then {
 		_player = selectRandom _players;
 		_players = [getPosASL _player,100] call EFUNC(main,getNearPlayers);
-
 		if ({CHECK_DIST2D(_player,(_x select 0),(_x select 1))} count GVAR(blacklist) isEqualTo 0) then { // check if player is in a blacklist array
-			_posArray = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,6] call EFUNC(main,findPosGrid);
+			_posArrayCheck = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,6] call EFUNC(main,findPosGrid);
+			_posArray = [];
 			{ // remove positions in blacklist, that are near players or that players can see
-				_y = _x;
+				private _y = _x;
 				private _distance = ((([EGVAR(fob,anchor)] call EFUNC(approval,getValue)) * 15) max 750) min 1500;
-				if ({CHECK_DIST2D(_y,(_x select 0),(_x select 1))} count GVAR(blacklist) > 0 ||
+				if (!({CHECK_DIST2D(_y,(_x select 0),(_x select 1))} count GVAR(blacklist) > 0 ||
 				    EGVAR(fob,anchor) distance2D _y <= _distance ||
 				    {count ([_y,100] call EFUNC(main,getNearPlayers)) > 0} ||
-					{{[_y,_x] call EFUNC(main,inLOS)} count _players > 0}) then {
-					_posArray deleteAt _forEachIndex;
+					{{[_y,_x] call EFUNC(main,inLOS)} count _players > 0})) then {
+					_posArray pushBack _y;
 				};
-			} forEach _posArray;
-
+			} forEach _posArrayCheck;
 			if !(_posArray isEqualTo []) then {
 				_grp = grpNull;
 				_pos = selectRandom _posArray;

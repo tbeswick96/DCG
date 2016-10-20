@@ -22,7 +22,6 @@ PREP(setupPB);
 PREP(canDeletePB);
 PREP(deletePB);
 
-GVAR(location) = locationNull;
 GVAR(respawnPos) = [];
 GVAR(requestReady) = 1;
 GVAR(UID) = "";
@@ -44,7 +43,6 @@ publicVariable QFUNC(canDeployPB);
 publicVariable QFUNC(canDeletePB);
 publicVariable QFUNC(deletePB);
 
-publicVariable QGVAR(location);
 publicVariable QGVAR(requestReady);
 publicVariable QGVAR(UID);
 publicVariable QGVAR(response);

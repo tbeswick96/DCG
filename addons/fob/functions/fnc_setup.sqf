@@ -39,10 +39,13 @@ GVAR(anchor) setPos _pos;
 publicVariable QGVAR(anchor);
 GVAR(anchor) allowDamage false;
 GVAR(anchor) enableSimulation false;
-
-{
- 	[getPos GVAR(anchor),"NameCity",GVAR(range),GVAR(name),QGVAR(location)] call EFUNC(main,createLocation);
-} remoteExecCall [QUOTE(BIS_fnc_call),0,GVAR(anchor)];
+_name = GVAR(name);
+_marker = createMarker [_name, _pos];
+_marker setMarkerShape "ICON";
+_marker setMarkerType "hd_dot";
+_marker setMarkerColor "colorBLUFOR";
+_marker setMarkerText _name;
+SETPVAR(_anchor,GVAR(marker),_marker);
 
 GVAR(respawnPos) = [missionNamespace,GVAR(anchor) modelToWorld [0,-4,0],GVAR(name)] call BIS_fnc_addRespawnPosition;
 

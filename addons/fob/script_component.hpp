@@ -35,7 +35,7 @@
 #define REQUEST_ID QUOTE(DOUBLES(ADDON,request))
 #define REQUEST_NAME "Request Control of FOB"
 #define REQUEST_STATEMENT call FUNC(request)
-#define REQUEST_COND !(GVAR(location) isEqualTo locationNull) && {!(player isEqualTo (getAssignedCuratorUnit GVAR(curator)))} && {GVAR(requestReady) isEqualTo 1}
+#define REQUEST_COND !(GVAR(anchor) isEqualTo objNull) && {!(player isEqualTo (getAssignedCuratorUnit GVAR(curator)))} && {GVAR(requestReady) isEqualTo 1}
 
 #define DISMANTLE_ID QUOTE(DOUBLES(ADDON,dismantle))
 #define DISMANTLE_NAME "Dismantle FOB"

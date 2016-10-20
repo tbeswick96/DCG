@@ -33,7 +33,7 @@ if (_cooldown < 0) then {
 
 	if !(isNil "_task") then {
 		INFO_1("Spawning task %1.",_task);
-		[] spawn (missionNamespace getVariable [_task,{}]);
+		[] spawn call compile format [QUOTE(FUNC(%1)), _task];
 	} else {
 		WARNING("No task selected.");
 	};

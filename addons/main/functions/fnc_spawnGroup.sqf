@@ -103,7 +103,7 @@ if (_type isEqualTo 0) exitWith {
 		_unit moveInGunner _veh;
 	};
 
-	if (_cargo) then {
+	/*if (_cargo) then {
 		[{
 			params ["_args","_idPFH"];
 			_args params ["_grp","_unitPool","_veh","_count"];
@@ -118,7 +118,7 @@ if (_type isEqualTo 0) exitWith {
 				_unit moveInCargo _veh;
 			}, [_grp,_unitPool,_veh,_count,_idPFH], 10] call CBA_fnc_waitAndExecute;			
 		}, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh)]] call CBA_fnc_addPerFrameHandler;
-	};
+	};*/
 
 	_check pushBack 0;
 }, _delay, [_pos,_grp,_type,_count,_unitPool,_vehPool,_airPool,_check,_cargo]] call CBA_fnc_addPerFrameHandler;

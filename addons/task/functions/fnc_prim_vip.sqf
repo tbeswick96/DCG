@@ -95,9 +95,9 @@ if !(_base isEqualTo []) then {
 
 // SET TASK
 _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe));
-_taskDescription = format ["We have intel that the son of a local elder has been taken hostage by enemy forces somewhere near %1. Locate the VIP, %2, and safely escort him to %3.",mapGridPosition _taskPos, name _vip, _town select 0];
+_taskDescription = format ["We have intel that the son of a local elder has been taken hostage by enemy forces somewhere near %1. Locate the VIP, %2, and safely escort him to %3.",mapGridPosition _position, name _vip, _town select 0];
 
-[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"Search"] call EFUNC(main,setTask);
+[true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"Search"] call EFUNC(main,setTask);
 
 TASK_DEBUG(getpos _vip);
 

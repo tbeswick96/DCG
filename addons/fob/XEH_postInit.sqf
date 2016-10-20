@@ -19,13 +19,10 @@ PVEH_REASSIGN addPublicVariableEventHandler {(_this select 1) assignCurator GVAR
 PVEH_DELETE addPublicVariableEventHandler {
 	[getPosASL GVAR(anchor),AV_FOB*-1] call EFUNC(approval,addValue);
 	unassignCurator GVAR(curator);
+	deleteMarker (GETVAR(GVAR(anchor),GVAR(marker),""));
 	deleteVehicle GVAR(anchor);
 
 	GVAR(respawnPos) call BIS_fnc_removeRespawnPosition;
-
-	{
-		deleteLocation GVAR(location);
-	} remoteExecCall [QUOTE(BIS_fnc_call), 0, false];
 };
 
 addMissionEventHandler ["HandleDisconnect",{
@@ -80,7 +77,8 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 			};
 
 			{
-				_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []], ["_vars", []], ["_varValues", []]];
+				//_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []], ["_vars", []], ["_varValues", []]];
+				_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []]];
 				if(_isMan) then {
 					_side = switch(getNumber (configFile >> "CfgVehicles" >> _type >> "side")) do {
 						case 0: {east};
@@ -146,9 +144,9 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 					};
 				};
 				
-				{
+				/*{
 					_veh setVariable [_x, _varValues select _forEachIndex, true];
-				} forEach _vars;
+				} forEach _vars;*/
 				false
 			} count (_data select 4);
 		};

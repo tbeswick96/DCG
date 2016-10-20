@@ -40,7 +40,6 @@ if (_bNodes isEqualTo []) exitWith {
 	(_base select 2) call EFUNC(main,cleanup);
 	[TASK_TYPE,0] call FUNC(select);
 };
-
 _posCache = selectRandom _bNodes;
 _posCache = _posCache select 0;
 
@@ -87,8 +86,8 @@ if !(_vehPos isEqualTo _position) then {
 
 // SET TASK
 _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe));
-_taskDescription = format ["An enemy camp housing an ammunitions cache has been spotted near %1. These supplies are critical to the opposition's efforts. Destroy the cache and weaken the enemy.", mapGridPosition _taskPos];
-[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"destroy"] call EFUNC(main,setTask);
+_taskDescription = format ["An enemy camp housing an ammunitions cache has been spotted near %1. These supplies are critical to the opposition's efforts. Destroy the cache and weaken the enemy.", mapGridPosition _position];
+[true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"destroy"] call EFUNC(main,setTask);
 
 TASK_DEBUG(_posCache);
 

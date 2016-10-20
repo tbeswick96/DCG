@@ -13,10 +13,8 @@ __________________________________________________________________*/
 
 if !(CHECK_INIT) exitWith {};
 
-[] spawn {
-	waitUntil {dcg_serverSettings_done};
-
-    if (CHECK_MARKER(QUOTE(BASE))) then {
+_fnc_finishInit = {
+	if (CHECK_MARKER(QUOTE(BASE))) then {
 	    BASE = "Land_HelipadEmpty_F" createVehicle [0,0,0];
 	    BASE setPos (getMarkerPos QUOTE(BASE));
 	    publicVariable QUOTE(BASE);
@@ -117,12 +115,12 @@ if !(CHECK_INIT) exitWith {};
 	    false
     } count GVAR(locations);
 
-if (GVAR(baseSafezone)) then {
-	[FUNC(handleSafezone), 60, []] call CBA_fnc_addPerFrameHandler;
-};
+	if (GVAR(baseSafezone)) then {
+		[FUNC(handleSafezone), 60, []] call CBA_fnc_addPerFrameHandler;
+	};
 
-// set cleanup handlers
-[FUNC(handleCleanup), 60, []] call CBA_fnc_addPerFrameHandler;
+	// set cleanup handlers
+	[FUNC(handleCleanup), 60, []] call CBA_fnc_addPerFrameHandler;
 
 	if !(isNil {HEADLESSCLIENT}) then {
 		[{
@@ -182,4 +180,11 @@ if (GVAR(baseSafezone)) then {
 
 	ADDON = true;
 	publicVariable QUOTE(ADDON);
+};
+
+[_fnc_finishInit] spawn {
+	waitUntil {!(isNil "dcg_postSettings_done")};
+	waitUntil {dcg_postSettings_done};
+
+    (_this select 0) call CBA_fnc_directCall;
 };

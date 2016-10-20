@@ -12,4 +12,4 @@ none
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-GVAR(location) isEqualTo locationNull && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10}
+GVAR(anchor) isEqualTo objNull && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10}

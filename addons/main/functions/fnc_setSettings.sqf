@@ -10,12 +10,11 @@ Arguments:
 Return:
 none
 __________________________________________________________________*/
-waitUntil {dcg_settings_done};
-
 _settings = [
 	["dcg_main_init", ["ALL"]],
 	["dcg_main_debug", 0],
 	["dcg_main_loadData", true],
+	["dcg_main_autoSave", true],
 	["dcg_main_baseName", "MOB Jupiter"],
 	["dcg_main_baseRadius", (worldSize * 0.055)],
 	["dcg_main_baseSafezone", true],
@@ -42,7 +41,7 @@ _settings = [
 	["dcg_main_vehPoolCiv", ["C_Offroad_02_unarmed_F_orange", "C_Offroad_02_unarmed_F_green", "C_Offroad_02_unarmed_F_blue", "C_Offroad_02_unarmed_F_black", "C_Offroad_02_unarmed_F", "C_Hatchback_01_beigecustom_F", "C_Hatchback_01_black_F", "C_Hatchback_01_blue_F", "C_Hatchback_01_bluecustom_F", "C_Hatchback_01_dark_F", "C_Hatchback_01_F", "C_Hatchback_01_green_F", "C_Hatchback_01_grey_F", "C_Hatchback_01_sport_blue_F", "C_Hatchback_01_sport_F", "C_Hatchback_01_sport_green_F", "C_Hatchback_01_sport_grey_F", "C_Hatchback_01_sport_orange_F", "C_Hatchback_01_sport_red_F", "C_Hatchback_01_sport_white_F", "C_Hatchback_01_white_F", "C_Hatchback_01_yellow_F", "C_Offroad_01_blue_F", "C_Offroad_01_bluecustom_F", "C_Offroad_01_darkred_F", "C_Offroad_01_F", "C_Offroad_01_red_F", "C_Offroad_01_repair_F", "C_Offroad_01_sand_F", "C_Offroad_01_white_F", "C_Offroad_default_F", "C_Offroad_luxe_F", "C_Offroad_stripped_F", "C_Quadbike_01_black_F", "C_Quadbike_01_blue_F", "C_Quadbike_01_F", "C_Quadbike_01_red_F", "C_Quadbike_01_white_F", "C_Truck_02_covered_F", "C_Truck_02_transport_F", "C_SUV_01_F", "C_Truck_02_box_F", "C_Truck_02_fuel_F", "C_Van_01_box_F", "C_Van_01_box_red_F", "C_Van_01_box_white_F", "C_Van_01_fuel_F", "C_Van_01_fuel_red_F", "C_Van_01_fuel_red_v2_F", "C_Van_01_fuel_white_F", "C_Van_01_fuel_white_v2_F", "C_Van_01_transport_F", "C_Van_01_transport_red_F", "C_Van_01_transport_white_F"]],
 	["dcg_main_airPoolCiv", ["C_Heli_Light_01_civil_F", "C_Plane_Civil_01_F", "C_Plane_Civil_01_racing_F"]],
 	["dcg_occupy_enable", 1],
-	["dcg_occupy_cooldown", 180],
+	["dcg_occupy_cooldown", 10],
 	["dcg_occupy_locationCount", 2],
 	["dcg_occupy_infCountCapital", 5],
 	["dcg_occupy_vehCountCapital", 8],
@@ -54,12 +53,12 @@ _settings = [
 	["dcg_occupy_vehCountVillage", 3],
 	["dcg_occupy_airCountVillage", 0],
 	["dcg_patrol_enable", 1],
-	["dcg_patrol_cooldown", 180],
+	["dcg_patrol_cooldown", 120],
 	["dcg_patrol_groupsMaxCount", 40],
 	["dcg_patrol_vehChance", 0.4],
 	["dcg_respawn_enable", 1],
 	["dcg_task_enable", 1],
-	["dcg_task_cooldown", 180],
+	["dcg_task_cooldown", 10],
 	["dcg_approval_enable", 1],
 	["dcg_approval_multiplier", 1],
 	["dcg_approval_hostileCooldown", 180],
@@ -71,12 +70,13 @@ _settings = [
 	["dcg_civilian_countCity", 20],
 	["dcg_civilian_countVillage", 15],
 	["dcg_civilian_vehMaxCount", 8],
-	["dcg_civilian_vehCooldown", 180],
+	["dcg_civilian_vehCooldown", 120],
 	["dcg_fob_enable", 1],
 	["dcg_fob_name", "FOB Saturn"],
 	["dcg_fob_range", 200],
 	["dcg_fob_pbnames", ["PB Venus","PB Mercury","PB Mars"]],
-	["dcg_fob_pbrange", 50]
+	["dcg_fob_pbrange", 50],
+	["dcg_fob_whitelist", ["ALL"]]
 ];
 
 {
@@ -85,5 +85,5 @@ _settings = [
 	publicVariable _name;
 } forEach _settings;
 
-dcg_serverSettings_done = true;
-publicVariable "dcg_serverSettings_done";
+dcg_preSettings_done = true;
+publicVariable "dcg_preSettings_done";

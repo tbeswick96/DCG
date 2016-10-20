@@ -3,12 +3,14 @@ Author:
 Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
-dcg_settings_done = false;
-dcg_serverSettings_done = false;
 
 ADDON = false;
 
+dcg_preSettings_done = false;
+publicVariable "dcg_preSettings_done";
+
 PREP(init); // do not change
+PREP(setSettings); // do not change
 call FUNC(init); // do not change
 
 if ((GVAR(enable) isEqualTo 0) || {!isServer}) exitWith {};
@@ -44,7 +46,6 @@ PREP(removeAction);
 PREP(removeParticle);
 PREP(saveInventory);
 PREP(setAction);
-PREP(setSettings);
 PREP(exportSettings);
 PREP(exportBase);
 PREP(shuffle);
@@ -130,6 +131,13 @@ publicVariable QGVAR(markerCleanup);
 publicVariable QGVAR(objectCleanup);
 publicVariable QGVAR(actions);
 
-call FUNC(setParams);
-call FUNC(setSettings);
-call FUNC(loadData);
+[] spawn {
+    waitUntil {!(isNil "dcg_settings_done")};
+    waitUntil {dcg_settings_done};
+
+    [] spawn FUNC(setParams);
+    call FUNC(loadData);
+    
+    dcg_postSettings_done = true;
+    publicVariable "dcg_postSettings_done";
+};
