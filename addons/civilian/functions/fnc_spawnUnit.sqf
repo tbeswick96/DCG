@@ -31,14 +31,17 @@ _grp = [_pos,0,_unitCount,CIVILIAN,false,1] call EFUNC(main,spawnGroup);
 			_x addEventHandler ["firedNear",{
 				if !((_this select 0) getVariable [QUOTE(DOUBLES(PREFIX,isOnPatrol)),-1] isEqualTo 0) then {
 					(_this select 0) setVariable [QUOTE(DOUBLES(PREFIX,isOnPatrol)),0];
-					(_this select 0) forceSpeed ((_this select 0) getSpeed "FAST");
-					(_this select 0) setUnitPos "MIDDLE";
+					//(_this select 0) forceSpeed ((_this select 0) getSpeed "FAST");
+					//(_this select 0) setUnitPos "MIDDLE";
+					(_this select 0) setSpeedMode "FULL";
 					(_this select 0) doMove ([getposASL (_this select 0),1000,2000] call EFUNC(main,findPosSafe));
 				};
 			}];
 		} forEach (units _grp);
 
 		[units _grp,100,true,"CARELESS"] call EFUNC(main,setPatrol);
+        _unit allowfleeing 0;
+		_unit setSpeedMode "LIMITED";
 
 		[{
 			params ["_args","_idPFH"];
