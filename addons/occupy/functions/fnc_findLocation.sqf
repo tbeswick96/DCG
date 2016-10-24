@@ -26,10 +26,17 @@ if !(_data isEqualTo []) exitWith {
 };
 
 private _locations = [];
+private _fobCheck = true;
 
+if (EGVAR(fob,anchor) isEqualTo objNull) then {
+	_fobCheck = false;
+};
 {
-	if (!(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius))) &&
-		(EGVAR(fob,anchor) distance2D (_x select 1) <= 6000)) then {
+	private _distCheck = true;
+	if (_fobCheck) then {
+		_distCheck = (EGVAR(fob,anchor) distance2D (_x select 1) <= 6000);
+	};
+	if (!(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius))) && _distCheck) then {
 		_locations pushBack _x;
 	};
 } forEach EGVAR(main,locations);

@@ -25,7 +25,13 @@ _classes = [];
 _vehicle = objNull;
 
 if (_position isEqualTo []) then {
-	_position = [(position EGVAR(fob,anchor)),6000,"house"] call EFUNC(main,findPos);
+	private _center = EGVAR(main,center);
+	private _distance = EGVAR(main,range);
+	if (!(EGVAR(fob,anchor) isEqualTo objNull)) then {
+		_center = (position EGVAR(fob,anchor));
+		_distance = 6000;
+	};
+	_position = [_center,_distance,6000,"house"] call EFUNC(main,findPos);
 };
 
 if (_position isEqualTo []) exitWith {

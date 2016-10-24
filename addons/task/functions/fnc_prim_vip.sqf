@@ -26,10 +26,16 @@ _strength = [TASK_UNIT_MIN,TASK_UNIT_MAX] call EFUNC(main,setStrength);
 _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
+	private _center = EGVAR(main,center);
+	private _distance = EGVAR(main,range);
+	if (!(EGVAR(fob,anchor) isEqualTo objNull)) then {
+		_center = (position EGVAR(fob,anchor));
+		_distance = 6000;
+	};
 	if (toLower worldName in EGVAR(main,simpleWorlds)) then {
-		_position = [(position EGVAR(fob,anchor)),6000,"meadow",10] call EFUNC(main,findPos);
+		_position = [_center,_distance,"meadow",10] call EFUNC(main,findPos);
 	} else {
-		_position = [(position EGVAR(fob,anchor)),6000,"house"] call EFUNC(main,findPos);
+		_position = [_center,_distance,"house"] call EFUNC(main,findPos);
 		if !(_position isEqualTo []) then {
 			_position = (_position select 1);
 		};

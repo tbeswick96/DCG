@@ -29,7 +29,13 @@ if (_position isEqualTo []) then {
 			_position = [];
 		};
 	} else {
-		_position = [(position EGVAR(fob,anchor)),6000,"forest",0,true] call EFUNC(main,findPos);
+	private _center = EGVAR(main,center);
+	private _distance = EGVAR(main,range);
+	if (!(EGVAR(fob,anchor) isEqualTo objNull)) then {
+		_center = (position EGVAR(fob,anchor));
+		_distance = 6000;
+	};
+		_position = [_center,_distance,"forest",0,true] call EFUNC(main,findPos);
 	};
 };
 

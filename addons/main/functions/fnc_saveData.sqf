@@ -68,7 +68,7 @@ if (CHECK_ADDON_2(fob)) then {
 	private ["_data","_dataObj"];
 	_data = [];
 
-	if !(EGVAR(fob,anchor) isEqualTo locationNull) then {
+	if !(EGVAR(fob,anchor) isEqualTo objNull) then {
 		{_x addCuratorEditableObjects [allMissionObjects "all", true]} forEach allCurators;
 		_data pushBack (position EGVAR(fob,anchor));
 		{
@@ -102,25 +102,25 @@ if (CHECK_ADDON_2(fob)) then {
 									_waypoints pushBack [_x select 1, waypointPosition _x, waypointName _x, waypointBehaviour _x, waypointCombatMode _x, waypointFormation _x, waypointSpeed _x, waypointType _x];
 								};
 							} forEach (waypoints (group _x));
-							/*private _vars = allVariables _x;
+							private _vars = allVariables _x;
 							private _varValues = [];
 							_y = _x;
 							{
 								_var = _y getVariable [_x,""];
 								_varValues pushBack _var;
 							} forEach _vars;
-							_dataObj pushBack [true,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,_waypoints,[],[],[],[],_vars,_varValues];*/
+							_dataObj pushBack [true,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,_waypoints,[],[],[],[],_vars,_varValues];
 							_dataObj pushBack [true,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,_waypoints,[],[],[],[]];
 						};
 					} else {
-						/*private _vars = allVariables _x;
+						private _vars = allVariables _x;
 						private _varValues = [];
 						_y = _x;
 						{
 							_var = _y getVariable _x;
 							_varValues pushBack _var;
 						} forEach _vars;
-						_dataObj pushBack [false,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,[],getWeaponCargo _x,getMagazineCargo _x,getItemCargo _x,getBackpackCargo _x,_vars,_varValues];*/
+						_dataObj pushBack [false,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,[],getWeaponCargo _x,getMagazineCargo _x,getItemCargo _x,getBackpackCargo _x,_vars,_varValues];
 						_dataObj pushBack [false,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,[],getWeaponCargo _x,getMagazineCargo _x,getItemCargo _x,getBackpackCargo _x];
 					};
 				};
