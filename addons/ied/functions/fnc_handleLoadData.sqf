@@ -14,7 +14,7 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 #define DIST_MIN 750
 #define DIST worldSize*0.057 max DIST_MIN
-#define TYPE_IED "IEDUrbanBig_F"
+#define TYPE_IED "ACE_ModuleExplosive_IEDLandBig_Range"
 #define DEBUG_IED \
 	_mrk = createMarker [format["%1_%2",QUOTE(ADDON),getPosATL _ied],getPosATL _ied]; \
 	_mrk setMarkerType "mil_triangle"; \
