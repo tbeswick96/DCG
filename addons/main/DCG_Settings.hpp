@@ -64,6 +64,18 @@ class DOUBLES(PREFIX,settings) {
         value[] = {
             {"ALL","O_officer_F"}
         };
+    };    
+    class GVAR(staticPoolEast) {
+        typeName = "POOL";
+        value[] = {
+            {"ALL","Inegal_Static_HMG","Inegal_Static_GMG","Genfor_Static_ZU23","Genfor_Static_DSHKM","Genfor_Static_DSHKMMiniTripod","Genfor_Static_KORD","Genfor_Static_KORDHigh","Genfor_Static_M2","Genfor_Static_M2MiniTripod","Genfor_Static_AGS","Genfor_Static_GMG","Genfor_Static_MK19","Genfor_Static_Metis","Genfor_Static_TOW","Genfor_Static_SPG9","Genfor_Static_Igla","Genfor_Static_Stinger","Genfor_Static_D30","Genfor_Static_D30AT","Genfor_Static_M119","Genfor_Static_M119AT"}
+        };
+    };
+    class GVAR(mortarPoolEast) {
+        typeName = "POOL";
+        value[] = {
+            {"ALL","Inegal_Static_Mortar", "Genfor_Static_2B14", "Genfor_Static_M252"}
+        };
     };
     class GVAR(unitPoolInd) {
         typeName = "POOL";
