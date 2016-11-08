@@ -6,11 +6,7 @@ __________________________________________________________________*/
 
 ADDON = false;
 
-dcg_preSettings_done = false;
-publicVariable "dcg_preSettings_done";
-
 PREP(init); // do not change
-PREP(setSettings); // do not change
 call FUNC(init); // do not change
 
 if ((GVAR(enable) isEqualTo 0) || {!isServer}) exitWith {};
@@ -46,13 +42,16 @@ PREP(removeAction);
 PREP(removeParticle);
 PREP(saveInventory);
 PREP(setAction);
+PREP(setSettingsValue);
+PREP(setSettings);
+PREP(setSettingsConfig);
+PREP(setSettingsParams);
 PREP(exportSettings);
 PREP(exportBase);
 PREP(shuffle);
 PREP(setOwner);
 PREP(setTask);
 PREP(setTaskState);
-PREP(setParams);
 PREP(setPatrol);
 PREP(setSide);
 PREP(setAnim);
@@ -129,15 +128,10 @@ publicVariable QGVAR(enemySide);
 publicVariable QGVAR(playerSide);
 publicVariable QGVAR(markerCleanup);
 publicVariable QGVAR(objectCleanup);
-publicVariable QGVAR(actions);
 
-[] spawn {
-    waitUntil {!(isNil "dcg_settings_done")};
-    waitUntil {dcg_settings_done};
+call FUNC(setSettings);
+call FUNC(loadData);
 
-    [] spawn FUNC(setParams);
-    call FUNC(loadData);
-    
-    dcg_postSettings_done = true;
-    publicVariable "dcg_postSettings_done";
+if (GVAR(debug) isEqualTo 1) then {
+  [true] call FUNC(debug);
 };

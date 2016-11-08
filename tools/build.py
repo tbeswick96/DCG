@@ -31,9 +31,9 @@ def check_for_obsolete_pbos(addonspath, file):
 
 def main():
     print("""
-  #####################
+  ####################
   # DCG Debug Build #
-  #####################
+  ####################
 """)
 
     scriptpath = os.path.realpath(__file__)
