@@ -31,4 +31,8 @@ class DOUBLES(PREFIX,settings) {
         typeName = "SCALAR";
         value = 300;
     };
+    class GVAR(suicide) {
+        typeName = "SCALAR";
+        value = 0;
+    };
 };

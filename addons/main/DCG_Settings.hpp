@@ -155,4 +155,10 @@ class DOUBLES(PREFIX,settings) {
             {"ALL","C_Heli_Light_01_civil_F"}
         };
     };
+    class GVAR(suicidePool) {
+        typeName = "POOL";
+        value[] = {
+            {"Laraka_Special_Suicide","Laraka_Special_SuicideDeadman","Laraka_Special_SuicideDiscrete","Laraka_Special_SuicideDiscreteDeadman"}
+        };
+    };
 };

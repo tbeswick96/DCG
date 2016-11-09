@@ -20,6 +20,10 @@ params ["_pos","_unitCount","_townName"];
 missionNamespace setVariable [LOCATION_ID(_townName),true];
 
 _grp = [_pos,0,_unitCount,CIVILIAN,false,1] call EFUNC(main,spawnGroup);
+if (GVAR(suicide) isEqualTo 1) then {
+	_count = floor ((100 - (_pos call EFUNC(approval,getValue))) / 25);
+	units ([_pos,0,_count,"SUICIDE",false,1] call EFUNC(main,spawnGroup)) joinSilent _grp;
+};
 
 [
 	{count units (_this select 0) isEqualTo (_this select 2)},

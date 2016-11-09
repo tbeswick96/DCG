@@ -51,6 +51,9 @@ call {
 		_vehPool = GVAR(vehPoolCiv);
 		_airPool = GVAR(airPoolCiv)
 	};
+	if (_side isEqualTo "SUICIDE") exitWith {
+		_unitPool = GVAR(suicidePool)
+	};
 	_unitPool = GVAR(unitPoolInd);
 	_vehPool = GVAR(vehPoolInd);
 	_airPool = GVAR(airPoolInd);
