@@ -11,22 +11,15 @@ if (GVAR(enable) isEqualTo 0) exitWith {
 	INFO("Addon is disabled.");
 };
 
-unassignCurator GVAR(curator);
-
-PVEH_DEPLOY addPublicVariableEventHandler {[_this select 1] call FUNC(setup)};
-PVEH_REQUEST addPublicVariableEventHandler {(_this select 1) call FUNC(handleRequest)};
-PVEH_REASSIGN addPublicVariableEventHandler {(_this select 1) assignCurator GVAR(curator)};
-PVEH_DELETE addPublicVariableEventHandler {
-	[getPosASL GVAR(anchor),AV_FOB*-1] call EFUNC(approval,addValue);
-	unassignCurator GVAR(curator);
-	deleteMarker (GETVAR(GVAR(anchor),GVAR(marker),""));
-	deleteVehicle GVAR(anchor);
-
-	GVAR(respawnPos) call BIS_fnc_removeRespawnPosition;
-};
+PVEH_CREATE addPublicVariableEventHandler {[_this select 1] call FUNC(handleCreate)};
+PVEH_DELETE addPublicVariableEventHandler {[_this select 1] call FUNC(handleDelete)};
+PVEH_TRANSFER addPublicVariableEventHandler {(_this select 1) call FUNC(handleTransfer)};
+PVEH_ASSIGN addPublicVariableEventHandler {(_this select 1) assignCurator GVAR(curator)};
 
 addMissionEventHandler ["HandleDisconnect",{
-	if ((_this select 2) isEqualTo GVAR(UID)) then {unassignCurator GVAR(curator)};
+	if ((_this select 0) isEqualTo getAssignedCuratorUnit GVAR(curator)) then {
+        unassignCurator GVAR(curator)
+    };
 	false
 }];
 
@@ -53,7 +46,7 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 	if (DOUBLES(PREFIX,main)) exitWith {
 		[_this select 1] call CBA_fnc_removePerFrameHandler;
 
-		
+
 	};
 }, 0, []] call CBA_fnc_addPerFrameHandler;
 
@@ -61,118 +54,26 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 	{DOUBLES(PREFIX,main)},
 	{
 		_data = QUOTE(ADDON) call EFUNC(main,loadDataAddon);
-		if !(_data isEqualTo []) then {
-			[_data select 0] call FUNC(setup);
-			(_data select 1) params ["_pos", "_name"];
-			if(count _pos > 0) then {
-				[_pos, _name] call FUNC(setupPB);
-			};
-			(_data select 2) params ["_pos", "_name"];
-			if(count _pos > 0) then {
-				[_pos, _name] call FUNC(setupPB);
-			};
-			(_data select 3) params ["_pos", "_name"];
-			if(count _pos > 0) then {
-				[_pos, _name] call FUNC(setupPB);
-			};
-
-			{
-				//_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []], ["_vars", []], ["_varValues", []]];
-				_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []]];
-				if(_isMan) then {
-					_side = switch(getNumber (configFile >> "CfgVehicles" >> _type >> "side")) do {
-						case 0: {east};
-						case 1: {west};
-						case 2: {resistance};
-						case 3: {civilian};
-						default {sideUnknown};
-					};
-					_veh = (createGroup _side) createUnit [_type, [0,0,0], [], 0, "NONE"];
-					_veh setDir _dir;
-					_veh setPosASL _pos;
-					if(count _waypoints > 1) then {
-						{
-							_x params ["_index", "_pos", "_name", "_behaviour", "_combatMode", "_formation", "_speed", "_type"];
-							_waypoint = (group _veh) addWaypoint [_pos, 0, _index, _name];
-							_waypoint setWaypointBehaviour _behaviour;
-							_waypoint setWaypointCombatMode _combatMode;
-							_waypoint setWaypointFormation _formation;
-							_waypoint setWaypointSpeed _speed;
-							_waypoint setWaypointType _type;
-						} forEach _waypoints;
-					} else {
-						_veh disableAI "MOVE";
-					};
-					_veh allowDamage false;
-					_veh addEventHandler ["Fired", {(_this select 0) setVehicleAmmo 1}];
-				} else {
-					_veh = _type createVehicle [0,0,0];
-					_veh setDir _dir;
-					_veh setPosASL _pos;
-					_veh setVectorUp _vectorUp;
-
-					[_veh, _weapons, _magazines, _items, _backpacks] spawn {
-						params ["_veh", "_weapons", "_magazines", "_items", "_backpacks"];
-						if(count (_weapons select 0) > 0) then {
-							clearWeaponCargoGlobal _veh;
-							{
-								_count = (_weapons select 1) select _forEachIndex;
-								_veh addWeaponCargoGlobal [_x, _count];
-							} forEach (_weapons select 0);
-						};
-						if(count (_magazines select 0) > 0) then {
-							clearMagazineCargoGlobal _veh;
-							{
-								_count = (_magazines select 1) select _forEachIndex;
-								_veh addMagazineCargoGlobal [_x, _count];
-							} forEach (_magazines select 0);
-						};
-						if(count (_items select 0) > 0) then {
-							clearItemCargoGlobal _veh;
-							{
-								_count = (_items select 1) select _forEachIndex;
-								_veh addItemCargoGlobal [_x, _count];
-							} forEach (_items select 0);
-						};
-						if(count (_backpacks select 0) > 0) then {
-							clearBackpackCargoGlobal _veh;
-							{
-								_count = (_backpacks select 1) select _forEachIndex;
-								_veh addBackpackCargoGlobal [_x, _count];
-							} forEach (_backpacks select 0);
-						};
-					};
-				};
-				
-				/*{
-					_veh setVariable [_x, _varValues select _forEachIndex, true];
-				} forEach _vars;*/
-				false
-			} count (_data select 4);
-		};
-		{_x addCuratorEditableObjects [allMissionObjects "all", true]} forEach allCurators;
+		[_data] call FUNC(handleLoadData);
 
 		[[],{
 			if (hasInterface) then {
-				if (COMPARE_STR(GVAR(whitelist) select 0,"all") || {{COMPARE_STR(_x,player)} count GVAR(whitelist) > 0}) then {
-	 				[QUOTE(ADDON),"Forward Operating Base","",QUOTE(true),QUOTE(call FUNC(getChildren))] call EFUNC(main,setAction);
+				if ([player] call FUNC(canAddAction)) then {
+	 				call FUNC(handleClient);
 				};
 
-	 			player addEventHandler ["Respawn",{
-	 				if ((getPlayerUID (_this select 0)) isEqualTo GVAR(UID)) then {
-	 					[
-	 						{
-	 							missionNamespace setVariable [PVEH_REASSIGN,player];
-	 							publicVariableServer PVEH_REASSIGN;
-	 						},
-	 						[],
-	 						5
-	 					] call CBA_fnc_waitAndExecute;
-	 				};
-	 			}];
+	 			[ADDON_TITLE, CREATE_ID, CREATE_NAME, {CREATE_KEYCODE}, ""] call CBA_fnc_addKeybind;
+                [ADDON_TITLE, DELETE_ID, DELETE_NAME, {DELETE_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, TRANSFER_ID, TRANSFER_NAME, {TRANSFER_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, CONTROL_ID, CONTROL_NAME, {CONTROL_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			// [ADDON_TITLE, PATROL_ID, PATROL_NAME, {PATROL_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, RECON_ID, RECON_NAME, {RECON_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, BUILD_ID, BUILD_NAME, {BUILD_KEYCODE}, "", [DIK_DOWN, [true, false, false]]] call CBA_fnc_addKeybind;
 			};
  		}] remoteExecCall [QUOTE(BIS_fnc_call),0,true];
 	}
 ] call CBA_fnc_waitUntilAndExecute;
+
+INFO_1("Curator list %1",allCurators);
 
 ADDON = true;

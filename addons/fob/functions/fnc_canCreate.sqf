@@ -12,4 +12,4 @@ none
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-GVAR(anchor) isEqualTo objNull && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10}
+!(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10}

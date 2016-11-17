@@ -8,14 +8,20 @@ if !(CHECK_INIT) exitWith {};
 
 ADDON = false;
 
-PREP(deploy);
-PREP(delete);
-PREP(request);
+PREP(handleCreate);
+PREP(handleDelete);
+PREP(handleTransfer);
 PREP(handleLoadData);
-PREP(handleRequest);
-PREP(setup);
+PREP(handleClient);
+PREP(getKeybind);
 PREP(getChildren);
-PREP(canDeploy);
+PREP(getCuratorCost);
+PREP(canCreate);
+PREP(canAddAction);
+PREP(curatorEH);
+PREP(recon);
+PREP(createOnClient);
+PREP(deleteOnClient);
 PREP(deployPB);
 PREP(canDeployPB);
 PREP(setupPB);
@@ -23,29 +29,34 @@ PREP(canDeletePB);
 PREP(deletePB);
 
 GVAR(respawnPos) = [];
-GVAR(requestReady) = 1;
-GVAR(UID) = "";
-GVAR(response) = -1;
 GVAR(anchor) = objNull;
 GVAR(side) = createCenter sideLogic;
 GVAR(group) = createGroup GVAR(side);
-GVAR(curator) = GVAR(group) createUnit ["ModuleCurator_F",[0,0,0], [], 0, "FORM"];
-INFO_1("Creating curator %1.",GVAR(curator));
-GVAR(pbanchors) = [objNull,objNull,objNull];
 
-publicVariable QFUNC(request);
+GVAR(curator) = GVAR(group) createUnit ["ModuleCurator_F",[0,0,0], [], 0, "FORM"];
+GVAR(curator) setVariable ["showNotification", false, true];
+GVAR(curator) setVariable ["birdType", "", true];
+GVAR(curator) setVariable ["Owner", "", true];
+GVAR(curator) setVariable ["Addons", 3, true];
+GVAR(curator) setVariable ["Forced", 0, true];
+
+INFO_1("Init curator %1",GVAR(curator));
+
+publicVariable QFUNC(getKeybind);
 publicVariable QFUNC(getChildren);
-publicVariable QFUNC(deploy);
-publicVariable QFUNC(delete);
-publicVariable QFUNC(canDeploy);
+publicVariable QFUNC(getCuratorCost);
+publicVariable QFUNC(canCreate);
+publicVariable QFUNC(canAddAction);
+publicVariable QFUNC(curatorEH);
+publicVariable QFUNC(createOnClient);
+publicVariable QFUNC(deleteOnClient);
+publicVariable QFUNC(handleClient);
 publicVariable QFUNC(deployPB);
 publicVariable QFUNC(canDeployPB);
 publicVariable QFUNC(canDeletePB);
 publicVariable QFUNC(deletePB);
 
-publicVariable QGVAR(requestReady);
-publicVariable QGVAR(UID);
-publicVariable QGVAR(response);
+publicVariable QGVAR(location);
 publicVariable QGVAR(side);
 publicVariable QGVAR(group);
 publicVariable QGVAR(curator);
