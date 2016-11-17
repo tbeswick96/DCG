@@ -7,16 +7,15 @@
 
 #include "\d\dcg\addons\main\script_macros.hpp"
 
-#define COST_MULTIPIER 0.5
-#define FOB_RECON GVAR(uav)
-#define FOB_DEPLOYED !(GVAR(location) isEqualTo locationNull)
-#define FOB_POSITION (getPos GVAR(location))
-#define FOB_MED ["Land_Medevac_house_V1_F", "Land_Medevac_HQ_V1_F","B_Slingload_01_Medevac_F"]
+#define FOB_DEPLOYED !(GVAR(anchor) isEqualTo objNull)
+#define FOB_POSITION (getPos GVAR(anchor))
 
 #define PVEH_CREATE QGVAR(pveh_create)
 #define PVEH_DELETE QGVAR(pveh_delete)
 #define PVEH_TRANSFER QGVAR(pveh_transfer)
 #define PVEH_ASSIGN QGVAR(PVEH_ASSIGN)
+#define PVEH_DEPLOYPB QGVAR(pveh_deploypb)
+#define PVEH_DELETEPB QGVAR(pveh_deletepb)
 
 #define CREATE_ID QUOTE(DOUBLES(ADDON,create))
 #define CREATE_NAME "Deploy FOB"
@@ -98,44 +97,6 @@
 		DELETE_STATEMENT \
 	}
 
-#define PATROL_ID QUOTE(DOUBLES(ADDON,patrol))
-#define PATROL_NAME "Set FOB Groups on Patrol"
-#define PATROL_STATEMENT \
-	{ \
-		if (_x isKindOf 'Man' && {_x isEqualTo leader group _x} && {!(_x getVariable ['dcg_isOnPatrol',-1] isEqualTo 1)}) then { \
-			[units group _x,GVAR(range),false] call EFUNC(main,setPatrol); \
-			_x addEventHandler ['Local',{ \
-				if (_this select 1) then { \
-					_x setVariable ['dcg_isOnPatrol',0]; \
-					[units group (_this select 0),GVAR(range),false] call EFUNC(main,setPatrol); \
-				}; \
-			}]; \
-		}; \
-	} forEach (curatorEditableObjects GVAR(curator));
-#define PATROL_COND player isEqualTo (getAssignedCuratorUnit GVAR(curator))
-#define PATROL_KEYCODE \
-	if (PATROL_COND) then { \
-		PATROL_STATEMENT \
-	}
-
-#define RECON_ID QUOTE(DOUBLES(ADDON,recon))
-#define RECON_NAME "FOB Aerial Recon"
-#define RECON_STATEMENT \
-	if (((UAVControl FOB_RECON) select 0) isEqualTo player) then { \
-		player allowDamage true; \
-		objNull remoteControl gunner FOB_RECON; \
-		player switchCamera "internal"; \
-	} else { \
-		player allowDamage false; \
-		player remoteControl gunner FOB_RECON; \
-		FOB_RECON switchCamera "internal"; \
-	}
-#define RECON_COND player isEqualTo getAssignedCuratorUnit GVAR(curator) && {!isNull FOB_RECON} && {!(visibleMap)}
-#define RECON_KEYCODE \
-	if (RECON_COND) then { \
-		RECON_STATEMENT \
-	}
-
 #define BUILD_ID QUOTE(DOUBLES(ADDON,build))
 #define BUILD_NAME "Build FOB"
 #define BUILD_STATEMENT \
@@ -149,3 +110,13 @@
 	if (BUILD_COND) then { \
 		BUILD_STATEMENT \
 	}
+
+#define PB_DEPLOY_ID QUOTE(DOUBLES(ADDON,deployPB))
+#define PB_DEPLOY_NAME "Deploy PB"
+#define PB_DEPLOY_STATEMENT call FUNC(deployPB)
+#define PB_DEPLOY_COND call FUNC(canDeployPB)
+
+#define PB_DISMANTLE_ID QUOTE(DOUBLES(ADDON,deletePB))
+#define PB_DISMANTLE_NAME "Dismantle PB"
+#define PB_DISMANTLE_STATEMENT call FUNC(deletePB)
+#define PB_DISMANTLE_COND call FUNC(canDeletePB)

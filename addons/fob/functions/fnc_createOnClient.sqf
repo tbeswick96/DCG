@@ -15,13 +15,13 @@ __________________________________________________________________*/
 #define ANIM_TIME 9
 
 if !([player modelToWorld [0,3,0],4,0] call EFUNC(main,isPosSafe)) exitWith {
-	[format ["Select an open area to deploy %1.",GVAR(name)],true] call EFUNC(main,displayText);
+	[format ["Select an open area to deploy %1",GVAR(name)],true] call EFUNC(main,displayText);
 };
 
 [player,ANIM] call EFUNC(main,setAnim);
 
 [{
-    _format = format ["%2 Deployed \n \nPress [%1] to start building",call FUNC(getKeybind), GVAR(name)];
+    _format = format ["%1 Deployed", GVAR(name)];
     [_format,true] call EFUNC(main,displayText);
 
 	missionNamespace setVariable [PVEH_CREATE,player];
