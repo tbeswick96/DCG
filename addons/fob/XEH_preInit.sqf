@@ -46,7 +46,9 @@ publicVariable QFUNC(canDeployPB);
 publicVariable QFUNC(canDeletePB);
 publicVariable QFUNC(deletePB);
 
+publicVariable QGVAR(respawnPos);
 publicVariable QGVAR(side);
 publicVariable QGVAR(group);
 publicVariable QGVAR(curator);
+publicVariable QGVAR(anchor);
 publicVariable QGVAR(pbanchors);

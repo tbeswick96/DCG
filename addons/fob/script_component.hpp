@@ -80,7 +80,6 @@
 #define CONTROL_STATEMENT \
     missionNamespace setVariable [PVEH_ASSIGN,player]; \
     publicVariableServer PVEH_ASSIGN; \
-    call FUNC(curatorEH); \
     [format ["You've taken control of %1",GVAR(name)],true] call EFUNC(main,displayText)
 #define CONTROL_COND FOB_DEPLOYED && {isNull (getAssignedCuratorUnit GVAR(curator))}
 #define CONTROL_KEYCODE \
