@@ -16,7 +16,7 @@ __________________________________________________________________*/
 
 if !(isServer) exitWith {};
 
-params [["_center",objNull,[objNull,[]]],["_name",""]];
+params [["_center",objNull,[objNull,[]]],["_name","",[""]]];
 
 private _unit = objNull;
 private _pos = [];
@@ -46,10 +46,8 @@ _anchor setPos _pos;
 publicVariable QGVAR(pbanchors);
 _anchor allowDamage false;
 _anchor enableSimulation false;
-_name = if(_name == "") then {
-	(GVAR(pbnames) select _index)
-} else {
-	_name
+if(_name == "") then {
+	_name = (GVAR(pbnames) select _index);
 };
 SETPVAR(_anchor,GVAR(pbname),_name);
 

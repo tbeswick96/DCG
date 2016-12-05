@@ -65,7 +65,6 @@ if (CHECK_ADDON_2(occupy)) then {
 };
 
 if (CHECK_ADDON_2(fob)) then {
-	diag_log "SAVE";
 	private ["_data","_dataObj"];
 	_data = [];
 
