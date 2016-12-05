@@ -21,7 +21,7 @@ params [["_position",[]]];
 _taskID = str diag_tickTime;
 _drivers = [];
 _town = [];
-_strength = [TASK_UNIT_MIN,TASK_UNIT_MAX] call EFUNC(main,setStrength);
+_strength = TASK_STRENGTH;
 _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
@@ -72,7 +72,7 @@ _vehPos = [_position,50,100,8,0] call EFUNC(main,findPosSafe);
 if !(_vehPos isEqualTo _position) then {
 	_vehGrp = [_vehPos,1,1,EGVAR(main,enemySide)] call EFUNC(main,spawnGroup);
 	[
-		{{_x getVariable [QUOTE(EGVAR(main,spawnDriver)),false]} count (units (_this select 0)) > 0},
+		{{_x getVariable [SPAWNED_DRIVER,false]} count (units (_this select 0)) > 0},
 		{
 			[units (_this select 0),200] call EFUNC(main,setPatrol);
 		},
@@ -114,7 +114,7 @@ TASK_PUBLISH(_position);
 	};
 
 	// if vip is returned to town and is alive/awake
-	if (CHECK_DIST2D((_town select 1),_vip,TASK_DIST_RET)) then {
+	if (CHECK_DIST2D(_town select 1,_vip,(_town select 2)*0.5 max TASK_DIST_RET)) then {
 		if (CHECK_ADDON_1("ace_medical")) then {
 			if ([_vip] call ace_common_fnc_isAwake) then {
 				_success = true;

@@ -12,6 +12,7 @@ Return:
 none
 __________________________________________________________________*/
 #include "script_component.hpp"
+#define INTERVAL 5
 
 params [
 	["_data",[]]
@@ -27,6 +28,7 @@ if !(_data isEqualTo []) exitWith {
 
 private _locations = [];
 private _fobCheck = true;
+private _occupied = [];
 
 if (EGVAR(fob,anchor) isEqualTo objNull) then {
 	_fobCheck = false;
@@ -41,10 +43,23 @@ if (EGVAR(fob,anchor) isEqualTo objNull) then {
 	};
 } forEach EGVAR(main,locations);
 
-if (count _locations >= GVAR(locationCount)) then {
-	[_locations,(count _locations)*3] call EFUNC(main,shuffle);
-
-	for "_index" from 0 to (floor GVAR(locationCount)) - 1 do {
-		(_locations select _index) spawn FUNC(setOccupied);
-	};
+if (count _locations < GVAR(locationCount)) exitWith {
+    WARNING_1("%1 exceeds terrain location count",QGVAR(locationCount));
 };
+
+[{
+	params ["_args","_idPFH"];
+	_args params ["_locations","_occupied"];
+
+	if (count _occupied >= GVAR(locationCount)) exitWith {
+		[_idPFH] call CBA_fnc_removePerFrameHandler;
+	};
+
+    _selected = selectRandom _locations;
+    _name = _selected select 0;
+
+    if !(_name in _occupied) then {
+        _selected spawn FUNC(setOccupied);
+        _occupied pushBack _name;
+    };
+}, INTERVAL, [_locations,_occupied]] call CBA_fnc_addPerFrameHandler;

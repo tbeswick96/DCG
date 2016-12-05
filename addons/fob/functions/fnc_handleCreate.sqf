@@ -56,9 +56,24 @@ GVAR(curator) addCuratorAddons activatedAddons;
         GVAR(respawnPos) = [missionNamespace,FOB_POSITION,GVAR(name)] call BIS_fnc_addRespawnPosition;
 
         if !(isNull _unit) then {
-        	_unit assignCurator GVAR(curator);
+            // if unit is already assigned to a curator, save previous curator for later and unassign
+            _previousCurator = getAssignedCuratorLogic _unit;
 
-            [FOB_POSITION,AV_FOB] call EFUNC(approval,addValue);
+            if !(isNull _previousCurator) then {
+                if !(_previousCurator isEqualTo GVAR(curator)) then {
+                    GVAR(curatorExternal) = _previousCurator;
+                };
+                unassignCurator _previousCurator;
+            };
+
+            // a delay between unassigning and assigning curator is required
+            [
+                {
+                    (_this select 0) assignCurator GVAR(curator);
+                },
+                [_unit],
+                2
+            ] call CBA_fnc_waitAndExecute;
 
         	// unit does not immediately become owner of curator, it takes a few seconds
         	[
@@ -68,6 +83,8 @@ GVAR(curator) addCuratorAddons activatedAddons;
         		},
         		[_unit]
         	] call CBA_fnc_waitUntilAndExecute;
+
+            [FOB_POSITION,AV_FOB] call EFUNC(approval,addValue);
         };
     },
     [_unit]

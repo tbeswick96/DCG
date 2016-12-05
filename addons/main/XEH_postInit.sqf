@@ -11,7 +11,7 @@ __________________________________________________________________*/
 	GVAR(baseLocation) attachObject BASE
 #define CREATE_DEFAULTBASE GVAR(baseLocation) = createLocation ["NameCity", DEFAULTPOS, 10, 10]
 
-if !(CHECK_INIT) exitWith {};
+CHECK_INIT;
 
 if (CHECK_MARKER(QUOTE(BASE))) then {
 	BASE = "Land_HelipadEmpty_F" createVehicle [0,0,0];
@@ -116,7 +116,14 @@ if (GVAR(baseSafezone)) then {
 };
 
 // set cleanup handlers
-[FUNC(handleCleanup), 60, []] call CBA_fnc_addPerFrameHandler;
+[FUNC(handleCleanup), 120, []] call CBA_fnc_addPerFrameHandler;
+
+[{
+    {
+    	if (_x getVariable [QUOTE(DOUBLES(PREFIX,cleanup)),true]) then {deleteVehicle _x};
+    	false
+    } count (nearestObjects [locationPosition GVAR(baseLocation),["WeaponHolder","GroundWeaponHolder","WeaponHolderSimulated"],GVAR(baseRadius)]);
+}, 1200, []] call CBA_fnc_addPerFrameHandler;
 
 if !(isNil {HEADLESSCLIENT}) then {
 	[{
@@ -125,7 +132,7 @@ if !(isNil {HEADLESSCLIENT}) then {
 				deleteGroup _x;
 			};
 		} forEach allGroups;
-	}, 10, []] remoteExecCall [QUOTE(CBA_fnc_addPerFrameHandler),owner HEADLESSCLIENT,false];
+	}, 120, []] remoteExecCall [QUOTE(CBA_fnc_addPerFrameHandler),owner HEADLESSCLIENT,false];
 };
 
 // save functionality
@@ -134,10 +141,10 @@ if (GVAR(autoSave)) then {
 		{
 			[{
 				call FUNC(saveData);
-			}, 900, []] call CBA_fnc_addPerFrameHandler;
+			}, 1800, []] call CBA_fnc_addPerFrameHandler;
 		},
 		[],
-		900
+		1800
 	] call CBA_fnc_waitAndExecute;
 };
 

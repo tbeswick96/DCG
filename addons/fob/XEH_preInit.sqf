@@ -4,10 +4,11 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-if !(CHECK_INIT) exitWith {};
+CHECK_INIT;
 
 ADDON = false;
 
+PREP(init);
 PREP(handleCreate);
 PREP(handleDelete);
 PREP(handleTransfer);
@@ -30,6 +31,7 @@ GVAR(anchor) = objNull;
 GVAR(side) = createCenter sideLogic;
 GVAR(group) = createGroup GVAR(side);
 GVAR(curator) = GVAR(group) createUnit ["ModuleCurator_F",[0,0,0], [], 0, "FORM"];
+GVAR(curatorExternal) = objNull;
 GVAR(pbanchors) = [objNull,objNull,objNull];
 
 INFO_1("Init curator %1",GVAR(curator));

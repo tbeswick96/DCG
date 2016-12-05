@@ -51,7 +51,7 @@ if (count GVAR(groups) <= GVAR(groupsMaxCount)) then {
 			} forEach _posArrayCheck;
 			if !(_posArray isEqualTo []) then {
 				_grp = grpNull;
-				_pos = selectRandom _posArray;
+				_pos = ASLtoAGL (selectRandom _posArray);
 				if (random 1 < GVAR(vehChance)) then {
 					_grp = [_pos,1,1,EGVAR(main,enemySide),false,1,true] call EFUNC(main,spawnGroup);
 					[
@@ -62,7 +62,7 @@ if (count GVAR(groups) <= GVAR(groupsMaxCount)) then {
 						[_grp]
 					] call CBA_fnc_waitUntilAndExecute;
 
-					INFO_1("Spawning vehicle patrol at %1.",_pos);
+					INFO_1("Spawning vehicle patrol at %1",_pos);
 				} else {
 					_count = UNITCOUNT(4,6);
 					_grp = [_pos,0,_count,EGVAR(main,enemySide),false,2] call EFUNC(main,spawnGroup);
@@ -82,7 +82,7 @@ if (count GVAR(groups) <= GVAR(groupsMaxCount)) then {
 						[_grp,_player,_count]
 					] call CBA_fnc_waitUntilAndExecute;
 
-					INFO_1("Spawning infantry patrol at %1.",_pos);
+					INFO_1("Spawning infantry patrol at %1",_pos);
 				};
 				GVAR(groups) pushBack _grp;
 			};

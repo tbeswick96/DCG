@@ -5,11 +5,11 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 #include "\a3\editor_f\Data\Scripts\dikCodes.h"
 
-if !(CHECK_INIT) exitWith {};
+CHECK_INIT;
 
-if (GVAR(enable) isEqualTo 0) exitWith {
-	INFO("Addon is disabled.");
-};
+CHECK_ADDON;
+
+call FUNC(init);
 
 PVEH_CREATE addPublicVariableEventHandler {[_this select 1] call FUNC(handleCreate)};
 PVEH_DELETE addPublicVariableEventHandler {[_this select 1] call FUNC(handleDelete)};
@@ -64,7 +64,5 @@ PVEH_DELETEPB addPublicVariableEventHandler {
  		}] remoteExecCall [QUOTE(BIS_fnc_call),0,true];
 	}
 ] call CBA_fnc_waitUntilAndExecute;
-
-INFO_1("Curator list %1",allCurators);
 
 ADDON = true;
