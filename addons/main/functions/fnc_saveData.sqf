@@ -65,6 +65,7 @@ if (CHECK_ADDON_2(occupy)) then {
 };
 
 if (CHECK_ADDON_2(fob)) then {
+	diag_log "SAVE";
 	private ["_data","_dataObj"];
 	_data = [];
 
@@ -110,7 +111,6 @@ if (CHECK_ADDON_2(fob)) then {
 								_varValues pushBack _var;
 							} forEach _vars;
 							_dataObj pushBack [true,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,_waypoints,[],[],[],[],_vars,_varValues];
-							_dataObj pushBack [true,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,_waypoints,[],[],[],[]];
 						};
 					} else {
 						private _vars = allVariables _x;
@@ -121,12 +121,11 @@ if (CHECK_ADDON_2(fob)) then {
 							_varValues pushBack _var;
 						} forEach _vars;
 						_dataObj pushBack [false,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,[],getWeaponCargo _x,getMagazineCargo _x,getItemCargo _x,getBackpackCargo _x,_vars,_varValues];
-						_dataObj pushBack [false,typeOf _x,getPosASL _x,getDir _x,vectorUp _x,[],getWeaponCargo _x,getMagazineCargo _x,getItemCargo _x,getBackpackCargo _x];
 					};
 				};
 			};
 			false
-		} count (curatorEditableObjects EGVAR(fob,curator));
+		} count (allMissionObjects "All");
 
 		_data pushBack _dataObj;
 	};

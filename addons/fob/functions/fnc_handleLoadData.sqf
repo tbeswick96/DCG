@@ -14,6 +14,8 @@ __________________________________________________________________*/
 
 params ["_data"];
 
+diag_log "LOAD";
+
 if !(_data isEqualTo []) then {
 	[_data select 0] call FUNC(handleCreate);
 	(_data select 1) params ["_pos", "_name"];
