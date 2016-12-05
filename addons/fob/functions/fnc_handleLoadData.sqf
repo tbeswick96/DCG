@@ -32,7 +32,7 @@ if !(_data isEqualTo []) then {
 	};
 
 	{
-		_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []], ["_vars", []], ["_varValues", []]];
+		_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []]];
 		if(_isMan) then {
 			_side = switch(getNumber (configFile >> "CfgVehicles" >> _type >> "side")) do {
 				case 0: {east};
@@ -97,10 +97,6 @@ if !(_data isEqualTo []) then {
 				};
 			};
 		};
-		
-		{
-			_veh setVariable [_x, _varValues select _forEachIndex, true];
-		} forEach _vars;
 		false
 	} count (_data select 4);
 };
