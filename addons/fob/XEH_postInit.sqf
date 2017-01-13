@@ -5,9 +5,7 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 #include "\a3\editor_f\Data\Scripts\dikCodes.h"
 
-CHECK_INIT;
-
-CHECK_ADDON;
+CHECK_POSTINIT;
 
 call FUNC(init);
 
@@ -42,14 +40,8 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 	GVAR(pbanchors) set [_index, objNull];
 };
 
-[{
-	if (DOUBLES(PREFIX,main)) exitWith {
-		[_this select 1] call CBA_fnc_removePerFrameHandler;
-	};
-}, 0, []] call CBA_fnc_addPerFrameHandler;
-
 [
-	{DOUBLES(PREFIX,main)},
+	{DOUBLES(PREFIX,main) && {CHECK_POSTBRIEFING}},
 	{
 		_data = QUOTE(ADDON) call EFUNC(main,loadDataAddon);
 		[_data] call FUNC(handleLoadData);
@@ -57,9 +49,15 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 
 		[[],{
 			if (hasInterface) then {
-				if ([player] call FUNC(canAddAction)) then {
-	 				call FUNC(handleClient);
-				};
+				call FUNC(handleClient);
+
+	 			[ADDON_TITLE, CREATE_ID, CREATE_NAME, {CREATE_KEYCODE}, ""] call CBA_fnc_addKeybind;
+                [ADDON_TITLE, DELETE_ID, DELETE_NAME, {DELETE_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, TRANSFER_ID, TRANSFER_NAME, {TRANSFER_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, CONTROL_ID, CONTROL_NAME, {CONTROL_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			// [ADDON_TITLE, PATROL_ID, PATROL_NAME, {PATROL_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, RECON_ID, RECON_NAME, {RECON_KEYCODE}, ""] call CBA_fnc_addKeybind;
+	 			[ADDON_TITLE, BUILD_ID, BUILD_NAME, {BUILD_KEYCODE}, "", [DIK_DOWN, [true, false, false]]] call CBA_fnc_addKeybind;
 			};
  		}] remoteExecCall [QUOTE(BIS_fnc_call),0,true];
 	}

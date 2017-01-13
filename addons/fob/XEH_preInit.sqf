@@ -4,10 +4,11 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_INIT;
+CHECK_PREINIT;
 
 ADDON = false;
 
+PREP(initSettings);
 PREP(init);
 PREP(handleCreate);
 PREP(handleDelete);
@@ -16,10 +17,7 @@ PREP(handleLoadData);
 PREP(handleClient);
 PREP(getKeybind);
 PREP(getChildren);
-PREP(canCreate);
-PREP(canAddAction);
-PREP(createOnClient);
-PREP(deleteOnClient);
+PREP(isAllowedOwner);
 PREP(deployPB);
 PREP(canDeployPB);
 PREP(setupPB);
@@ -31,6 +29,7 @@ GVAR(anchor) = objNull;
 GVAR(curatorExternal) = objNull;
 GVAR(pbanchors) = [objNull,objNull,objNull];
 
+publicVariable QFUNC(initSettings);
 publicVariable QFUNC(getKeybind);
 publicVariable QFUNC(getChildren);
 publicVariable QFUNC(canCreate);
@@ -46,3 +45,5 @@ publicVariable QFUNC(deletePB);
 publicVariable QGVAR(respawnPos);
 publicVariable QGVAR(anchor);
 publicVariable QGVAR(pbanchors);
+
+INITSETTINGS;
