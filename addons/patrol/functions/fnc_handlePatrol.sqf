@@ -41,10 +41,10 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 			_posArray = [];
 			{ // remove positions in blacklist, that are near players or that players can see
 				private _y = _x;
-				private _distance = ((([EGVAR(fob,anchor)] call EFUNC(approval,getValue)) * 15) max 750) min 1500;
+				private _distance = ((([EGVAR(fob,anchor)] call EFUNC(approval,getValue)) * 8) max 300) min 800;
 				if (!({CHECK_DIST2D(_y,(_x select 0),(_x select 1))} count GVAR(blacklist) > 0 ||
 				    EGVAR(fob,anchor) distance2D _y <= _distance ||
-				    {count ([_y,100] call EFUNC(main,getNearPlayers)) > 0} ||
+				    {count ([_y,80] call EFUNC(main,getNearPlayers)) > 0} ||
 					{{[_y,_x] call EFUNC(main,inLOS)} count _players > 0})) then {
 					_posArray pushBack _y;
 				};
