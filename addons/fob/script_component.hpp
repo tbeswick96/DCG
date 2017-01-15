@@ -79,7 +79,7 @@
         {missionNamespace setVariable [(_this select 0),true]; publicVariableServer (_this select 0);}, \
         [PVEH_DELETE] \
     ] call EFUNC(main,displayGUIMessage)
-#define DELETE_COND player isEqualTo getAssignedCuratorUnit GVAR(curator) && {cameraOn isEqualTo player} && {!(visibleMap)}
+#define DELETE_COND GVAR(anchor) distance2D (position player) < 10 && {cameraOn isEqualTo player} && {!(visibleMap)}
 #define DELETE_KEYCODE \
 	if (DELETE_COND) then { \
 		DELETE_STATEMENT \

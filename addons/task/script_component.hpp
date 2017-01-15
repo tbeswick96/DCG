@@ -16,8 +16,8 @@
 	#define TASK_TYPE 1
 	#define TASK_GVAR GVAR(primary)
 	#define TASK_TAG '(P)'
-	#define TASK_UNIT_MIN 16
-	#define TASK_UNIT_MAX 40
+	#define TASK_UNIT_MIN 15
+	#define TASK_UNIT_MAX 30
 	#define TASK_AV ((AV_MAX*0.1)*EGVAR(approval,multiplier))
 	#define TASK_EXIT TASK_GVAR = []; [TASK_TYPE] call FUNC(select)
 	#define TASK_PUBLISH(POS) TASK_GVAR = [TASK_QFUNC,POS]
@@ -39,7 +39,7 @@
 #define TASK_APPROVAL(POS,AV) [POS,AV] call EFUNC(approval,addValue)
 #define TASK_DIST_START 50
 #define TASK_DIST_FAIL 350
-#define TASK_DIST_RET 20
+#define TASK_DIST_RET 50
 #define TASK_DIST_MRK 350
 #define TASK_SLEEP 5
 

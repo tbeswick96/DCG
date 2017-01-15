@@ -9,4 +9,4 @@
 
 #define UNITCOUNT(MIN,MAX) floor (random ((MAX - MIN) + 1)) + MIN
 #define PATROL_MINRANGE 100
-#define PATROL_RANGE 800
+#define PATROL_RANGE 300

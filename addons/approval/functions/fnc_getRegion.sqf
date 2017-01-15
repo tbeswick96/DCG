@@ -17,6 +17,7 @@ private ["_nearest"];
 params [["_position",[]]];
 
 _nearest = [];
+diag_log _position;
 
 if (_position isEqualTo []) exitWith {_nearest};
 

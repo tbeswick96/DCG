@@ -92,7 +92,7 @@ SET_UNITVAR(_officer);
 call {
 	if (COMPARE_STR(_type,"NameCityCapital")) exitWith {
 		_taskType = "Capital";
-		_count = ceil (((GVAR(infCountCapital) * (count allPlayers)) min 150) max 40);
+		_count = ceil (((GVAR(infCountCapital) * (count allPlayers)) min 80) max 15);
 		if (isNil "_data") then {
 			PREP_INF(_position,_count,_size);
 			PREP_VEH(_position,ceil GVAR(vehCountCapital),_size,CHANCE_VEH_CAP);
@@ -109,7 +109,7 @@ call {
 
 	if (COMPARE_STR(_type,"NameCity")) exitWith {
 		_taskType = "City";
-		_count = ceil (((GVAR(infCountCity) * (count allPlayers)) min 150) max 40);
+		_count = ceil (((GVAR(infCountCity) * (count allPlayers)) min 80) max 15);
 		if (isNil "_data") then {
 			PREP_INF(_position,_count,_size);
 			PREP_VEH(_position,ceil GVAR(vehCountCity),_size,CHANCE_VEH_CITY);
@@ -126,7 +126,7 @@ call {
 
     if (COMPARE_STR(_type,"NameVillage")) exitWith {
     	_taskType = "Village";
-    	_count = ceil (((GVAR(infCountVillage) * (count allPlayers)) min 150) max 40);
+    	_count = ceil (((GVAR(infCountVillage) * (count allPlayers)) min 80) max 15);
     	if (isNil "_data") then {
     		PREP_INF(_position,_count,_size);
     		PREP_VEH(_position,ceil GVAR(vehCountVillage),_size,CHANCE_VEH_VILL);

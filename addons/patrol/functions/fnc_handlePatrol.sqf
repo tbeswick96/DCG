@@ -39,11 +39,20 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 		if ({CHECK_DIST2D(_player,(_x select 0),(_x select 1))} count GVAR(blacklist) isEqualTo 0) then { // check if player is in a blacklist array
 			_posArrayCheck = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,6] call EFUNC(main,findPosGrid);
 			_posArray = [];
+			/*private _distance = if (!(isNull EGVAR(fob,anchor)) then {
+				(((([position EGVAR(fob,anchor)] call EFUNC(approval,getValue)) * 8) max 300) min 800)
+			} else {
+				800
+			};*/
 			{ // remove positions in blacklist, that are near players or that players can see
 				private _y = _x;
-				private _distance = ((([EGVAR(fob,anchor)] call EFUNC(approval,getValue)) * 8) max 300) min 800;
+				/*private _distanceCheck = if (isNull EGVAR(fob,anchor)) then {
+					false
+				} else {
+					(EGVAR(fob,anchor) distance2D _y <= _distance)
+				};*/
 				if (!({CHECK_DIST2D(_y,(_x select 0),(_x select 1))} count GVAR(blacklist) > 0 ||
-				    EGVAR(fob,anchor) distance2D _y <= _distance ||
+				    //_distanceCheck ||
 				    {count ([_y,80] call EFUNC(main,getNearPlayers)) > 0} ||
 					{{[_y,_x] call EFUNC(main,inLOS)} count _players > 0})) then {
 					_posArray pushBack _y;
@@ -64,7 +73,7 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 
 					INFO_1("Spawning vehicle patrol at %1",_pos);
 				} else {
-					_count = UNITCOUNT(4,6);
+					_count = UNITCOUNT(2,8);
 					_grp = [_pos,0,_count,EGVAR(main,enemySide),false,2] call EFUNC(main,spawnGroup);
 					[
 						{count units (_this select 0) isEqualTo (_this select 2)},

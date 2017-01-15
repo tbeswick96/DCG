@@ -7,7 +7,7 @@ __________________________________________________________________*/
 #define DEFAULTPOS [-5000,-5000]
 #define CREATE_BASE \
 	GVAR(baseLocation) = createLocation ["NameCity", getPos BASE, GVAR(baseRadius), GVAR(baseRadius)]; \
-	GVAR(baseLocation) setText "Main Operating Base"; \
+	GVAR(baseLocation) setText GVAR(baseName); \
 	GVAR(baseLocation) attachObject BASE
 #define CREATE_DEFAULTBASE GVAR(baseLocation) = createLocation ["NameCity", DEFAULTPOS, 10, 10]
 
