@@ -41,7 +41,7 @@ __________________________________________________________________*/
     "CHECKBOX",
     "Load Mission Data",
     COMPONENT_NAME,
-    false,
+    true,
     true,
     {
         if (GVAR(loadData)) then {

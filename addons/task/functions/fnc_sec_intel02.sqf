@@ -33,7 +33,7 @@ if (_position isEqualTo []) then {
 		_center = (position EGVAR(fob,anchor));
 		_distance = 6000;
 	};
-	_position = [_center,_distance,6000,"house"] call EFUNC(main,findPos);
+	_position = [_center,_distance,"house"] call EFUNC(main,findPos);
 };
 
 if (_position isEqualTo []) exitWith {

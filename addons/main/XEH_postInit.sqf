@@ -5,9 +5,8 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 #define BASE DOUBLES(PREFIX,base)
 #define DEFAULTPOS [-5000,-5000]
-#define CREATE_BASE \
+#define CREATE_BASE \	
 	GVAR(baseLocation) = createLocation ["NameCity", getPos BASE, GVAR(baseRadius), GVAR(baseRadius)]; \
-	GVAR(baseLocation) setText GVAR(baseName); \
 	GVAR(baseLocation) attachObject BASE
 #define CREATE_DEFAULTBASE GVAR(baseLocation) = createLocation ["NameCity", DEFAULTPOS, 10, 10]
 
@@ -26,6 +25,12 @@ if !(isNil QUOTE(BASE)) then {
 	{
 		CREATE_BASE;
 	} remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
+	_name = GVAR(name);
+	_marker = createMarker [_name, _pos];
+	_marker setMarkerShape "ICON";
+	_marker setMarkerType "hd_dot";
+	_marker setMarkerColor "colorBLUFOR";
+	_marker setMarkerText _name;
 };
 
 // if base object does not exist

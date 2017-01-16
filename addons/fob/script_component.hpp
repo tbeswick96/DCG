@@ -28,7 +28,7 @@
     	publicVariableServer PVEH_CREATE; \
     }, [], 9] call CBA_fnc_waitAndExecute
 
-#define CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10} && {!(((player modelToWorld [0,3,0]) isFlatEmpty  [3, -1, -1, -1, 0, false, player]) isEqualTo [])}
+#define CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10}
 #define CREATE_KEYCODE \
 	if (CREATE_COND) then { \
 		CREATE_STATEMENT \
