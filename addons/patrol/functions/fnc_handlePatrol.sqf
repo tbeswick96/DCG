@@ -36,8 +36,9 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 	if !(_players isEqualTo []) then {
 		_player = selectRandom _players;
 		_players = [getPosASL _player,100] call EFUNC(main,getNearPlayers);
-		if ({CHECK_DIST2D(_player,(_x select 0),(_x select 1))} count GVAR(blacklist) isEqualTo 0) then { // check if player is in a blacklist array
-			_posArrayCheck = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,6] call EFUNC(main,findPosGrid);
+
+		if ({_player inArea [_x select 0,_x select 1,_x select 1,0,false,-1]} count GVAR(blacklist) isEqualTo 0) then { // check if player is in a blacklist array
+			_posArrayCheck = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,10] call EFUNC(main,findPosGrid);
 			_posArray = [];
 			/*private _distance = if (!(isNull EGVAR(fob,anchor)) then {
 				(((([position EGVAR(fob,anchor)] call EFUNC(approval,getValue)) * 8) max 300) min 800)
@@ -45,17 +46,17 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 				800
 			};*/
 			{ // remove positions in blacklist, that are near players or that players can see
-				private _y = _x;
+				_y = _x;
 				/*private _distanceCheck = if (isNull EGVAR(fob,anchor)) then {
 					false
 				} else {
 					(EGVAR(fob,anchor) distance2D _y <= _distance)
 				};*/
-				if (!({CHECK_DIST2D(_y,(_x select 0),(_x select 1))} count GVAR(blacklist) > 0 ||
+				if ({_y inArea [_x select 0,_x select 1,_x select 1,0,false,-1]} count GVAR(blacklist) > 0 ||
 				    //_distanceCheck ||
-				    {count ([_y,80] call EFUNC(main,getNearPlayers)) > 0} ||
-					{{[_y,_x] call EFUNC(main,inLOS)} count _players > 0})) then {
-					_posArray pushBack _y;
+				    {!([_y,100] call EFUNC(main,getNearPlayers) isEqualTo [])} ||
+					{{[_y,eyePos _x] call EFUNC(main,inLOS)} count _players > 0}) then {
+					_posArray deleteAt _forEachIndex;
 				};
 			} forEach _posArrayCheck;
 			if !(_posArray isEqualTo []) then {
@@ -66,14 +67,14 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 					[
 						{count units (_this select 0) > 0},
 						{
-							[_this select 0,PATROL_RANGE] call EFUNC(main,setPatrol);
+                            [_this select 0, _this select 0, PATROL_RANGE, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "if (random 1 < 0.2) then {this spawn CBA_fnc_searchNearby}", [5,10,15]] call CBA_fnc_taskPatrol;
 						},
 						[_grp]
 					] call CBA_fnc_waitUntilAndExecute;
 
 					INFO_1("Spawning vehicle patrol at %1",_pos);
 				} else {
-					_count = UNITCOUNT(2,8);
+					_count = 6;
 					_grp = [_pos,0,_count,EGVAR(main,enemySide),false,2] call EFUNC(main,spawnGroup);
 					[
 						{count units (_this select 0) isEqualTo (_this select 2)},
@@ -81,12 +82,15 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 							_this params ["_grp","_player","_count"];
 
 							// set waypoint around target player
-							_wp = _grp addWaypoint [getPosATL _player,50];
+							_wp = _grp addWaypoint [getPosATL _player,0];
 							_wp setWaypointCompletionRadius 100;
 							_wp setWaypointBehaviour "SAFE";
 							_wp setWaypointFormation "STAG COLUMN";
 							_wp setWaypointSpeed "LIMITED";
-							_wp setWaypointStatements ["!(behaviour this isEqualTo ""COMBAT"")", format ["[group this,%2,false] call %1;",QEFUNC(main,setPatrol),PATROL_RANGE]];
+							_wp setWaypointStatements [
+                                "!(behaviour this isEqualTo ""COMBAT"")",
+                                format ["[this, this, %1, 5, ""MOVE"", ""SAFE"", ""YELLOW"", ""LIMITED"", ""STAG COLUMN"", """", [0,0,0]] call CBA_fnc_taskPatrol;",PATROL_RANGE]
+                            ];
 						},
 						[_grp,_player,_count]
 					] call CBA_fnc_waitUntilAndExecute;

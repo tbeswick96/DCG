@@ -15,13 +15,16 @@ __________________________________________________________________*/
 #define TASK_NAME 'Destroy Cache'
 #include "script_component.hpp"
 
-params [["_position",[]]];
+params [
+    ["_position",[],[[]]]
+];
 
 // CREATE TASK
 _taskID = str diag_tickTime;
 _caches = [];
 _base = [];
-_strength = TASK_STRENGTH;
+_cleanup = [];
+_strength = TASK_STRENGTH + TASK_GARRISONCOUNT;
 _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
@@ -31,11 +34,11 @@ if (_position isEqualTo []) then {
 		_center = (position EGVAR(fob,anchor));
 		_distance = 6000;
 	};
-	_position = [_center,_distance,"meadow",10] call EFUNC(main,findPos);
+	_position = [_center,_distance,"meadow",10] call EFUNC(main,findPosTerrain);
 };
 
 if (_position isEqualTo []) exitWith {
-	[TASK_TYPE,0] call FUNC(select);
+	TASK_EXIT_DELAY(0);
 };
 
 _base = [_position,0.47 + random 0.3] call EFUNC(main,spawnBase);
@@ -44,8 +47,11 @@ _bNodes = _base select 3;
 
 if (_bNodes isEqualTo []) exitWith {
 	(_base select 2) call EFUNC(main,cleanup);
-	[TASK_TYPE,0] call FUNC(select);
+	TASK_EXIT_DELAY(0);
 };
+
+_cleanup append (_base select 2);
+
 _posCache = selectRandom _bNodes;
 _posCache = _posCache select 0;
 
@@ -54,37 +60,56 @@ for "_i" from 0 to 1 do {
 	_cache setDir random 360;
 	_cache setVectorUp surfaceNormal getPos _cache;
     [_cache] call FUNC(handleDamage);
-	_caches pushBack _cache;
+	_cleanup pushBack _cache;
 };
 
-_grp = [_position,0,_strength,EGVAR(main,enemySide),false,1] call EFUNC(main,spawnGroup);
+_grp = [_position,0,_strength,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 
 [
 	{count units (_this select 0) >= (_this select 2)},
 	{
-		[_this select 0,_this select 1] call EFUNC(main,setPatrol);
+        params ["_grp","_bRadius","_strength","_cleanup"];
+
+        _cleanup append (units _grp);
+
+        // regroup garrison units
+        _garrisonGrp = createGroup EGVAR(main,enemySide);
+        ((units _grp) select [0,TASK_GARRISONCOUNT]) joinSilent _garrisonGrp;
+        [_garrisonGrp,_garrisonGrp,_bRadius,1,false] call CBA_fnc_taskDefend;
+
+        // regroup patrols
+        for "_i" from 0 to (count units _grp) - 1 step TASK_PATROL_UNITCOUNT do {
+            _patrolGrp = createGroup EGVAR(main,enemySide);
+            ((units _grp) select [0,TASK_PATROL_UNITCOUNT]) joinSilent _patrolGrp;
+            [_patrolGrp, _patrolGrp, _bRadius, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol;
+        };
 	},
-	[_grp,_bRadius,_strength]
+	[_grp,_bRadius,_strength,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
 
 _vehPos = [_position,60,200,8,0] call EFUNC(main,findPosSafe);
 
 if !(_vehPos isEqualTo _position) then {
-	_vehGrp = [_vehPos,1,1,EGVAR(main,enemySide),false,1,true] call EFUNC(main,spawnGroup);
+	_vehGrp = [_vehPos,1,1,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY,true] call EFUNC(main,spawnGroup);
 
 	[
-		{{_x getVariable [ISDRIVER,false]} count (units (_this select 0)) > 0},
+		{{_x getVariable [ISDRIVER,false]} count (units (_this select 1)) > 0},
 		{
-			[_this select 0,((_this select 1)*4 min 300) max 100] call EFUNC(main,setPatrol);
+            params ["_position","_vehGrp","_bRadius"];
+
+            _cleanup pushBack (objectParent leader _vehGrp);
+            _cleanup append (units _vehGrp);
+
+			[_vehGrp, _position, _bRadius*2, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [5,10,15]] call CBA_fnc_taskPatrol;
 		},
-		[_vehGrp,_bRadius]
+		[_position,_vehGrp,_bRadius]
 	] call CBA_fnc_waitUntilAndExecute;
 };
 
 // SET TASK
 _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe));
-_taskDescription = format ["An enemy camp housing an ammunitions cache has been spotted near %1. These supplies are critical to the opposition's efforts. Destroy the cache and weaken the enemy.", mapGridPosition _position];
-[true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"destroy"] call EFUNC(main,setTask);
+_taskDescription = "An enemy base, housing an ammunitions cache, has been located nearby. These supplies are critical to the opposition's efforts, destroy the cache and weaken the enemy supply lines.";
+[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"destroy"] call EFUNC(main,setTask);
 
 TASK_DEBUG(_posCache);
 
@@ -94,20 +119,20 @@ TASK_PUBLISH(_position);
 // TASK HANDLER
 [{
 	params ["_args","_idPFH"];
-	_args params ["_taskID","_caches","_grp","_vehGrp","_base","_posCache"];
+	_args params ["_taskID","_cleanup","_posCache"];
 
 	if (TASK_GVAR isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "CANCELED"] call EFUNC(main,setTaskState);
-		((units _grp) + (units _vehGrp) + [vehicle leader _vehGrp] + _caches + _base) call EFUNC(main,cleanup);
-		[TASK_TYPE,30] call FUNC(select);
+		_cleanup call EFUNC(main,cleanup);
+		TASK_EXIT_DELAY(30);
 	};
 
-	if ({alive _x} count _caches isEqualTo 0) exitWith {
+	if ({alive _x} count _cleanup isEqualTo 0) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "SUCCEEDED"] call EFUNC(main,setTaskState);
-		((units _grp) + (units _vehGrp) + [vehicle leader _vehGrp] + _caches + _base) call EFUNC(main,cleanup);
+		_cleanup call EFUNC(main,cleanup);
 		TASK_APPROVAL(_posCache,TASK_AV);
 		TASK_EXIT;
 	};
-}, TASK_SLEEP, [_taskID,_caches,_grp,_vehGrp,_base select 2,_posCache]] call CBA_fnc_addPerFrameHandler;
+}, TASK_SLEEP, [_taskID,_cleanup,_posCache]] call CBA_fnc_addPerFrameHandler;

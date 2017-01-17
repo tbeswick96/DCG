@@ -28,7 +28,7 @@
     	publicVariableServer PVEH_CREATE; \
     }, [], 9] call CBA_fnc_waitAndExecute
 
-#define CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10}
+#define CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10} && {[player] call FUNC(isAllowedOwner)}
 #define CREATE_KEYCODE \
 	if (CREATE_COND) then { \
 		CREATE_STATEMENT \
@@ -63,7 +63,7 @@
     missionNamespace setVariable [PVEH_ASSIGN,player]; \
     publicVariableServer PVEH_ASSIGN; \
     [format ["You've taken control of %1",GVAR(name)],true] call EFUNC(main,displayText)
-#define CONTROL_COND FOB_DEPLOYED && {isNull (getAssignedCuratorUnit GVAR(curator))}
+#define CONTROL_COND FOB_DEPLOYED && {isNull (getAssignedCuratorUnit GVAR(curator))} && {[player] call FUNC(isAllowedOwner)}
 #define CONTROL_KEYCODE \
 	if (CONTROL_COND) then { \
 		CONTROL_STATEMENT \

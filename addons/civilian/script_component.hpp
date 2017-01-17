@@ -7,8 +7,6 @@
 
 #include "\d\dcg\addons\main\script_macros.hpp"
 
-#define ZDIST 65
-#define RANGE 1100
-#define BUFFER 150
-#define ITERATIONS 350
+#define HANDLER_DELAY 15
+#define ZDIST 50
 #define LOCATION_ID(NAME) ([QUOTE(ADDON),NAME] joinString "_")

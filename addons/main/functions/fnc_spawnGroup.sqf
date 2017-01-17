@@ -18,17 +18,17 @@ Return:
 group
 __________________________________________________________________*/
 #include "script_component.hpp"
-#define MAX_CARGO 6
+#define MAX_CARGO 4
 
 private ["_unitPool","_vehPool","_airPool"];
 params [
-	"_pos",
-	["_type",0],
-	["_count",1],
-	["_side",GVAR(enemySide)],
-	["_uncache",false],
-	["_delay",1],
-	["_cargo",false]
+	["_pos",[0,0,0],[[]]],
+	["_type",0,[0]],
+	["_count",1,[0]],
+	["_side",GVAR(enemySide),[sideUnknown]],
+	["_uncache",false,[false]],
+	["_delay",1,[0]],
+	["_cargo",false,[false]]
 ];
 
 private _grp = createGroup _side;
@@ -54,9 +54,11 @@ call {
 	if (_side isEqualTo "SUICIDE") exitWith {
 		_unitPool = GVAR(suicidePool)
 	};
-	_unitPool = GVAR(unitPoolInd);
-	_vehPool = GVAR(vehPoolInd);
-	_airPool = GVAR(airPoolInd);
+    if (_side isEqualTo RESISTANCE) exitWith {
+        _unitPool = GVAR(unitPoolInd);
+    	_vehPool = GVAR(vehPoolInd);
+    	_airPool = GVAR(airPoolInd);
+	};
 };
 
 if (_uncache) then {
@@ -91,7 +93,7 @@ if (_type isEqualTo 0) exitWith {
 	private "_veh";
 
 	if (_type isEqualTo 1) then {
-		_veh = createVehicle [selectRandom _vehPool, _pos, [], 16, "NONE"];
+		_veh = createVehicle [selectRandom _vehPool, _pos, [], 0, "NONE"];
 		_veh setVectorUp surfaceNormal getPos _veh;
 	} else {
 		_veh = createVehicle [selectRandom _airPool, _pos, [], 0, "FLY"];
@@ -113,13 +115,13 @@ if (_type isEqualTo 0) exitWith {
 			[{
 				params ["_grp","_unitPool","_veh","_count","_idPFH"];
 
-				if (count crew _veh >= _count) exitWith {
-					[_idPFH] call CBA_fnc_removePerFrameHandler;
-				};
+			    if (!(alive _veh) || {count crew _veh >= _count}) exitWith {
+				    [_idPFH] call CBA_fnc_removePerFrameHandler;
+			    };
 
 				_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
 				_unit moveInCargo _veh;
-			}, [_grp,_unitPool,_veh,_count,_idPFH], 10] call CBA_fnc_waitAndExecute;			
+			}, [_grp,_unitPool,_veh,_count,_idPFH], 10] call CBA_fnc_waitAndExecute;
 		}, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh)]] call CBA_fnc_addPerFrameHandler;
 	};*/
 

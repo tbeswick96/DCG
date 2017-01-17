@@ -15,12 +15,12 @@ __________________________________________________________________*/
 #define INTERVAL 5
 
 params [
-	["_data",[]]
+	["_data",[],[[]]]
 ];
 
 if !(_data isEqualTo []) exitWith {
 	{
-		if !(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius))) then {
+		if !((_x select 1) inArea EGVAR(main,baseLocation)) then {
 			_x spawn FUNC(setOccupied);
 		};
 	} forEach _data;
@@ -34,11 +34,11 @@ if (EGVAR(fob,anchor) isEqualTo objNull) then {
 	_fobCheck = false;
 };
 {
-	private _distCheck = true;
+    private _distCheck = true;
 	if (_fobCheck) then {
 		_distCheck = (EGVAR(fob,anchor) distance2D (_x select 1) <= 6000);
 	};
-	if (!(CHECK_DIST2D((_x select 1),locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius))) && _distCheck) then {
+	if !((_x select 1) inArea EGVAR(main,baseLocation)) then {
 		_locations pushBack _x;
 	};
 } forEach EGVAR(main,locations);

@@ -18,12 +18,14 @@ __________________________________________________________________*/
 #define UNITCOUNT 8
 #include "script_component.hpp"
 
-params [["_position",[]]];
+params [
+    ["_position",[],[[]]]
+];
 
 // CREATE TASK
 _taskID = str diag_tickTime;
 _classes = [];
-_vehicle = objNull;
+_cleanup = [];
 INTEL_CONTAINER = objNull;
 
 if (_position isEqualTo []) then {
@@ -33,11 +35,11 @@ if (_position isEqualTo []) then {
 		_center = (position EGVAR(fob,anchor));
 		_distance = 6000;
 	};
-	_position = [_center,_distance,"house"] call EFUNC(main,findPos);
+	_position = [_center,_distance,"house"] call EFUNC(main,findPosTerrain);
 };
 
 if (_position isEqualTo []) exitWith {
-	[TASK_TYPE,0] call FUNC(select);
+	TASK_EXIT_DELAY(0);
 };
 
 call {
@@ -52,23 +54,14 @@ call {
 	};
 };
 
-_position = _position select 1;
-_vehPos = [_position,5,30,7,0] call EFUNC(main,findPosSafe);
-
-if !(_position isEqualTo _vehPos) then {
-	_vehicle = (selectRandom _classes) createVehicle [0,0,0];
-	[_vehicle,_vehPos] call EFUNC(main,setPosSafe);
-};
-
-_grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,1] call EFUNC(main,spawnGroup);
+_grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 
 [
 	{count units (_this select 0) >= UNITCOUNT},
 	{
-		params ["_grp","_position","_vehicle","_taskID"];
+		params ["_grp","_cleanup"];
 
-		[_grp,30] call EFUNC(main,setPatrol);
-
+        _cleanup append (units _grp);
         removeFromRemainsCollector units _grp;
 
 		{
@@ -82,8 +75,10 @@ _grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,1] call EFUNC(main,spa
         } forEach (uniformItems leader _grp);
 
         INTEL_CONTAINER = [leader _grp,INTEL_CLASS] call FUNC(addItem);
+
+        [_grp,_grp,30,1,true] call CBA_fnc_taskDefend;
 	},
-	[_grp]
+	[_grp,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
 
 TASK_DEBUG(_position);
@@ -98,20 +93,20 @@ TASK_PUBLISH(_position);
 // TASK HANDLER
 [{
     params ["_args","_idPFH"];
-    _args params ["_taskID","_grp","_vehicle"];
+    _args params ["_taskID","_grp","_cleanup"];
 
     if (TASK_GVAR isEqualTo []) exitWith {
         [_idPFH] call CBA_fnc_removePerFrameHandler;
         [_taskID, "CANCELED"] call EFUNC(main,setTaskState);
-        ((units _grp) + [_vehicle]) call EFUNC(main,cleanup);
-        [TASK_TYPE,30] call FUNC(select);
+        _cleanup call EFUNC(main,cleanup);
+        TASK_EXIT_DELAY(30);
     };
 
     if (!isNull INTEL_CONTAINER && {{COMPARE_STR(INTEL_CLASS,_x)} count itemCargo INTEL_CONTAINER < 1}) exitWith {
         [_idPFH] call CBA_fnc_removePerFrameHandler;
         [_taskID, "SUCCEEDED"] call EFUNC(main,setTaskState);
         TASK_APPROVAL(getPos (leader _grp),TASK_AV);
-        ((units _grp) + [_vehicle]) call EFUNC(main,cleanup);
+        _cleanup call EFUNC(main,cleanup);
         TASK_EXIT;
     };
-}, TASK_SLEEP, [_taskID,_grp,_vehicle]] call CBA_fnc_addPerFrameHandler;
+}, TASK_SLEEP, [_taskID,_grp,_cleanup]] call CBA_fnc_addPerFrameHandler;

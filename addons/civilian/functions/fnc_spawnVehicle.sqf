@@ -16,10 +16,9 @@ none
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-private ["_grp","_driver","_veh","_wp","_statement"];
 params ["_start","_mid","_end","_player"];
 
-_grp = [getPosASL _start,1,1,CIVILIAN] call EFUNC(main,spawnGroup);
+private _grp = [getPos _start,1,1,CIVILIAN] call EFUNC(main,spawnGroup);
 
 [
 	{{_x getVariable [ISDRIVER,false]} count (units (_this select 0)) > 0},
@@ -41,11 +40,7 @@ _grp = [getPosASL _start,1,1,CIVILIAN] call EFUNC(main,spawnGroup);
 		_wp setWaypointTimeout [0, 0, 0];
 		_wp setWaypointCompletionRadius 100;
 		_wp setWaypointBehaviour "CARELESS";
-		if (random 1 < 0.5) then {
-			_wp setWaypointSpeed "LIMITED";
-		} else {
-			_wp setWaypointSpeed "FULL";
-		};
+		_wp setWaypointSpeed "LIMITED";
 
 		_wp = _grp addWaypoint [getPosATL _end,0];
 		_statement = format ["deleteVehicle (objectParent this); deleteVehicle this; %1 = %1 - [this];", QGVAR(drivers)];
@@ -60,7 +55,7 @@ _grp = [getPosASL _start,1,1,CIVILIAN] call EFUNC(main,spawnGroup);
 
 		GVAR(drivers) pushBack _driver;
 
-		INFO_1("Spawned civilian driver at %1.",getPos _driver);
+		INFO_1("Spawned civilian driver at %1",getPos _driver);
 	},
 	[_grp,_start,_mid,_end,_player]
 ] call CBA_fnc_waitUntilAndExecute;

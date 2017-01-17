@@ -15,12 +15,15 @@ __________________________________________________________________*/
 #define TASK_NAME 'Eliminate Officer'
 #include "script_component.hpp"
 
-params [["_position",[]]];
+params [
+    ["_position",[],[[]]]
+];
 
 // CREATE TASK
 _taskID = str diag_tickTime;
 _classes = [];
-_strength = TASK_STRENGTH;
+_cleanup = [];
+_strength = TASK_STRENGTH + TASK_GARRISONCOUNT;
 _vehGrp = grpNull;
 
 if (_position isEqualTo []) then {
@@ -30,7 +33,7 @@ if (_position isEqualTo []) then {
 		_center = (position EGVAR(fob,anchor));
 		_distance = 6000;
 	};
-	_position = [_center,_distance,"meadow",10] call EFUNC(main,findPos);
+	_position = [_center,_distance,"meadow",10] call EFUNC(main,findPosTerrain);
 };
 
 call {
@@ -46,53 +49,76 @@ call {
 };
 
 if (_position isEqualTo []) exitWith {
-	[TASK_TYPE,0] call FUNC(select);
+	TASK_EXIT_DELAY(0);
 };
 
 _base = [_position,0.65 + random 1] call EFUNC(main,spawnBase);
 _bRadius = _base select 0;
+_cleanup append (_base select 2);
 
 _officer = (createGroup EGVAR(main,enemySide)) createUnit [selectRandom _classes, ASLtoAGL _position, [], 0, "NONE"];
-[group _officer,25] call EFUNC(main,setPatrol);
+_cleanup pushBack _officer;
+[group _officer,_position,_bRadius*0.5,1,false] call CBA_fnc_taskDefend;
 
-_grp = [_position,0,_strength,EGVAR(main,enemySide),false,2] call EFUNC(main,spawnGroup);
+_grp = [_position,0,_strength,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 
 [
 	{count units (_this select 0) >= (_this select 2)},
 	{
-		[_this select 0,_this select 1] call EFUNC(main,setPatrol);
+        params ["_grp","_bRadius","_strength","_cleanup"];
+
+        _cleanup append (units _grp);
+
+        // regroup garrison units
+        _garrisonGrp = createGroup EGVAR(main,enemySide);
+        ((units _grp) select [0,TASK_GARRISONCOUNT]) joinSilent _garrisonGrp;
+        [_garrisonGrp,_garrisonGrp,_bRadius,1,false] call CBA_fnc_taskDefend;
+
+        // regroup patrols
+        for "_i" from 0 to (count units _grp) - 1 step TASK_PATROL_UNITCOUNT do {
+            _patrolGrp = createGroup EGVAR(main,enemySide);
+            ((units _grp) select [0,TASK_PATROL_UNITCOUNT]) joinSilent _patrolGrp;
+            [_patrolGrp, _patrolGrp, _bRadius, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol;
+        };
 	},
-	[_grp,_bRadius,_strength]
+	[_grp,_bRadius,_strength,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
 
-_vehPos = [_position,100,200,8,0] call EFUNC(main,findPosSafe);
-
-if !(_vehPos isEqualTo _position) then {
-	_vehGrp = [_vehPos,1,1,EGVAR(main,enemySide),false,1,true] call EFUNC(main,spawnGroup);
-	[
-		{{_x getVariable [ISDRIVER,false]} count (units (_this select 0)) > 0},
-		{
-			[_this select 0,((_this select 1)*4 min 300) max 100] call EFUNC(main,setPatrol);
-		},
-		[_vehGrp,_bRadius]
-	] call CBA_fnc_waitUntilAndExecute;
+_vehPos = [_position,_bRadius,_bRadius + 100,8,0] call EFUNC(main,findPosSafe);
+_vehGrp = if !(_vehPos isEqualTo _position) then {
+	[_vehPos,1,1,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY,true] call EFUNC(main,spawnGroup);
 } else {
-	_vehGrp = [_vehPos,2,1,EGVAR(main,enemySide),false,1] call EFUNC(main,spawnGroup);
-	[
-		{{_x getVariable [ISDRIVER,false]} count (units (_this select 0)) > 0},
-		{
-			[_this select 0,1200] call EFUNC(main,setPatrol);
-		},
-		[_vehGrp,_bRadius]
-	] call CBA_fnc_waitUntilAndExecute;
+	[_vehPos,2,1,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 };
+
+[
+    {{_x getVariable [ISDRIVER,false]} count (units (_this select 1)) > 0},
+    {
+        params ["_position","_vehGrp","_bRadius","_cleanup"];
+
+        _cleanup pushBack (objectParent leader _vehGrp);
+        _cleanup pushBack (units _vehGrp);
+
+        if (objectParent leader _vehGrp isKindOf "AIR") then {
+            _waypoint = _vehGrp addWaypoint [_position,0];
+            _waypoint setWaypointType "LOITER";
+            _waypoint setWaypointLoiterRadius 700;
+            _waypoint setWaypointLoiterType "CIRCLE";
+            _waypoint setWaypointSpeed "NORMAL";
+            _waypoint setWaypointBehaviour "AWARE";
+        } else {
+            [_vehGrp, _position, _bRadius*2, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [5,10,15]] call CBA_fnc_taskPatrol;
+        };
+    },
+    [_position,_vehGrp,_bRadius,_cleanup]
+] call CBA_fnc_waitUntilAndExecute;
 
 TASK_DEBUG(getPos _officer);
 
 // SET TASK
 _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe));
-_taskDescription = format ["A high ranking enemy officer has been spotted near %1. Find and eliminate the officer.",mapGridPosition _position];
-[true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"kill"] call EFUNC(main,setTask);
+_taskDescription = "A high ranking enemy officer has been spotted nearby. Find and eliminate the officer.";
+[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"kill"] call EFUNC(main,setTask);
 
 // PUBLISH TASK
 TASK_PUBLISH(_position);
@@ -100,20 +126,20 @@ TASK_PUBLISH(_position);
 // TASK HANDLER
 [{
 	params ["_args","_idPFH"];
-	_args params ["_taskID","_officer","_grp","_vehGrp","_base","_position"];
+	_args params ["_taskID","_officer","_cleanup","_position"];
 
 	if (TASK_GVAR isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "CANCELED"] call EFUNC(main,setTaskState);
-		((units _grp) + [_officer] + _base + (units _vehGrp) + [vehicle leader _vehGrp]) call EFUNC(main,cleanup);
-		[TASK_TYPE,30] call FUNC(select);
+		_cleanup call EFUNC(main,cleanup);
+		TASK_EXIT_DELAY(30);
 	};
 
 	if !(alive _officer) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "SUCCEEDED"] call EFUNC(main,setTaskState);
 		TASK_APPROVAL(_position,TASK_AV);
-		((units _grp) + [_officer] + _base + (units _vehGrp) + [vehicle leader _vehGrp]) call EFUNC(main,cleanup);
+		_cleanup call EFUNC(main,cleanup);
 		TASK_EXIT;
 	};
-}, TASK_SLEEP, [_taskID,_officer,_grp,_vehGrp,(_base select 2),_position]] call CBA_fnc_addPerFrameHandler;
+}, TASK_SLEEP, [_taskID,_officer,_cleanup,_position]] call CBA_fnc_addPerFrameHandler;

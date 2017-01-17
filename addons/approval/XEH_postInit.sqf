@@ -7,7 +7,7 @@ __________________________________________________________________*/
 CHECK_POSTINIT;
 
 PVEH_QUESTION addPublicVariableEventHandler {(_this select 1) call FUNC(handleQuestion)};
-PVEH_HINT addPublicVariableEventHandler {[_this select 1] call FUNC(handleHint)};
+PVEH_HINT addPublicVariableEventHandler {[_this select 1,0] call FUNC(handleHint)};
 PVEH_AVADD addPublicVariableEventHandler {(_this select 1) call FUNC(addValue)};
 
 [
@@ -25,16 +25,6 @@ PVEH_AVADD addPublicVariableEventHandler {(_this select 1) call FUNC(addValue)};
                 call FUNC(handleClient);
 			};
  		}] remoteExecCall [QUOTE(BIS_fnc_call),0,true];
-
-		{
-			_mrk = createMarker [LOCATION_DEBUG_ID(_x select 0),_x select 1];
-			_mrk setMarkerType "mil_dot";
-			_mrk setMarkerText LOCATION_DEBUG_TEXT(_x select 0);
-
-			[_mrk] call EFUNC(main,setDebugMarker);
-
-			false
-		} count EGVAR(main,locations);
 	}
 ] call CBA_fnc_waitUntilAndExecute;
 

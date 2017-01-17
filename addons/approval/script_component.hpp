@@ -7,9 +7,6 @@
 
 #include "\d\dcg\addons\main\script_macros.hpp"
 
-#define LOCATION_DEBUG_ID(LNAME) ([QUOTE(COMPONENT),LNAME,"debug"] joinString "_")
-#define LOCATION_DEBUG_TEXT(LNAME) (format ["AV: %1", missionNamespace getVariable [AV_LOCATION_ID(LNAME),AV_MAX*0.1]])
-
 #define PVEH_HINT QGVAR(pveh_hint)
 #define HINT_ID QUOTE(DOUBLES(ADDON,hint))
 #define HINT_NAME "Check Approval in Region"
