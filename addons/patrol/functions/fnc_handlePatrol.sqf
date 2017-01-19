@@ -67,7 +67,7 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 					[
 						{count units (_this select 0) > 0},
 						{
-                            [_this select 0, _this select 0, PATROL_RANGE, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "if (random 1 < 0.2) then {this spawn CBA_fnc_searchNearby}", [5,10,15]] call CBA_fnc_taskPatrol;
+							[_this select 0, _this select 0, PATROL_RANGE, 5, "MOVE", GVAR(mode), "YELLOW", GVAR(speed), "STAG COLUMN", "if (random 1 < 0.2) then {this spawn CBA_fnc_searchNearby}", [5,10,15]] call CBA_fnc_taskPatrol;
 						},
 						[_grp]
 					] call CBA_fnc_waitUntilAndExecute;
@@ -84,12 +84,12 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 							// set waypoint around target player
 							_wp = _grp addWaypoint [getPosATL _player,0];
 							_wp setWaypointCompletionRadius 100;
-							_wp setWaypointBehaviour "SAFE";
+							_wp setWaypointBehaviour GVAR(mode);
 							_wp setWaypointFormation "STAG COLUMN";
-							_wp setWaypointSpeed "LIMITED";
+							_wp setWaypointSpeed GVAR(speed);
 							_wp setWaypointStatements [
                                 "!(behaviour this isEqualTo ""COMBAT"")",
-                                format ["[this, this, %1, 5, ""MOVE"", ""SAFE"", ""YELLOW"", ""LIMITED"", ""STAG COLUMN"", """", [0,0,0]] call CBA_fnc_taskPatrol;",PATROL_RANGE]
+                                format ["[this, this, %1, 5, ""MOVE"", %2, ""YELLOW"", %3, ""STAG COLUMN"", """", [0,0,0]] call CBA_fnc_taskPatrol;",PATROL_RANGE, QGVAR(mode), QGVAR(speed)]
                             ];
 						},
 						[_grp,_player,_count]

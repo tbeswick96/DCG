@@ -51,10 +51,6 @@ call {
 	_return pushBack _grp;
 	_grp setBehaviour "COMBAT";
 
-	if (_uncache) then {
-		CACHE_DISABLE(_grp,true);
-	};
-
 	private _mrk = createMarker [format["%1_sniper_%2",QUOTE(PREFIX),_unit],getposATL leader _grp];
 	_mrk setMarkerType "o_recon";
 	_mrk setMarkerColor ([side _unit,true] call BIS_fnc_sideColor); 

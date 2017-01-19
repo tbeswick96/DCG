@@ -104,9 +104,6 @@
 #define COMPARE_STR(STR1,STR2) ((STR1) == (STR2))
 #define COMPARE_STR_CASE(STR1,STR2) ((STR1) isEqualTo (STR2))
 
-#define CACHE_DISABLE_VAR QUOTE(TRIPLES(PREFIX,cache,disableCaching))
-#define CACHE_DISABLE(GRP,BOOL) GRP setVariable [CACHE_DISABLE_VAR,BOOL,true]
-
 #define PVEH_AVADD QEGVAR(approval,pveh_add)
 #define AV_LOCATION_ID(LOCATION) ([QUOTE(PREFIX),"approval",LOCATION] joinString "_")
 #define AV_MIN 0

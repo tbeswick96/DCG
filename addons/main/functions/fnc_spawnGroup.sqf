@@ -61,10 +61,6 @@ call {
 	};
 };
 
-if (_uncache) then {
-	CACHE_DISABLE(_grp,true);
-};
-
 if (_type isEqualTo 0) exitWith {
 	[{
 		params ["_args","_idPFH"];

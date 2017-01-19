@@ -66,3 +66,31 @@ __________________________________________________________________*/
     true,
     {}
 ] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(mode),
+    "LIST",
+    ["Enemy mode","Behaviour of enemy patrols."],
+    COMPONENT_NAME,
+    [
+        ["SAFE","AWARE","COMBAT"],
+        ["SAFE","AWARE","COMBAT"],
+        0
+    ],
+    true,
+    {}
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(speed),
+    "LIST",
+    ["Enemy movement speed","Movement speed of enemy patrols."],
+    COMPONENT_NAME,
+    [
+        ["LIMITED","NORMAL","FULL"],
+        ["LIMITED","NORMAL","FULL"],
+        0
+    ],
+    true,
+    {}
+] call CBA_Settings_fnc_init;

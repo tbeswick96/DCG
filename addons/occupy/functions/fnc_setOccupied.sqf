@@ -107,8 +107,6 @@ call {
     _airCount = AIR_COUNT_VILL;
 };
 
-//_count = ceil (((GVAR(infCountCapital) * (count allPlayers)) min 80) max 15);
-
 if (isNil "_data") then {
     PREP_VEH(_center,_grid,_vehCount,_size*1.25);
     PREP_AIR(_center,_airCount);
