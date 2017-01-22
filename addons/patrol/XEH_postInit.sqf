@@ -14,10 +14,13 @@ CHECK_POSTINIT;
 		if (!isNil {HEADLESSCLIENT} && {!(CHECK_ADDON_1("acex_headless"))}) then { // let ace handle transfer if enabled
 			(owner HEADLESSCLIENT) publicVariableClient QFUNC(handlePatrol);
 			(owner HEADLESSCLIENT) publicVariableClient QGVAR(groups);
-
-			[FUNC(handlePatrol), GVAR(cooldown), []] remoteExecCall [QUOTE(CBA_fnc_addPerFrameHandler), owner HEADLESSCLIENT, false];
+			[{
+				[FUNC(handlePatrol), 120, []] remoteExecCall [QUOTE(CBA_fnc_addPerFrameHandler), owner HEADLESSCLIENT, false];
+			}, [], 60] call CBA_fnc_waitAndExecute;		
 		} else {
-			[FUNC(handlePatrol), GVAR(cooldown), []] call CBA_fnc_addPerFrameHandler;
+			[{
+				[FUNC(handlePatrol), 120, []] call CBA_fnc_addPerFrameHandler;
+			}, [], 60] call CBA_fnc_waitAndExecute;			
 		};
 	}
 ] call CBA_fnc_waitUntilAndExecute;

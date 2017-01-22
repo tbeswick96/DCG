@@ -25,13 +25,17 @@ params [
 	["_pos",[0,0,0],[[]]],
 	["_type",0,[0]],
 	["_count",1,[0]],
-	["_side",GVAR(enemySide),[sideUnknown]],
+	["_side",GVAR(enemySide),[sideUnknown,""]],
 	["_uncache",false,[false]],
 	["_delay",1,[0]],
 	["_cargo",false,[false]]
 ];
 
-private _grp = createGroup _side;
+private _grp = if (_side isEqualTo "SUICIDE") then {
+		createGroup EAST
+	} else {
+		createGroup _side
+	};
 private _drivers = [];
 private _check = [];
 
@@ -49,10 +53,10 @@ call {
 	if (_side isEqualTo CIVILIAN) exitWith {
 		_unitPool = GVAR(unitPoolCiv);
 		_vehPool = GVAR(vehPoolCiv);
-		_airPool = GVAR(airPoolCiv)
+		_airPool = GVAR(airPoolCiv);
 	};
 	if (_side isEqualTo "SUICIDE") exitWith {
-		_unitPool = GVAR(suicidePool)
+		_unitPool = GVAR(suicidePool);
 	};
     if (_side isEqualTo RESISTANCE) exitWith {
         _unitPool = GVAR(unitPoolInd);
@@ -70,7 +74,11 @@ if (_type isEqualTo 0) exitWith {
 			[_idPFH] call CBA_fnc_removePerFrameHandler;
 		};
 
-		(selectRandom _unitPool) createUnit [_pos, _grp];
+		_unit = (selectRandom _unitPool);
+		if (count _pos == 2) then {
+			_pos = _pos select 1;
+		};
+		_unit createUnit [_pos, _grp];
 
 		_check pushBack 0;
 	}, _delay, [_pos,_grp,_unitPool,_count,_check]] call CBA_fnc_addPerFrameHandler;

@@ -29,7 +29,7 @@ if !(GVAR(groups) isEqualTo []) then {
 	};
 };
 
-if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
+if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) exitWith {
 	_HCs = entities "HeadlessClient_F";
 	_players = allPlayers - _HCs;
 
@@ -52,13 +52,13 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 				} else {
 					(EGVAR(fob,anchor) distance2D _y <= _distance)
 				};*/
-				if ({_y inArea [_x select 0,_x select 1,_x select 1,0,false,-1]} count GVAR(blacklist) > 0 ||
-				    //_distanceCheck ||
+				if (!({_y inArea [_x select 0,_x select 1,_x select 1,0,false,-1]} count GVAR(blacklist) > 0 ||
 				    {!([_y,100] call EFUNC(main,getNearPlayers) isEqualTo [])} ||
-					{{[_y,eyePos _x] call EFUNC(main,inLOS)} count _players > 0}) then {
-					_posArray deleteAt _forEachIndex;
+					{{[_y,eyePos _x] call EFUNC(main,inLOS)} count _players > 0})) then {
+					_posArray pushBack _y;
 				};
 			} forEach _posArrayCheck;
+			
 			if !(_posArray isEqualTo []) then {
 				_grp = grpNull;
 				_pos = ASLtoAGL (selectRandom _posArray);

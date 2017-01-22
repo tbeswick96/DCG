@@ -19,7 +19,7 @@ __________________________________________________________________*/
 #define WRECKS \
     ["a3\structures_f\wrecks\Wreck_Car2_F.p3d","a3\structures_f\wrecks\Wreck_Car3_F.p3d","a3\structures_f\wrecks\Wreck_Car_F.p3d","a3\structures_f\wrecks\Wreck_Offroad2_F.p3d","a3\structures_f\wrecks\Wreck_Offroad_F.p3d","a3\structures_f\wrecks\Wreck_Truck_dropside_F.p3d","a3\structures_f\wrecks\Wreck_Truck_F.p3d","a3\structures_f\wrecks\Wreck_UAZ_F.p3d","a3\structures_f\wrecks\Wreck_Van_F.p3d","a3\structures_f\wrecks\Wreck_Ural_F.p3d"]
 #define SAFE_DIST 10
-#define GAR_COUNT ([3,10] call EFUNC(main,getUnitCount))
+#define GAR_COUNT ([10,30] call EFUNC(main,getUnitCount))
 #define INF_COUNT_VILL ([15,25] call EFUNC(main,getUnitCount))
 #define INF_COUNT_CITY ([20,35] call EFUNC(main,getUnitCount))
 #define INF_COUNT_CAP ([25,45] call EFUNC(main,getUnitCount))

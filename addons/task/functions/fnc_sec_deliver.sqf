@@ -30,7 +30,7 @@ _cargo = "";
 
 
 if (count _posArray > 1) then {
-	if (!(((_posArray select 0) select 0) inArea [_x select 1,1000,1000,0,false,-1]) && {!(((_posArray select 1) select 0) inArea [_x select 1,1000,1000,0,false,-1])}) then {
+if ({!(((_posArray select 0) select 0) inArea [_x select 1,1000,1000,0,false,-1]) && {!(((_posArray select 1) select 0) inArea [_x select 1,1000,1000,0,false,-1])}} count EGVAR(occupy,locations) isEqualTo 0) then {
 		_posConvoy = (_posArray select 0) select 0;
 		_locConvoy = (_posArray select 0) select 1;
 		_posDeliver = (_posArray select 1) select 0;

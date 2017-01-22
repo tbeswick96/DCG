@@ -81,7 +81,7 @@ _grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call
 	[_grp,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
 
-TASK_DEBUG(_position);
+//TASK_DEBUG(_position);
 
 // SET TASK
 _taskDescription = format["Aerial reconnaissance spotted an enemy fireteam at grid %1. This is an opportunity to gain the upper hand. Ambush the unit and search the enemy combatants for intel.", mapGridPosition _position];

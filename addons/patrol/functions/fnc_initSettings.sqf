@@ -28,7 +28,7 @@ __________________________________________________________________*/
     ["Patrol Spawn Cooldown","Time in seconds between potential patrol spawns."],
     COMPONENT_NAME,
     [
-        300,
+        60,
         3600,
         900,
         0

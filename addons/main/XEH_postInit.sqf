@@ -5,8 +5,9 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 #define BASE DOUBLES(PREFIX,base)
 #define DEFAULTPOS [-5000,-5000]
-#define CREATE_BASE \	
+#define CREATE_BASE \
 	GVAR(baseLocation) = createLocation ["NameCity", getPos BASE, GVAR(baseRadius), GVAR(baseRadius)]; \
+	GVAR(baseLocation) setText ""; \
 	GVAR(baseLocation) attachObject BASE
 #define CREATE_DEFAULTBASE GVAR(baseLocation) = createLocation ["NameCity", DEFAULTPOS, 10, 10]
 
@@ -25,7 +26,8 @@ if !(isNil QUOTE(BASE)) then {
 	{
 		CREATE_BASE;
 	} remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
-	_name = GVAR(name);
+	_name = GVAR(baseName);
+	_pos = position GVAR(baseLocation);
 	_marker = createMarker [_name, _pos];
 	_marker setMarkerShape "ICON";
 	_marker setMarkerType "hd_dot";
@@ -56,7 +58,7 @@ for "_i" from 0 to (count _cfgLocations) - 1 do {
 	_name = getText (_location >> "name");
 	_position = getArray (_location >> "position");
 	_position set [2,(getTerrainHeightASL _position) max 0];
-	_size = ((getNumber (_location >> "radiusA")) + (getNumber (_location >> "radiusB")))*0.5;
+	_size = (((getNumber (_location >> "radiusA")) + (getNumber (_location >> "radiusB"))) * 0.5) * GVAR(locationSizeFactor);
 
 	call {
 		if (toLower _type in _typeLocations) exitWith {
