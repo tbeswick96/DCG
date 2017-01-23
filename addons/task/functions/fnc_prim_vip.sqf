@@ -67,6 +67,7 @@ _cleanup pushBack _vip;
 [_vip,"Acts_AidlPsitMstpSsurWnonDnon02",true] call EFUNC(main,setAnim);
 
 _grp = [[_position,5,20] call EFUNC(main,findPosSafe),0,_strength,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
+_grp setVariable ["uksf_caching_excluded", true, true];
 
 [
 	{count units (_this select 0) >= (_this select 1)},
@@ -79,13 +80,16 @@ _grp = [[_position,5,20] call EFUNC(main,findPosSafe),0,_strength,EGVAR(main,ene
         _garrisonGrp = createGroup EGVAR(main,enemySide);
         ((units _grp) select [0,TASK_GARRISONCOUNT]) joinSilent _garrisonGrp;
         [_garrisonGrp,_garrisonGrp,_bRadius,1,true] call CBA_fnc_taskDefend;
+		_garrisonGrp setVariable ["uksf_caching_excluded", false, true];
 
         // regroup patrols
         for "_i" from 0 to (count units _grp) - 1 step TASK_PATROL_UNITCOUNT do {
             _patrolGrp = createGroup EGVAR(main,enemySide);
             ((units _grp) select [0,TASK_PATROL_UNITCOUNT]) joinSilent _patrolGrp;
             [_patrolGrp, _patrolGrp, _bRadius, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol;
+			_patrolGrp setVariable ["uksf_caching_excluded", false, true];
         };
+		_grp setVariable ["uksf_caching_excluded", false, true];
 	},
 	[_grp,_strength,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;

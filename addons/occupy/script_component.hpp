@@ -16,6 +16,7 @@
 
 #define PREP_INF(POS,GRID,COUNT,GARRISON_COUNT,SIZE) \
     private _grp = [ASLtoAGL (selectRandom GRID),0,COUNT,EGVAR(main,enemySide),false,SPAWN_DELAY] call EFUNC(main,spawnGroup); \
+    _grp setVariable ["uksf_caching_excluded", true, true]; \
     [ \
     	{count units (_this select 1) >= (_this select 3)}, \
     	{ \
@@ -23,11 +24,14 @@
             _garrisonGrp = createGroup EGVAR(main,enemySide); \
             ((units _grp) select [0,_garrisonCount]) joinSilent _garrisonGrp; \
             [_garrisonGrp,_pos,_size,1,false] call CBA_fnc_taskDefend; \
+            _garrisonGrp setVariable ["uksf_caching_excluded", false, true]; \
             for "_i" from 0 to (count units _grp) - 1 step PATROL_UNITCOUNT do { \
                 _patrolGrp = createGroup EGVAR(main,enemySide); \
                 ((units _grp) select [0,PATROL_UNITCOUNT]) joinSilent _patrolGrp; \
                 [_patrolGrp, _pos, _size, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "if (random 1 < 0.2) then {this spawn CBA_fnc_searchNearby}", [0,5,8]] call CBA_fnc_taskPatrol; \
+                _patrolGrp setVariable ["uksf_caching_excluded", false, true]; \
             }; \
+            _grp setVariable ["uksf_caching_excluded", false, true]; \
     	}, \
     	[POS,_grp,SIZE,COUNT,GARRISON_COUNT] \
     ] call CBA_fnc_waitUntilAndExecute

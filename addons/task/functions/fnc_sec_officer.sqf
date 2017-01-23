@@ -71,6 +71,7 @@ _cleanup pushBack _officer;
 [group _officer,_position,_bRadius*0.5,1,false] call CBA_fnc_taskDefend;
 
 _grp = [_position,0,_strength,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
+_grp setVariable ["uksf_caching_excluded", true, true];
 
 [
 	{count units (_this select 0) >= (_this select 2)},
@@ -84,7 +85,9 @@ _grp = [_position,0,_strength,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call
             _patrolGrp = createGroup EGVAR(main,enemySide);
             ((units _grp) select [0,TASK_PATROL_UNITCOUNT]) joinSilent _patrolGrp;
             [_patrolGrp, _patrolGrp, _bRadius max 40, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol;
+			_patrolGrp setVariable ["uksf_caching_excluded", false, true];
         };
+		_grp setVariable ["uksf_caching_excluded", false, true];
 	},
 	[_grp,_bRadius,_strength,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
