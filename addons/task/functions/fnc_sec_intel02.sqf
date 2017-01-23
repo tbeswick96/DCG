@@ -68,6 +68,7 @@ _grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call
 			removeAllAssignedItems _x;
 			removeHeadgear _x;
             removeVest _x;
+			_x setVariable ["uksf_cleanup_excluded", true, true];
 		} forEach (units _grp);
 
         {

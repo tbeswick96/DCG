@@ -75,7 +75,7 @@ TASK_PUBLISH(_pos);
 // TASK HANDLER
 [{
 	params ["_args","_idPFH"];
-	_args params ["_taskID","_pos","_cleanup"];
+	_args params ["_taskID","_pos","_cleanup", "_tower"];
 
 	if (GVAR(secondary) isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
@@ -91,4 +91,4 @@ TASK_PUBLISH(_pos);
 		_cleanup call EFUNC(main,cleanup);
 		TASK_EXIT;
 	};
-}, TASK_SLEEP, [_taskID,_pos,_cleanup]] call CBA_fnc_addPerFrameHandler;
+}, TASK_SLEEP, [_taskID,_pos,_cleanup, _tower]] call CBA_fnc_addPerFrameHandler;

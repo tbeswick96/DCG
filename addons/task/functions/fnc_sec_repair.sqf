@@ -48,12 +48,13 @@ _grp = [_position,1,VEHCOUNT,EGVAR(main,playerSide),false,TASK_SPAWN_DELAY] call
 [
 	{{_x getVariable [ISDRIVER,false]} count (units (_this select 0)) >= VEHCOUNT},
 	{
-		params ["_grp","_cleanup"];
+		params ["_grp","_cleanup", "_vehicles"];
 
 		{
 			if (_x getVariable [ISDRIVER,false]) then {
 				_cleanup pushBack _x;
 				_cleanup pushBack (vehicle _x);
+				_vehicles pushBackUnique (vehicle _x);
 				_x removeItems "ToolKit";
 				(vehicle _x) setDir random 360;
 				(vehicle _x) lock 3;
@@ -65,7 +66,7 @@ _grp = [_position,1,VEHCOUNT,EGVAR(main,playerSide),false,TASK_SPAWN_DELAY] call
 			false
 		} count (units _grp);
 	},
-	[_grp,_cleanup]
+	[_grp, _cleanup, _vehicles]
 ] call CBA_fnc_waitUntilAndExecute;
 
 // SET TASK
@@ -78,7 +79,7 @@ TASK_PUBLISH(_position);
 // TASK HANDLER
 [{
 	params ["_args","_idPFH"];
-	_args params ["_taskID","_cleanup","_position"];
+	_args params ["_taskID","_cleanup","_position","_vehicles"];
 
 	if (TASK_GVAR isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
@@ -102,4 +103,4 @@ TASK_PUBLISH(_position);
 		_cleanup call EFUNC(main,cleanup);
 		TASK_EXIT;
 	};
-}, TASK_SLEEP, [_taskID,_cleanup,_position]] call CBA_fnc_addPerFrameHandler;
+}, TASK_SLEEP, [_taskID,_cleanup,_position,_vehicles]] call CBA_fnc_addPerFrameHandler;

@@ -62,6 +62,7 @@ _grp = [_position,0,UNITCOUNT,CIVILIAN,true,TASK_SPAWN_DELAY] call EFUNC(main,sp
 			removeAllAssignedItems _x;
             _x setDir random 360;
 			_x setDamage 1;
+			_x setVariable ["uksf_cleanup_excluded", true, true];
 		} forEach _units;
 
         INTEL_CONTAINER = [leader _grp,INTEL_CLASS] call FUNC(addItem);
