@@ -31,7 +31,7 @@
 #endif
 
 #define TASK_EXIT TASK_GVAR = []; [TASK_TYPE] call FUNC(select); INFO_1("Exiting task %1",TASK_QFUNC)
-#define TASK_EXIT_DELAY(DELAY) TASK_GVAR = []; [TASK_TYPE,DELAY] call FUNC(select); INFO_2("Exiting task %1 with %2 second cooldown",TASK_QFUNC,DELAY)
+#define TASK_EXIT_DELAY(DELAY) TASK_GVAR = []; [TASK_TYPE,DELAY] call FUNC(select); INFO_2("Exiting task %1 with %2 sec cooldown",TASK_QFUNC,DELAY)
 #define TASK_PUBLISH(POS) TASK_GVAR = [TASK_QFUNC,POS]
 #define TASK_GARRISONCOUNT 10
 #define TASK_PATROL_UNITCOUNT 4
@@ -46,7 +46,7 @@
 #define TASK_SPAWN_DELAY 2
 
 #define TASK_DEBUG(POS) \
-	_mrk = createMarker [format ["%1_%2",TASK, diag_tickTime],POS]; \
+	_mrk = createMarker [format ["%1_%2",TASK_TAG, diag_tickTime],POS]; \
 	_mrk setMarkerColor ([EGVAR(main,enemySide),true] call BIS_fnc_sideColor); \
 	_mrk setMarkerType "mil_dot"; \
 	_mrk setMarkerText TASK; \

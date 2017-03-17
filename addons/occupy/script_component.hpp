@@ -10,82 +10,77 @@
 #define UNITVAR QUOTE(DOUBLES(ADDON,unit))
 #define SET_UNITVAR(OBJ) (OBJ) setVariable [UNITVAR,true]
 #define GET_UNITVAR(OBJ) (OBJ) getVariable [UNITVAR,false]
-#define SPAWN_DELAY 0.75
-#define PATROL_UNITCOUNT 4
-#define VEH_SPAWN_CHANCE 0.75
+#define SPAWN_DELAY 1
+#define PATROL_UNITCOUNT 2
+#define VEH_SPAWN_CHANCE 0.5
 
-#define PREP_INF(POS,GRID,COUNT,GARRISON_COUNT,SIZE) \
-    private _grp = [ASLtoAGL (selectRandom GRID),0,COUNT,EGVAR(main,enemySide),false,SPAWN_DELAY] call EFUNC(main,spawnGroup); \
+#define PREP_INF(POS,GRID,COUNT,SIZE) \
+    private _grp = [ASLtoAGL (selectRandom GRID),0,COUNT,EGVAR(main,enemySide),true,SPAWN_DELAY] call EFUNC(main,spawnGroup); \
     _grp setVariable ["uksf_caching_excluded", true, true]; \
     [ \
     	{count units (_this select 1) >= (_this select 3)}, \
     	{ \
-            params ["_pos","_grp","_size","_strength","_garrisonCount"];  \
-            _garrisonGrp = createGroup EGVAR(main,enemySide); \
-            ((units _grp) select [0,_garrisonCount]) joinSilent _garrisonGrp; \
-            [_garrisonGrp,_pos,_size,1,false] call CBA_fnc_taskDefend; \
-            _garrisonGrp setVariable ["uksf_caching_excluded", false, true]; \
-            for "_i" from 0 to (count units _grp) - 1 step PATROL_UNITCOUNT do { \
-                _patrolGrp = createGroup EGVAR(main,enemySide); \
-                ((units _grp) select [0,PATROL_UNITCOUNT]) joinSilent _patrolGrp; \
-                [_patrolGrp, _pos, _size, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "if (random 1 < 0.2) then {this spawn CBA_fnc_searchNearby}", [0,5,8]] call CBA_fnc_taskPatrol; \
-                _patrolGrp setVariable ["uksf_caching_excluded", false, true]; \
-            }; \
-            _grp setVariable ["uksf_caching_excluded", false, true]; \
+            params ["_pos","_grp","_size"];  \
+            { \
+                SET_UNITVAR(_x); \
+                false \
+            } count units _grp; \
+            [ \
+                _grp, \
+                PATROL_UNITCOUNT, \
+                {[_this select 0, _this select 1, _this select 2, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "if (random 1 < 0.15) then {this spawn CBA_fnc_searchNearby}", [0,10,15]] call CBA_fnc_taskPatrol}, \
+                [_pos,_size], \
+                0, \
+                0.1 \
+            ] call EFUNC(main,splitGroup); \
     	}, \
-    	[POS,_grp,SIZE,COUNT,GARRISON_COUNT] \
+    	[POS,_grp,SIZE,COUNT] \
     ] call CBA_fnc_waitUntilAndExecute
 
 #define PREP_VEH(POS,GRID,COUNT,SIZE) \
-    for "_i" from 0 to (COUNT) - 1 do { \
-        if (GRID isEqualTo []) exitWith {}; \
-        if (random 1 < VEH_SPAWN_CHANCE) then { \
-            private _gridPos = ASLtoAGL (selectRandom GRID); \
-            private _grp = [_gridPos,1,1,EGVAR(main,enemySide),false,SPAWN_DELAY,true] call EFUNC(main,spawnGroup); \
-            GRID deleteAt (GRID find _gridPos); \
-            [ \
-                {{_x getVariable [ISDRIVER,false]} count units (_this select 0) >= 1}, \
-                { \
-                    params ["_grp","_size","_center"]; \
-                    [_grp, _center, _size, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [5,10,15]] call CBA_fnc_taskPatrol; \
-                    { \
-                        if (_x getVariable [ISDRIVER,false]) then { \
-                            SET_UNITVAR(_x); \
-                        }; \
-                        false \
-                    } count units _grp; \
-                }, \
-                [_grp,SIZE,POS] \
-            ] call CBA_fnc_waitUntilAndExecute; \
+    private _check = []; \
+    [{ \
+        params ["_args","_idPFH"]; \
+        _args params ["_pos","_grid","_count","_size","_check"]; \
+        if (_grid isEqualTo [] || {count _check >= _count}) exitWith { \
+            [_idPFH] call CBA_fnc_removePerFrameHandler; \
         }; \
-    }
+        private _gridPos = ASLtoAGL (selectRandom _grid); \
+        private _grp = [_gridPos,1,1,EGVAR(main,enemySide),false,SPAWN_DELAY,true] call EFUNC(main,spawnGroup); \
+        _grid deleteAt (_grid find _gridPos); \
+        [ \
+            {{_x getVariable [ISDRIVER,false]} count units (_this select 0) >= 1}, \
+            { \
+                params ["_grp","_size","_pos"]; \
+                (vehicle leader _grp) addEventHandler ["Fuel",{if !(_this select 1) then {(_this select 0) setFuel 1}}]; \
+                SET_UNITVAR(leader _grp); \
+                [_grp, _pos, _size, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [10,20,30]] call CBA_fnc_taskPatrol; \
+            }, \
+            [_grp,_size,_pos] \
+        ] call CBA_fnc_waitUntilAndExecute; \
+        _check pushBack 0; \
+    }, SPAWN_DELAY, [POS,GRID,COUNT,SIZE,_check]] call CBA_fnc_addPerFrameHandler
 
 #define PREP_AIR(POS,COUNT) \
-    for "_i" from 0 to (COUNT) - 1 do { \
-        if (random 1 < VEH_SPAWN_CHANCE) then { \
-            private _grp = [POS,2,1,EGVAR(main,enemySide),false,SPAWN_DELAY] call EFUNC(main,spawnGroup); \
-            [ \
-                {{_x getVariable [ISDRIVER,false]} count units (_this select 0) >= 1}, \
-                { \
-                    params ["_grp","_center"]; \
-                    [_grp] call CBA_fnc_clearWaypoints; \
-                    private _waypoint = _grp addWaypoint [_center,0]; \
-                    _waypoint setWaypointType "LOITER"; \
-                    _waypoint setWaypointLoiterRadius (500 + random 500); \
-                    _waypoint setWaypointLoiterType "CIRCLE"; \
-                    _waypoint setWaypointSpeed "NORMAL"; \
-                    _waypoint setWaypointBehaviour "AWARE"; \
-                    { \
-                        if (_x getVariable [ISDRIVER,false]) then { \
-                            SET_UNITVAR(_x); \
-                        }; \
-                        false \
-                    } count units _grp; \
-                }, \
-                [_grp,POS] \
-            ] call CBA_fnc_waitUntilAndExecute; \
+    private _check = []; \
+    [{ \
+        params ["_args","_idPFH"]; \
+        _args params ["_pos","_count","_check"]; \
+        if (count _check >= _count) exitWith { \
+            [_idPFH] call CBA_fnc_removePerFrameHandler; \
         }; \
-    }
+        private _grp = [_pos,2,1,EGVAR(main,enemySide),false,SPAWN_DELAY] call EFUNC(main,spawnGroup); \
+        [ \
+            {{_x getVariable [ISDRIVER,false]} count units (_this select 0) >= 1}, \
+            { \
+                params ["_grp","_pos"]; \
+                SET_UNITVAR(leader _grp); \
+                [_grp, _pos, 1000, 4, "MOVE", "SAFE", "YELLOW", "NORMAL", "STAG COLUMN", "", [0,0,0]] call CBA_fnc_taskPatrol; \
+            }, \
+            [_grp,_pos] \
+        ] call CBA_fnc_waitUntilAndExecute; \
+        _check pushBack 0; \
+    }, SPAWN_DELAY, [POS,COUNT,_check]] call CBA_fnc_addPerFrameHandler
 
 #define PREP_STATIC(POS,COUNT,SIZE,GRID,ARRAY) \
     if (GVAR(static) && {!(GRID isEqualTo [])}) then { \

@@ -42,6 +42,8 @@ if (_position isEqualTo []) exitWith {
 	TASK_EXIT_DELAY(0);
 };
 
+_position = _position select 1;
+
 call {
 	if (EGVAR(main,enemySide) isEqualTo EAST) exitWith {
 		_classes = EGVAR(main,vehPoolEast);
@@ -54,7 +56,7 @@ call {
 	};
 };
 
-_grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
+_grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),true,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 
 [
 	{count units (_this select 0) >= UNITCOUNT},
@@ -77,7 +79,12 @@ _grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call
 
         INTEL_CONTAINER = [leader _grp,INTEL_CLASS] call FUNC(addItem);
 
-        [_grp,_grp,30,1,true] call CBA_fnc_taskDefend;
+        // regroup patrols
+        [
+            _grp,
+            2,
+            {[_this select 0, _this select 0, 30, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol}
+        ] call EFUNC(main,splitGroup);
 	},
 	[_grp,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
@@ -85,7 +92,7 @@ _grp = [_position,0,UNITCOUNT,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call
 //TASK_DEBUG(_position);
 
 // SET TASK
-_taskDescription = format["Aerial reconnaissance spotted an enemy fireteam at grid %1. This is an opportunity to gain the upper hand. Ambush the unit and search the enemy combatants for intel.", mapGridPosition _position];
+_taskDescription = format ["Aerial reconnaissance spotted a %1 fireteam patrolling a nearby settlement. Ambush the unit and search the enemy combatants for intel.",[EGVAR(main,enemySide)] call BIS_fnc_sideName];
 [true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"search"] call EFUNC(main,setTask);
 
 // PUBLISH TASK

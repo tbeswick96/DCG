@@ -25,7 +25,7 @@ __________________________________________________________________*/
 [
     QGVAR(cooldown),
     "SLIDER",
-        ["Task Cooldown","Time in seconds between task spawns."],
+    ["Task Cooldown","Time in seconds between task spawns."],
     COMPONENT_NAME,
     [
         60,
@@ -33,6 +33,6 @@ __________________________________________________________________*/
         480,
         0
     ],
-    true,
+    false,
     {}
 ] call CBA_Settings_fnc_init;

@@ -9,6 +9,7 @@
 
 #define FOB_DEPLOYED !(GVAR(anchor) isEqualTo objNull)
 #define FOB_POSITION (getPos GVAR(anchor))
+#define FOB_CREATE_ANIM 'AinvPknlMstpSnonWnonDnon_medic4'
 
 #define PVEH_CREATE QGVAR(pveh_create)
 #define PVEH_DELETE QGVAR(pveh_delete)
@@ -20,7 +21,7 @@
 #define CREATE_ID QUOTE(DOUBLES(ADDON,create))
 #define CREATE_NAME "Deploy FOB"
 #define CREATE_STATEMENT \
-    [player,"AinvPknlMstpSnonWnonDnon_medic4"] call EFUNC(main,setAnim); \
+    [player,FOB_CREATE_ANIM] call EFUNC(main,setAnim); \
     [{ \
         _format = format ["Forward Operating Base Deployed \n \nPress [%1] to start building",call FUNC(getKeybind)]; \
         [_format,true] call EFUNC(main,displayText); \
@@ -28,7 +29,7 @@
     	publicVariableServer PVEH_CREATE; \
     }, [], 9] call CBA_fnc_waitAndExecute
 
-#define CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10} && {[player] call FUNC(isAllowedOwner)}
+#define CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10} && {!(COMPARE_STR(animationState player,FOB_CREATE_ANIM))} && {[player] call FUNC(isAllowedOwner)}
 #define CREATE_KEYCODE \
 	if (CREATE_COND) then { \
 		CREATE_STATEMENT \

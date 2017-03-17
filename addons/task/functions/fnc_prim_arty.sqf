@@ -27,7 +27,11 @@ _strength = TASK_STRENGTH + TASK_GARRISONCOUNT;
 _vehGrp = grpNull;
 _artyClass = "";
 _gunnerClass = "";
+_artyPool = [];
 _cleanup = [];
+_fnc_isArty = {
+    (getNumber (configFile >> "CfgVehicles" >> _this >> "artilleryScanner")) > 0
+};
 
 if (_position isEqualTo []) then {
 	private _center = EGVAR(main,center);
@@ -45,16 +49,26 @@ if (_position isEqualTo []) exitWith {
 
 call {
 	if (EGVAR(main,enemySide) isEqualTo EAST) exitWith {
-		_artyClass = "O_MBT_02_arty_F";
-		_gunnerClass = "O_crew_F";
+		_artyPool = EGVAR(main,artyPoolEast);
+        _artyClass = "O_MBT_02_arty_F";
+		_gunnerClass = selectRandom (EGVAR(main,unitPoolEast));
 	};
 	if (EGVAR(main,enemySide) isEqualTo RESISTANCE) exitWith {
-		_artyClass = "B_MBT_01_arty_F";
-		_gunnerClass = "I_crew_F";
+		_artyPool = EGVAR(main,artyPoolInd);
+        _artyClass = "B_T_MBT_01_arty_F";
+        _gunnerClass = selectRandom (EGVAR(main,unitPoolInd));
 	};
     if (EGVAR(main,enemySide) isEqualTo WEST) exitWith {
+        _artyPool = EGVAR(main,artyPoolWest);
         _artyClass = "B_MBT_01_arty_F";
-    	_gunnerClass = "B_crew_F";
+    	_gunnerClass = selectRandom (EGVAR(main,unitPoolWest));
+    };
+};
+
+if !(_artyPool isEqualTo []) then {
+    _temp = selectRandom _artyPool;
+    if (_temp call _fnc_isArty) then {
+        _artyClass = _temp;
     };
 };
 
@@ -76,22 +90,11 @@ _posArty = _posArty select 0;
 
 _arty = _artyClass createVehicle [0,0,0];
 _arty setDir random 360;
-_arty setPos _posArty;
-_arty lock 3;
-_arty allowCrewInImmobile true;
+[_arty,AGLtoASL _posArty] call EFUNC(main,setPosSafe);
+_arty lock 2;
 _cleanup pushBack _arty;
 
-_gunner = (createGroup EGVAR(main,enemySide)) createUnit [_gunnerClass, [0,0,0], [], 0, "NONE"];
-_gunner assignAsGunner _arty;
-_gunner moveInGunner  _arty;
-_gunner setFormDir (getDir _arty);
-_gunner setDir (getDir _arty);
-_gunner disableAI "FSM";
-_gunner setBehaviour "CARELESS";
-_gunner doWatch (_gunner modelToWorld [0,50,50]);
-_cleanup pushBack _gunner;
-
-_grp = [_position,0,_strength,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
+_grp = [_position,0,_strength,EGVAR(main,enemySide),true,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 _grp setVariable ["uksf_caching_excluded", true, true];
 
 [
@@ -102,24 +105,28 @@ _grp setVariable ["uksf_caching_excluded", true, true];
 		_cleanup append (units _grp);
 
         // regroup garrison units
-        _garrisonGrp = createGroup EGVAR(main,enemySide);
-        ((units _grp) select [0,TASK_GARRISONCOUNT]) joinSilent _garrisonGrp;
-        [_garrisonGrp,_garrisonGrp,_bRadius,1,false] call CBA_fnc_taskDefend;
-		_garrisonGrp setVariable ["uksf_caching_excluded", false, true];
+        [
+            _grp,
+            TASK_GARRISONCOUNT,
+            {[_this select 0,_this select 0,_this select 1,1,false] call CBA_fnc_taskDefend},
+            [_bRadius],
+            (count units _grp) - TASK_GARRISONCOUNT
+        ] call EFUNC(main,splitGroup);
 
         // regroup patrols
-        for "_i" from 0 to (count units _grp) - 1 step TASK_PATROL_UNITCOUNT do {
-            _patrolGrp = createGroup EGVAR(main,enemySide);
-            ((units _grp) select [0,TASK_PATROL_UNITCOUNT]) joinSilent _patrolGrp;
-            [_patrolGrp, _patrolGrp, _bRadius, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol;
-			_patrolGrp setVariable ["uksf_caching_excluded", false, true];
-        };
-		_grp setVariable ["uksf_caching_excluded", false, true];
+        [
+            _grp,
+            TASK_PATROL_UNITCOUNT,
+            {[_this select 0, _this select 0, _this select 1, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol},
+            [_bRadius],
+            0,
+            0.1
+        ] call EFUNC(main,splitGroup);
 	},
 	[_grp,_bRadius,_strength,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
 
-_vehPos = [_position,_bRadius,_bRadius + 100,8,0] call EFUNC(main,findPosSafe);
+_vehPos = [_position,_bRadius + 20,_bRadius + 150,8,0] call EFUNC(main,findPosSafe);
 _vehGrp = if !(_vehPos isEqualTo _position) then {
 	[_vehPos,1,1,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY,true] call EFUNC(main,spawnGroup);
 } else {
@@ -132,7 +139,7 @@ _vehGrp = if !(_vehPos isEqualTo _position) then {
         params ["_position","_vehGrp","_bRadius","_cleanup"];
 
         _cleanup pushBack (objectParent leader _vehGrp);
-        _cleanup pushBack (units _vehGrp);
+        _cleanup append (units _vehGrp);
 
         if (objectParent leader _vehGrp isKindOf "AIR") then {
             _waypoint = _vehGrp addWaypoint [_position,0];
@@ -149,7 +156,6 @@ _vehGrp = if !(_vehPos isEqualTo _position) then {
 ] call CBA_fnc_waitUntilAndExecute;
 
 _tar = EGVAR(main,locations) select {!(CHECK_DIST2D(_x select 1,_posArty,(worldSize*0.04) max 1000))};
-
 _tar = if !(_tar isEqualTo []) then {
 	(selectRandom _tar) select 1;
 } else {
@@ -162,14 +168,22 @@ _timerID = [
     format ["%1 Countdown", TASK_NAME],
 	{
 		if (isServer) then {
-			(_this select 1) doArtilleryFire [(_this select 2), "32Rnd_155mm_Mo_shells", 4];
+            params ["time","_arty","_class","_tar"];
+
+            _arty lock 3;
+            _gunner = (createGroup EGVAR(main,enemySide)) createUnit [_class, [0,0,0], [], 0, "NONE"];
+            _gunner assignAsGunner _arty;
+            _gunner moveInGunner  _arty;
+            _gunner disableAI "FSM";
+            _gunner setBehaviour "CARELESS";
+			_gunner doArtilleryFire [_tar, "32Rnd_155mm_Mo_shells", 4];
 		};
 	},
-	[_gunner,_tar]
+	[_arty,_gunnerClass,_tar]
 ] call EFUNC(main,setTimer);
 
 // SET TASK
-_taskDescription = "An enemy base, housing an artillery unit, is targetting a local settlement that's sympathetic to our mission. To keep the local sentiment on our side, we're tasked with eliminating the artillery before it's operational.";
+_taskDescription = format ["%1 artillery forces are threatening to attack a local settlement that's sympathetic to our mission. We're tasked with eliminating the artillery before it fires.",[EGVAR(main,enemySide)] call BIS_fnc_sideName];
 [true,_taskID,[_taskDescription,TASK_TITLE,""], ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe)),false,true,"destroy"] call EFUNC(main,setTask);
 
 TASK_DEBUG(_posArty);
@@ -180,7 +194,7 @@ TASK_PUBLISH(_position);
 // TASK HANDLER
 [{
 	params ["_args","_idPFH"];
-	_args params ["_taskID","_arty","_vehGrp","_position","_cleanup","_timerID","_tar"];
+	_args params ["_taskID","_arty","_position","_cleanup","_timerID","_tar"];
 
 	if (TASK_GVAR isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
@@ -206,4 +220,4 @@ TASK_PUBLISH(_position);
         TASK_APPROVAL(_tar,TASK_AV * -1);
 		TASK_EXIT;
 	};
-}, TASK_SLEEP, [_taskID,_arty,_vehGrp,_position,_cleanup,_timerID,_tar]] call CBA_fnc_addPerFrameHandler;
+}, TASK_SLEEP, [_taskID,_arty,_position,_cleanup,_timerID,_tar]] call CBA_fnc_addPerFrameHandler;

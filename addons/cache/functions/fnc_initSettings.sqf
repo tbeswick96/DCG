@@ -23,21 +23,16 @@ __________________________________________________________________*/
 ] call CBA_Settings_fnc_init;
 
 [
-    QGVAR(sniper),
-    "CHECKBOX",
-    ["Spawn Snipers","Spawn sniper units near occupied locations."],
+    QGVAR(dist),
+    "SLIDER",
+    "Cache Distance",
     COMPONENT_NAME,
-    true,
-    false,
-    {}
-] call CBA_Settings_fnc_init;
-
-[
-    QGVAR(static),
-    "CHECKBOX",
-    ["Spawn Static Emplacements","Spawn static emplacements in occupied locations."],
-    COMPONENT_NAME,
-    true,
+    [
+        100,
+        5000,
+        2000,
+        0
+    ],
     false,
     {}
 ] call CBA_Settings_fnc_init;

@@ -39,6 +39,9 @@ private _grp = if (_side isEqualTo "SUICIDE") then {
 private _drivers = [];
 private _check = [];
 
+_pos =+ _pos;
+_pos resize 2;
+
 call {
 	if (_side isEqualTo EAST) exitWith {
 		_unitPool = GVAR(unitPoolEast);
@@ -88,7 +91,7 @@ if (_type isEqualTo 0) exitWith {
 
 [{
 	params ["_args","_idPFH"];
-	_args params ["_pos","_grp","_type","_count","_unitPool","_vehPool","_airPool","_check","_cargo"];
+	_args params ["_pos","_grp","_type","_count","_unitPool","_vehPool","_airPool","_check","_cargo","_delay"];
 
 	if (count _check isEqualTo _count) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
@@ -100,7 +103,7 @@ if (_type isEqualTo 0) exitWith {
 		_veh = createVehicle [selectRandom _vehPool, _pos, [], 0, "NONE"];
 		_veh setVectorUp surfaceNormal getPos _veh;
 	} else {
-		_veh = createVehicle [selectRandom _airPool, _pos, [], 0, "FLY"];
+		_veh = createVehicle [selectRandom _airPool, _pos, [], 100, "FLY"];
 	};
 
 	_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
@@ -130,6 +133,6 @@ if (_type isEqualTo 0) exitWith {
 	};*/
 
 	_check pushBack 0;
-}, _delay, [_pos,_grp,_type,_count,_unitPool,_vehPool,_airPool,_check,_cargo]] call CBA_fnc_addPerFrameHandler;
+}, _delay, [_pos,_grp,_type,_count,_unitPool,_vehPool,_airPool,_check,_cargo,_delay]] call CBA_fnc_addPerFrameHandler;
 
 _grp

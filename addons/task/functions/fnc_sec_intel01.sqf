@@ -89,7 +89,7 @@ TASK_DEBUG(_position);
 
 // SET TASK
 _taskPos = ASLToAGL ([_position,120,150] call EFUNC(main,findPosSafe));
-_taskDescription = "A few days ago an informant didn't show for a meeting. He was suppose to hand off a GPS device with vital intel on the enemy's whereabouts. Today, UAV reconnaissance spotted activity nearby. Search the area for the informant and retrieve the GPS.";
+_taskDescription = "Yesterday, an informant was suppose to hand off a GPS device with vital intel on the enemy's whereabouts. UAV reconnaissance spotted activity nearby that may be related to our contact. Search the area for the informant and retrieve the GPS.";
 [true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"search"] call EFUNC(main,setTask);
 
 // PUBLISH TASK
@@ -111,14 +111,12 @@ TASK_PUBLISH(_position);
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		[_taskID, "SUCCEEDED"] call EFUNC(main,setTaskState);
 		TASK_APPROVAL(getPos (leader _grp),TASK_AV);
+        _cleanup call EFUNC(main,cleanup);
+		TASK_EXIT;
 
 		if (random 1 < 0.5) then {
-			_posArray = [getpos (leader _grp),50,250,175] call EFUNC(main,findPosGrid);
-			{
-				if !([_x,100] call EFUNC(main,getNearPlayers) isEqualTo []) then {
-					_posArray deleteAt _forEachIndex;
-				};
-			} forEach _posArray;
+			_posArray = [getpos (leader _grp),64,256,96] call EFUNC(main,findPosGrid);
+            _posArray = _posArray select {[_x,100] call EFUNC(main,getNearPlayers) isEqualTo []};
 
 			if !(_posArray isEqualTo []) then {
 				_grp = [selectRandom _posArray,0,TASK_STRENGTH,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
@@ -130,8 +128,5 @@ TASK_PUBLISH(_position);
 		} else {
 			[getpos (leader _grp),EGVAR(main,enemySide)] spawn EFUNC(main,spawnReinforcements);
 		};
-
-        _cleanup call EFUNC(main,cleanup);
-		TASK_EXIT;
 	};
 }, TASK_SLEEP, [_taskID,_grp,_cleanup]] call CBA_fnc_addPerFrameHandler;

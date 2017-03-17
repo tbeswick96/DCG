@@ -24,13 +24,8 @@ private _player = _this select 0;
 private _pos = getPos _player;
 private _type = floor random (TYPEMAX + 1);
 private _nearPlayers = [_pos,50] call EFUNC(main,getNearPlayers);
-private _posArray = [_pos,50,500,200] call EFUNC(main,findPosGrid);
-
-{
-	if !([_x,100] call EFUNC(main,getNearPlayers) isEqualTo []) then {
-		_posArray deleteAt _forEachIndex;
-	};
-} forEach _posArray;
+private _posArray = [_pos,64,512,256] call EFUNC(main,findPosGrid);
+_posArray = _posArray select {[_x,100] call EFUNC(main,getNearPlayers) isEqualTo []};
 
 if (_posArray isEqualTo []) exitWith {
 	WARNING("Hostile spawn position empty");
@@ -57,15 +52,14 @@ call {
 			_unitPool = EGVAR(main,unitPoolInd);
 		};
 
-		"GENFOR_R" createUnit [[0,0,0], _tempGrp];
+		(selectRandom _unitPool) createUnit [[0,0,0], _tempGrp];
 		_vest = vest (leader _tempGrp);
 		_weapon = currentWeapon (leader _tempGrp);
-		_mag = currentMagazine (leader _tempGrp);
-		_mags = [_mag, _mag, _mag, _mag, _mag, "HandGrenade", "HandGrenade", "SmokeShell", "SmokeShell"];
+		_mags = magazines (leader _tempGrp);
 
 		deleteVehicle (leader _tempGrp);
 
-		_grp = [_hostilePos,0,REBEL_COUNT,CIVILIAN,false,0.5] call EFUNC(main,spawnGroup);
+		_grp = [_hostilePos,0,REBEL_COUNT,CIVILIAN,false,1] call EFUNC(main,spawnGroup);
 
 		[
 			{count units (_this select 0) >= REBEL_COUNT},
@@ -75,13 +69,10 @@ call {
 				_grp = [units _grp] call EFUNC(main,setSide);
 
 				{
-					[_x, _vest, _weapon, _mags] spawn {
-						params ["_x", "_vest", "_weapon", "_mags"];
-						_y = _x;
-						_y addVest _vest;
-						_y addWeapon _weapon;
-						{_y addMagazine _x} forEach _mags;
-					};
+					_y = _x;
+					_y addVest _vest;
+					_y addWeapon _weapon;
+					{_y addMagazine _x} forEach _mags;
 				} forEach units _grp;
 
 				_wp = _grp addWaypoint [_pos,0];

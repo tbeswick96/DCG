@@ -39,14 +39,10 @@ PREP(setSettingsValue);
 PREP(setSettings);
 PREP(setSettingsConfig);
 PREP(setSettingsParams);
-PREP(exportConfigList);
-PREP(exportSettings);
-PREP(exportBase);
 PREP(shuffle);
 PREP(setOwner);
 PREP(setTask);
 PREP(setTaskState);
-PREP(setPatrol);
 PREP(setSide);
 PREP(setAnim);
 PREP(getUnitCount);
@@ -61,6 +57,12 @@ PREP(spawnGroup);
 PREP(spawnReinforcements);
 PREP(spawnSniper);
 PREP(spawnStatic);
+PREP(exportSettings);
+PREP(exportPool);
+PREP(exportBase);
+PREP(splitGroup);
+PREP(exportNetworkTraffic);
+// PREP(exportConfigList);
 
 GVAR(locations) = [];
 GVAR(locals) = [];
@@ -69,11 +71,9 @@ GVAR(marines) = [];
 GVAR(baseLocation) = locationNull;
 GVAR(range) = worldSize*0.5;
 GVAR(center) = [GVAR(range),GVAR(range),0];
-GVAR(playerSide) = sideUnknown;
-GVAR(enemySide) = sideUnknown;
 GVAR(markerCleanup) = [];
 GVAR(objectCleanup) = [];
-GVAR(saveDataCurrent) = [DATA_MISSION_ID];
+GVAR(saveDataCurrent) = [];
 GVAR(debugMarkers) = [];
 
 publicVariable QUOTE(ADDON);
@@ -86,11 +86,14 @@ publicVariable QFUNC(displayText);
 publicVariable QFUNC(displayGUIMessage);
 publicVariable QFUNC(armory);
 
+// variables required on all machines
 publicVariable QGVAR(range);
 publicVariable QGVAR(center);
-publicVariable QGVAR(enemySide);
-publicVariable QGVAR(playerSide);
 
+// load current mission data
+call FUNC(loadData);
+
+// init cba settings
 INITSETTINGS;
 
 // set config and mission settings

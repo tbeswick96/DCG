@@ -48,13 +48,10 @@ if (_position isEqualTo []) exitWith {
 
 for "_i" from 1 to 100 do {
 	_vehPos = [_position,0,25,16,0,.35] call EFUNC(main,findPosSafe);
-
 	if !(_vehPos isEqualTo _position) exitWith {};
-
-	_vehPos = [];
 };
 
-if (_vehPos isEqualTo []) exitWith {
+if (_vehPos isEqualTo _position) exitWith {
 	TASK_EXIT_DELAY(0);
 };
 
@@ -72,9 +69,11 @@ call {
 
 _truck = _type createVehicle [0,0,0];
 _truck lock 3;
+_truck setFuel 0;
 [_truck,_vehPos] call EFUNC(main,setPosSafe);
 _truck allowDamage false;
 _cleanup pushBack _truck;
+
 _driver = (createGroup CIVILIAN) createUnit ["C_man_w_worker_F", [0,0,0], [], 0, "NONE"];
 _driver moveInDriver _truck;
 _driver setBehaviour "CARELESS";
@@ -85,7 +84,7 @@ _grp = [_position,0,FRIENDLY_COUNT,EGVAR(main,playerSide),false,TASK_SPAWN_DELAY
 _cleanup append (units _grp);
 
 // SET TASK
-_taskDescription = "A friendly unit is resupplying beyond the safezone. Move to the area and provide security while the transport is idle.";
+_taskDescription = format ["A %1 unit is resupplying beyond the safezone. Move to the area and provide security while the vehicle is idle.",[EGVAR(main,playerSide)] call BIS_fnc_sideName];
 [true,_taskID,[_taskDescription,TASK_TITLE,""],_position,false,true,"defend"] call EFUNC(main,setTask);
 
 // PUBLISH TASK
@@ -103,13 +102,13 @@ TASK_PUBLISH(_position);
 		TASK_EXIT_DELAY(30);
 	};
 
-	if !((allPlayers inAreaArray [getPosASL _truck, TASK_DIST_START, TASK_DIST_START, 0, false, -1]) isEqualTo []) exitWith {
+	if !(([getPos _truck,TASK_DIST_START] call EFUNC(main,getNearPlayers)) isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 		_timerID = [COUNTDOWN,60,TASK_NAME] call EFUNC(main,setTimer);
 
 		[{
 			params ["_args","_idPFH"];
-			_args params ["_taskID","_truck","_grp","_enemyCount","_timerID"];
+			_args params ["_taskID","_truck","_cleanup","_enemyCount","_timerID"];
 
 			if (TASK_GVAR isEqualTo []) exitWith {
 				[_idPFH] call CBA_fnc_removePerFrameHandler;
@@ -119,7 +118,7 @@ TASK_PUBLISH(_position);
 				TASK_EXIT_DELAY(30);
 			};
 
-			if ((allPlayers inAreaArray [getPosASL _truck, TASK_DIST_FAIL, TASK_DIST_FAIL, 0, false, -1]) isEqualTo []) exitWith {
+			if (([getPos _truck,TASK_DIST_FAIL] call EFUNC(main,getNearPlayers)) isEqualTo []) exitWith {
 				[_idPFH] call CBA_fnc_removePerFrameHandler;
 				[_timerID] call CBA_fnc_removePerFrameHandler;
 				[_taskID, "FAILED"] call EFUNC(main,setTaskState);
@@ -136,6 +135,7 @@ TASK_PUBLISH(_position);
 				TASK_EXIT;
 
                 _pos = [getPos _truck,3000,4000] call EFUNC(main,findPosSafe);
+                _truck setFuel 1;
                 _wp = (group driver _truck) addWaypoint [_pos, 0];
                 _wp setWaypointSpeed "NORMAL";
                 _wp setWaypointBehaviour "CARELESS";
@@ -144,7 +144,7 @@ TASK_PUBLISH(_position);
 			GVAR(defend_enemies) = GVAR(defend_enemies) select {!(isNull _x)};
 
 			if (random 1 < 0.2 && {count GVAR(defend_enemies) < _enemyCount}) then {
-				_grp = [[getpos _truck,200,400] call EFUNC(main,findPosSafe),0,ENEMY_COUNT,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
+				_grp = [[getpos _truck,200,400] call EFUNC(main,findPosSafe),0,ENEMY_COUNT,EGVAR(main,enemySide),true,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 				[
 					{count units (_this select 0) >= ENEMY_COUNT},
 					{
@@ -154,6 +154,6 @@ TASK_PUBLISH(_position);
 					[_grp,_truck]
 				] call CBA_fnc_waitUntilAndExecute;
 			};
-		}, TASK_SLEEP, [_taskID,_truck,_grp,TASK_STRENGTH,_timerID]] call CBA_fnc_addPerFrameHandler;
+		}, TASK_SLEEP, [_taskID,_truck,_cleanup,TASK_STRENGTH,_timerID]] call CBA_fnc_addPerFrameHandler;
 	};
 }, TASK_SLEEP, [_taskID,_truck,_cleanup]] call CBA_fnc_addPerFrameHandler;

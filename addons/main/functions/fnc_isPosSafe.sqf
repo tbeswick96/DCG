@@ -25,6 +25,10 @@ params [
     ["_ignore",objNull,[objNull]]
 ];
 
+// always check position at ground level
+_pos =+ _pos;
+_pos resize 2;
+
 // does not find objects created with createVehicle
 private _objs = nearestTerrainObjects [_pos, [], _dist, false];
 
@@ -33,8 +37,8 @@ if !(_objs isEqualTo []) exitWith {false};
 _objs = _pos nearObjects ["All",_dist];
 _objs = _objs select {
     !(_x isEqualTo _ignore) &&
-    {getNumber (configFile >> "CfgVehicles" >> typeOf _x >> "scope") > 1} &&
-    {!(_x isKindOf "Logic")}
+    {!(_x isKindOf "Logic")} &&
+    {getNumber (configFile >> "CfgVehicles" >> typeOf _x >> "scope") > 1}
 };
 
 if (!(_objs isEqualTo []) || {_pos isFlatEmpty [-1, -1, _gradient, 30, _water] isEqualTo []}) exitWith {false};

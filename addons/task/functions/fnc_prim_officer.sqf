@@ -48,7 +48,7 @@ call {
 	};
 };
 
-if (_position isEqualTo []) exitWith {
+if (_position isEqualTo [] || {_classes isEqualTo []}) exitWith {
 	TASK_EXIT_DELAY(0);
 };
 
@@ -60,7 +60,7 @@ _officer = (createGroup EGVAR(main,enemySide)) createUnit [selectRandom _classes
 _cleanup pushBack _officer;
 [group _officer,_position,_bRadius*0.5,1,false] call CBA_fnc_taskDefend;
 
-_grp = [_position,0,_strength,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
+_grp = [_position,0,_strength,EGVAR(main,enemySide),true,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 _grp setVariable ["uksf_caching_excluded", true, true];
 
 [
@@ -71,24 +71,28 @@ _grp setVariable ["uksf_caching_excluded", true, true];
         _cleanup append (units _grp);
 
         // regroup garrison units
-        _garrisonGrp = createGroup EGVAR(main,enemySide);
-        ((units _grp) select [0,TASK_GARRISONCOUNT]) joinSilent _garrisonGrp;
-        [_garrisonGrp,_garrisonGrp,_bRadius,1,false] call CBA_fnc_taskDefend;
-		_garrisonGrp setVariable ["uksf_caching_excluded", false, true];
+        [
+            _grp,
+            TASK_GARRISONCOUNT,
+            {[_this select 0,_this select 0,_this select 1,1,false] call CBA_fnc_taskDefend},
+            [_bRadius],
+            (count units _grp) - TASK_GARRISONCOUNT
+        ] call EFUNC(main,splitGroup);
 
         // regroup patrols
-        for "_i" from 0 to (count units _grp) - 1 step TASK_PATROL_UNITCOUNT do {
-            _patrolGrp = createGroup EGVAR(main,enemySide);
-            ((units _grp) select [0,TASK_PATROL_UNITCOUNT]) joinSilent _patrolGrp;
-            [_patrolGrp, _patrolGrp, _bRadius, 5, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol;
-			_patrolGrp setVariable ["uksf_caching_excluded", false, true];
-        };
-		_grp setVariable ["uksf_caching_excluded", false, true];
+        [
+            _grp,
+            TASK_PATROL_UNITCOUNT,
+            {[_this select 0, _this select 0, _this select 1, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [0,5,8]] call CBA_fnc_taskPatrol},
+            [_bRadius],
+            0,
+            0.1
+        ] call EFUNC(main,splitGroup);
 	},
 	[_grp,_bRadius,_strength,_cleanup]
 ] call CBA_fnc_waitUntilAndExecute;
 
-_vehPos = [_position,_bRadius,_bRadius + 100,8,0] call EFUNC(main,findPosSafe);
+_vehPos = [_position,_bRadius + 20,_bRadius + 120,8,0] call EFUNC(main,findPosSafe);
 _vehGrp = if !(_vehPos isEqualTo _position) then {
 	[_vehPos,1,1,EGVAR(main,enemySide),false,TASK_SPAWN_DELAY,true] call EFUNC(main,spawnGroup);
 } else {
@@ -121,7 +125,7 @@ TASK_DEBUG(getPos _officer);
 
 // SET TASK
 _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe));
-_taskDescription = "A high ranking enemy officer has been spotted nearby. Find and eliminate the officer.";
+_taskDescription = format ["A high ranking %1 officer has been spotted nearby. Find and eliminate the officer.",[EGVAR(main,enemySide)] call BIS_fnc_sideName];
 [true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"kill"] call EFUNC(main,setTask);
 
 // PUBLISH TASK

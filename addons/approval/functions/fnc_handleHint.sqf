@@ -18,8 +18,12 @@ params [
 ];
 
 private _region = [getPos _player] call FUNC(getRegion);
-private _value = round ([getpos _player] call FUNC(getValue));
-private _safety = (1 - (AV_CHANCE(getPos _player))) * 100; 
+private _value = [getpos _player] call FUNC(getValue);
+private _safety = (1 - (AV_CHANCE(getPos _player))) * 100;
+
+_value = parseNumber (_value toFixed 1);
+_safety = parseNumber (_safety toFixed 1);
+
 private _hint = format ["
     %4 \n \n
     Region Approval: %1/%3 \n
