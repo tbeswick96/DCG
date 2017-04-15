@@ -10,6 +10,7 @@ ADDON = false;
 
 PREP(initSettings);
 PREP(init);
+PREP(handleAssign);
 PREP(handleCreate);
 PREP(handleDelete);
 PREP(handleTransfer);
@@ -46,4 +47,4 @@ publicVariable QGVAR(respawnPos);
 publicVariable QGVAR(anchor);
 publicVariable QGVAR(pbanchors);
 
-INITSETTINGS;
+SETTINGS_INIT;

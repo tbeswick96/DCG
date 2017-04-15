@@ -19,16 +19,12 @@ params [
 
 private _region = [getPos _player] call FUNC(getRegion);
 private _value = [getpos _player] call FUNC(getValue);
-private _safety = (1 - (AV_CHANCE(getPos _player))) * 100;
+private _safety = linearConversion [0, 1, AV_CONVERT2(getPos _player), 0, 100, true];
 
 _value = parseNumber (_value toFixed 1);
 _safety = parseNumber (_safety toFixed 1);
 
-private _hint = format ["
-    %4 \n \n
-    Region Approval: %1/%3 \n
-    Region Safety: %2/%3 \n
-",_value,_safety,AV_MAX,toUpper COMPONENT_NAME];
+private _hint = format ["Region Approval: %1/%3 \nRegion Safety: %2/%3",_value,_safety,AV_MAX];
 
 if !(isNil "_region") then {
     [

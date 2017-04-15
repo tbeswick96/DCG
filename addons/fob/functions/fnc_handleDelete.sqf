@@ -16,20 +16,22 @@ private _unit = getAssignedCuratorUnit GVAR(curator);
 
 [FOB_POSITION,AV_FOB*-1] call EFUNC(approval,addValue);
 deleteMarker (GETVAR(GVAR(anchor),GVAR(marker),""));
+GVAR(respawnPos) call BIS_fnc_removeRespawnPosition;
 deleteVehicle GVAR(anchor);
-
 unassignCurator GVAR(curator);
 
 // reassign previous curator
 if !(isNull GVAR(curatorExternal)) then {
+    [GVAR(curatorExternal),_unit] call FUNC(handleAssign);
+
+    // reset external curator var after reassign
     [
+        {getAssignedCuratorUnit GVAR(curatorExternal) isEqualTo (_this select 0)},
         {
-            (_this select 0) assignCurator GVAR(curatorExternal);
             GVAR(curatorExternal) = objNull;
         },
-        [_unit],
-        2
-    ] call CBA_fnc_waitAndExecute;
-};
-
-GVAR(respawnPos) call BIS_fnc_removeRespawnPosition;
+        [_unit]
+    ] call CBA_fnc_waitUntilAndExecute;
+} else {
+    [objNull,_unit] call FUNC(handleAssign);
+}

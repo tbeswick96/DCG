@@ -116,7 +116,7 @@ for "_i" from 0 to (count _cfgLocations) - 1 do {
 } count GVAR(locations);
 
 // create world size position grid
-GVAR(grid) = [EGVAR(main,center),1024,worldSize,0,0,0] call FUNC(findPosGrid);
+GVAR(grid) = [EGVAR(main,center),1000,worldSize,0,0,0] call FUNC(findPosGrid);
 
 [FUNC(handleSafezone), 60, []] call CBA_fnc_addPerFrameHandler;
 [FUNC(handleCleanup), 120, []] call CBA_fnc_addPerFrameHandler;
@@ -155,10 +155,10 @@ _data = QUOTE(ADDON) call FUNC(loadDataAddon);
         {
             _x call EFUNC(main,setAction);
         } forEach [
-            [QUOTE(DOUBLES(PREFIX,actions)),format["%1 Actions",toUpper QUOTE(PREFIX)],{},QUOTE(true),{},[],player,1,["ACE_SelfActions"]],
+            [QUOTE(DOUBLES(PREFIX,actions)),format["%1 Actions",toUpper QUOTE(PREFIX)],{},{true},{},[],player,1,["ACE_SelfActions"]],
             [QUOTE(DOUBLES(PREFIX,data)),"Mission Data"],
-            [SAVEDATA_ID,SAVEDATA_NAME,{SAVEDATA_STATEMENT},QUOTE(SAVEDATA_COND),{},[],player,1,["ACE_SelfActions",QUOTE(DOUBLES(PREFIX,actions)),QUOTE(DOUBLES(PREFIX,data))]],
-            [DELETEDATA_ID,DELETEDATA_NAME,{DELETEDATA_STATEMENT},QUOTE(DELETEDATA_COND),{},[],player,1,["ACE_SelfActions",QUOTE(DOUBLES(PREFIX,actions)),QUOTE(DOUBLES(PREFIX,data))]]
+            [SAVEDATA_ID,SAVEDATA_NAME,{SAVEDATA_STATEMENT},{SAVEDATA_COND},{},[],player,1,["ACE_SelfActions",QUOTE(DOUBLES(PREFIX,actions)),QUOTE(DOUBLES(PREFIX,data))]],
+            [DELETEDATA_ID,DELETEDATA_NAME,{DELETEDATA_STATEMENT},{DELETEDATA_COND},{},[],player,1,["ACE_SelfActions",QUOTE(DOUBLES(PREFIX,actions)),QUOTE(DOUBLES(PREFIX,data))]]
         ];
 	};
 }] remoteExecCall [QUOTE(BIS_fnc_call), 0, true];

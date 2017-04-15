@@ -10,9 +10,10 @@ ADDON = false;
 
 PREP(initSettings);
 PREP(handleLoadData);
+PREP(handleIED);
 
 GVAR(list) = [];
 
 publicVariable QFUNC(initSettings);
 
-INITSETTINGS;
+SETTINGS_INIT;

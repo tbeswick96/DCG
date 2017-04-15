@@ -14,9 +14,8 @@ PREP(handleLoadData);
 PREP(handleOccupied);
 PREP(setOccupied);
 
-GVAR(locations) = [];
-GVAR(locationCount) = 1;
+GVAR(location) = [];
 
 publicVariable QFUNC(initSettings);
 
-INITSETTINGS;
+SETTINGS_INIT;

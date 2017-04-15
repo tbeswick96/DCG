@@ -80,10 +80,10 @@
 
 ///////////////////
 
-#define ADDON_TITLE (toUpper QUOTE(ADDON)) splitString "_" joinString " "
 #define HEADLESSCLIENT Jarvis
 #define ACTIONPATH [QUOTE(DOUBLES(ACE,SelfActions)),QUOTE(DOUBLES(PREFIX,actions)),QUOTE(ADDON)]
-#define INITSETTINGS call FUNC(initSettings); remoteExecCall [QFUNC(initSettings), -2, true]
+#define SETTINGS_INIT remoteExecCall [QFUNC(initSettings), -2, true]; call FUNC(initSettings)
+#define SETTINGS_OVERWRITE(SETTING,VALUE) [{DOUBLES(PREFIX,main) && {CHECK_POSTBRIEFING}},{missionNamespace setVariable [SETTING,_this]},VALUE] remoteExecCall [QUOTE(CBA_fnc_waitUntilAndExecute),-2,true]
 
 #define ISDRIVER QEGVAR(main,isDriver)
 #define ISONPATROL QEGVAR(main,isOnPatrol)
@@ -102,6 +102,17 @@
 #define COMPARE_STR(STR1,STR2) ((STR1) == (STR2))
 #define COMPARE_STR_CASE(STR1,STR2) ((STR1) isEqualTo (STR2))
 
+#define COST_MAN 1.5
+#define COST_CAR 3
+#define COST_TANK 6
+#define COST_AIR 8
+#define COST_SHIP 3
+#define COST_AMMO 0.1
+#define COST_STRUCT 2
+#define COST_ITEM 0.1
+#define COST_FORT 0.2
+#define COST_SIGN 0.1
+
 #define PVEH_AVADD QEGVAR(approval,pveh_add)
 #define AV_LOCATION_ID(LOCATION) ([QUOTE(PREFIX),"approval",LOCATION] joinString "_")
 #define AV_MIN 0
@@ -118,4 +129,5 @@
 #define AV_VILLAGE ((AV_MAX*0.05)*EGVAR(approval,multiplier))
 #define AV_CITY ((AV_MAX*0.1)*EGVAR(approval,multiplier))
 #define AV_CAPITAL ((AV_MAX*0.15)*EGVAR(approval,multiplier))
-#define AV_CHANCE(POS) ((1 - (linearConversion [AV_MIN, AV_MAX, [POS] call EFUNC(approval,getValue), 0, 1, true])) * 0.5)
+#define AV_CONVERT1(POS) (linearConversion [AV_MIN, AV_MAX, [POS] call EFUNC(approval,getValue), 0, 1, true])
+#define AV_CONVERT2(POS) (1 - ((1 - AV_CONVERT1(POS)) * 0.5))

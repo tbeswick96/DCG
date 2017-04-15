@@ -10,8 +10,7 @@ Arguments:
 1: type of group <NUMBER>
 2: number of units in group <NUMBER>
 3: side of group <SIDE>
-4: disable group caching <BOOL>
-5: delay between unit spawns <NUMBER>
+4: delay between unit spawns <NUMBER>
 5: fill vehicle cargo <BOOL>
 
 Return:
@@ -25,8 +24,7 @@ params [
 	["_pos",[0,0,0],[[]]],
 	["_type",0,[0]],
 	["_count",1,[0]],
-	["_side",GVAR(enemySide),[sideUnknown,""]],
-	["_uncache",false,[false]],
+	["_side",GVAR(enemySide),[sideUnknown]],
 	["_delay",1,[0]],
 	["_cargo",false,[false]]
 ];
@@ -38,6 +36,8 @@ private _grp = if (_side isEqualTo "SUICIDE") then {
 	};
 private _drivers = [];
 private _check = [];
+
+_grp deleteGroupWhenEmpty true;
 
 _pos =+ _pos;
 _pos resize 2;
@@ -115,22 +115,21 @@ if (_type isEqualTo 0) exitWith {
 		_unit moveInGunner _veh;
 	};
 
-	/*if (_cargo) then {
+	if (_cargo) then {
+        _veh setUnloadInCombat [true,false];
+
 		[{
 			params ["_args","_idPFH"];
 			_args params ["_grp","_unitPool","_veh","_count"];
-			[{
-				params ["_grp","_unitPool","_veh","_count","_idPFH"];
 
-			    if (!(alive _veh) || {count crew _veh >= _count}) exitWith {
-				    [_idPFH] call CBA_fnc_removePerFrameHandler;
-			    };
+			if (!(alive _veh) || {count crew _veh >= _count}) exitWith {
+				[_idPFH] call CBA_fnc_removePerFrameHandler;
+			};
 
-				_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
-				_unit moveInCargo _veh;
-			}, [_grp,_unitPool,_veh,_count,_idPFH], 10] call CBA_fnc_waitAndExecute;
+			_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
+			_unit moveInCargo _veh;
 		}, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh)]] call CBA_fnc_addPerFrameHandler;
-	};*/
+	};
 
 	_check pushBack 0;
 }, _delay, [_pos,_grp,_type,_count,_unitPool,_vehPool,_airPool,_check,_cargo,_delay]] call CBA_fnc_addPerFrameHandler;

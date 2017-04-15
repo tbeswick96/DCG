@@ -23,8 +23,7 @@ params [
 	["_count",1,[0]],
 	["_min",100,[0]],
 	["_max",1000,[0]],
-	["_side",GVAR(enemySide)],
-	["_uncache",false]
+	["_side",GVAR(enemySide)]
 ];
 
 private _return = [];
@@ -53,7 +52,7 @@ call {
 
 	private _mrk = createMarker [format["%1_sniper_%2",QUOTE(PREFIX),_unit],getposATL leader _grp];
 	_mrk setMarkerType "o_recon";
-	_mrk setMarkerColor ([side _unit,true] call BIS_fnc_sideColor); 
+	_mrk setMarkerColor ([side _unit,true] call BIS_fnc_sideColor);
 	_mrk setMarkerSize [0.7,0.7];
 	[_mrk] call EFUNC(main,setDebugMarker);
 

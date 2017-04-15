@@ -7,18 +7,20 @@ secondary task - kill officer
 
 Arguments:
 0: forced task position <ARRAY>
+1: forced base strength <NUMBER>
 
 Return:
 none
 __________________________________________________________________*/
 #define TASK_SECONDARY
 #define TASK_NAME 'Eliminate Officer'
-#define SAFE_DIST 4
+#define SAFE_DIST 6
 #define SAFE_GRAD 0.4
 #include "script_component.hpp"
 
 params [
-    ["_position",[],[[]]]
+    ["_position",[],[[]]],
+    ["_baseStrength",random 0.2,[0]]
 ];
 
 // CREATE TASK
@@ -32,7 +34,13 @@ if (_position isEqualTo [] && {!(EGVAR(main,locals) isEqualTo [])}) then {
 };
 
 if (!(_position isEqualTo []) && {!([_position,SAFE_DIST,0,SAFE_GRAD] call EFUNC(main,isPosSafe))}) then {
-	_position = [_position,4,64,SAFE_DIST,0,SAFE_GRAD] call EFUNC(main,findPosSafe);
+	_posSafe = [_position,4,64,SAFE_DIST,0,SAFE_GRAD] call EFUNC(main,findPosSafe);
+
+    if !(_posSafe isEqualTo _position) then {
+        _position = _posSafe;
+    } else {
+        _position = [];
+    };
 };
 
 if (_position isEqualTo []) exitWith {
@@ -51,7 +59,7 @@ call {
 	};
 };
 
-_base = [_position,random 0.2] call EFUNC(main,spawnBase);
+_base = [ASLtoAGL _position,_baseStrength] call EFUNC(main,spawnBase);
 _bRadius = _base select 0;
 _cleanup append (_base select 2);
 
@@ -59,7 +67,7 @@ _officer = (createGroup EGVAR(main,enemySide)) createUnit [selectRandom _classes
 _cleanup pushBack _officer;
 [group _officer,_position,_bRadius,1,false] call CBA_fnc_taskDefend;
 
-_grp = [_position,0,_strength,EGVAR(main,enemySide),true,TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
+_grp = [_position,0,_strength,EGVAR(main,enemySide),TASK_SPAWN_DELAY] call EFUNC(main,spawnGroup);
 _grp setVariable ["uksf_caching_excluded", true, true];
 
 [
@@ -85,10 +93,12 @@ _grp setVariable ["uksf_caching_excluded", true, true];
 // SET TASK
 _taskPos = ASLToAGL ([_position,TASK_DIST_MRK,TASK_DIST_MRK] call EFUNC(main,findPosSafe));
 _taskDescription = format ["A low ranking %1 officer has been spotted nearby. Find and eliminate the officer.",[EGVAR(main,enemySide)] call BIS_fnc_sideName];
-[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,true,"kill"] call EFUNC(main,setTask);
+[true,_taskID,[_taskDescription,TASK_TITLE,""],_taskPos,false,0,true,"kill"] call BIS_fnc_taskCreate;
 
 // PUBLISH TASK
-TASK_PUBLISH(_position);
+_data = [_position,_baseStrength];
+TASK_PUBLISH(_data);
+TASK_DEBUG(_position);
 
 // TASK HANDLER
 [{
@@ -97,14 +107,14 @@ TASK_PUBLISH(_position);
 
 	if (TASK_GVAR isEqualTo []) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
-		[_taskID, "CANCELED"] call EFUNC(main,setTaskState);
+		[_taskID, "CANCELED"] call BIS_fnc_taskSetState;
 		_cleanup call EFUNC(main,cleanup);
 		TASK_EXIT_DELAY(30);
 	};
 
 	if !(alive _officer) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
-		[_taskID, "SUCCEEDED"] call EFUNC(main,setTaskState);
+		[_taskID, "SUCCEEDED"] call BIS_fnc_taskSetState;
 		TASK_APPROVAL(_position,TASK_AV);
 		_cleanup call EFUNC(main,cleanup);
 		TASK_EXIT;

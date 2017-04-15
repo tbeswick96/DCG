@@ -4,7 +4,7 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-if !(isServer) exitWith {};
+CHECK_PREINIT;
 
 ADDON = false;
 
@@ -41,8 +41,6 @@ PREP(setSettingsConfig);
 PREP(setSettingsParams);
 PREP(shuffle);
 PREP(setOwner);
-PREP(setTask);
-PREP(setTaskState);
 PREP(setSide);
 PREP(setAnim);
 PREP(getUnitCount);
@@ -62,6 +60,7 @@ PREP(exportPool);
 PREP(exportBase);
 PREP(splitGroup);
 PREP(exportNetworkTraffic);
+PREP(landAt);
 // PREP(exportConfigList);
 
 GVAR(locations) = [];
@@ -81,6 +80,7 @@ publicVariable QUOTE(ADDON);
 // functions required on all machines
 publicVariable QFUNC(initSettings);
 publicVariable QFUNC(setAction);
+publicVariable QFUNC(setAnim);
 publicVariable QFUNC(removeAction);
 publicVariable QFUNC(displayText);
 publicVariable QFUNC(displayGUIMessage);
@@ -94,7 +94,7 @@ publicVariable QGVAR(center);
 call FUNC(loadData);
 
 // init cba settings
-INITSETTINGS;
+SETTINGS_INIT;
 
 // set config and mission settings
 call FUNC(setSettings);

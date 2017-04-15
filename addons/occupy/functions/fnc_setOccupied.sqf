@@ -37,7 +37,7 @@ params [
     ["_data",nil,[[]]]
 ];
 
-INFO_1("Occupying %1",_name);
+INFO_1("%1",_this);
 
 private _objArray = [];
 private _mrkArray = [];
@@ -46,12 +46,6 @@ private _typeName = "";
 private _infCount = 0;
 private _vehCount = 0;
 private _airCount = 0;
-private _grid = [_center,32,_size,0,SAFE_DIST,0] call EFUNC(main,findPosGrid);
-
-if (_grid isEqualTo []) exitWith {
-    WARNING("Cannot occupy location, grid is empty");
-    [] call FUNC(findLocation);
-};
 
 call {
 	if (EGVAR(main,enemySide) isEqualTo EAST) exitWith {
@@ -69,60 +63,57 @@ if (_pool isEqualTo []) exitWith {
     WARNING("Cannot occupy location, unit pool empty")
 };
 
-GVAR(locations) pushBack [_name,_center,_size,_type]; // set as occupied location
-EGVAR(civilian,blacklist) pushBack _name; // stop civilians from spawning in location
-
 call {
     if (COMPARE_STR(_type,"NameCityCapital")) exitWith {
         _typeName = "Capital";
+    };
+    if (COMPARE_STR(_type,"NameCity")) exitWith {
+        _typeName = "City";
+    };
+    _typeName = "Village";
+};
+
+if (isNil "_data") then {
+    if (COMPARE_STR(_type,"NameCityCapital")) exitWith {
         _infCount = INF_COUNT_CAP;
         _vehCount = VEH_COUNT_CAP;
         _airCount = AIR_COUNT_CAP;
     };
     if (COMPARE_STR(_type,"NameCity")) exitWith {
-        _typeName = "City";
         _infCount = INF_COUNT_CITY;
         _vehCount = VEH_COUNT_CITY;
         _airCount = AIR_COUNT_CITY;
     };
-
-    _typeName = "Village";
     _infCount = INF_COUNT_VILL;
     _vehCount = VEH_COUNT_VILL;
     _airCount = AIR_COUNT_VILL;
-};
-
-if (isNil "_data") then {
-    PREP_VEH(_center,_grid,_vehCount,_size*1.25);
-    PREP_AIR(_center,_airCount);
-    PREP_STATIC(_center,2,_size,_grid,_objArray);
-    PREP_SNIPER(_center,2,_size);
-    PREP_INF(_center,_grid,_infCount,_size*0.68);
 } else {
-    PREP_VEH(_center,_grid,_data select 1,_size*1.25);
-    PREP_AIR(_center,_data select 2);
-    PREP_STATIC(_center,2,_size,_grid,_objArray);
-    PREP_SNIPER(_center,2,_size);
-    PREP_INF(_center,_grid,_data select 0,_size*0.68);
+    _infCount = _data select 0;
+    _vehCount = _data select 1;
+    _airCount = _data select 2;
 };
 
-// spawn vehicle wrecks
-for "_i" from 0 to (ceil random 2) do {
-    if (_grid isEqualTo []) exitWith {};
+PREP_STATIC(_center,2,_size,_objArray);
+PREP_VEH(_center,_vehCount,_size*1.25);
+PREP_AIR(_center,_airCount);
+PREP_INF(_center,_infCount,_size*0.68);
+PREP_SNIPER(_center,2,_size);
 
-	private _vehPos = selectRandom _grid;
-    _grid deleteAt (_grid find _vehPos);
+// destroy buildings
+private _buildings = _center nearObjects ["House", _size];
 
-	if ([_vehPos,8] call EFUNC(main,isPosSafe)) then {
-		private _veh = createSimpleObject [selectRandom WRECKS,[0,0,0]];
-		_veh setDir random 360;
-		_veh setPosASL _vehPos;
-		_veh setVectorUp surfaceNormal _vehPos;
-		private _fx = "test_EmptyObjectForSmoke" createVehicle [0,0,0];
-		_fx setPosWorld (getPosWorld _veh);
-		_objArray pushBack _veh;
-        _veh setVariable [QUOTE(DOUBLES(ADDON,wreck)), true];
-	};
+if !(_buildings isEqualTo []) then {
+    private _count = ceil random 4;
+
+    for "_i" from 1 to (_count min (count _buildings)) do {
+        private _house = selectRandom _buildings;
+        _buildings deleteAt (_buildings find _house);
+        if !((_house buildingPos -1) isEqualTo []) then {
+            _house setDamage [1, false];
+            private _fx = "test_EmptyObjectForSmoke" createVehicle [0,0,0];
+            _fx setPosWorld (getPosWorld _house);
+        };
+    };
 };
 
 private _iconPos =+ _center;
@@ -133,6 +124,9 @@ _icon setMarkerColor ([EGVAR(main,enemySide),true] call BIS_fnc_sideColor);
 _icon setMarkerText (["Liberate",_typeName] joinString " ");
 _icon setMarkerType "o_installation";
 _mrkArray pushBack _icon;
+
+GVAR(location) = [_name,_center,_size,_type]; // set as occupied location
+EGVAR(civilian,blacklist) pushBack _name; // stop civilians from spawning in location
 
 [
     {!([_this select 1,_this select 2] call EFUNC(main,getNearPlayers) isEqualTo [])},
