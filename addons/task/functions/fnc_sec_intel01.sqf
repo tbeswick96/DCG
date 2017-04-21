@@ -30,16 +30,14 @@ _cleanup = [];
 if (_position isEqualTo [] && {!(EGVAR(main,locals) isEqualTo [])}) then {
 	_position = (selectRandom EGVAR(main,locals)) select 1;
 
-	if !([_position,0.5,0] call EFUNC(main,isPosSafe)) then {
-		_position = [];
-	};
-	private _center = EGVAR(main,center);
-	private _distance = EGVAR(main,range);
-	if (!(EGVAR(fob,anchor) isEqualTo objNull)) then {
-	    _center = (position EGVAR(fob,anchor));
-	    _distance = 6000;
-	};
-	_position = [_center,_distance,"forest",0,true] call EFUNC(main,findPos);
+    if !([_position,5,0] call EFUNC(main,isPosSafe)) then {
+        _startPos = _position;
+        _position = [_startPos,0,50,5,0] call EFUNC(main,findPosSafe);
+
+        if (_position isEqualTo _startPos) then {
+            _position = [];
+        };
+    };
 };
 
 if (_position isEqualTo []) exitWith {
@@ -62,7 +60,6 @@ _grp = [_position,0,UNITCOUNT,CIVILIAN,TASK_SPAWN_DELAY] call EFUNC(main,spawnGr
 			removeAllAssignedItems _x;
             _x setDir random 360;
 			_x setDamage 1;
-			_x setVariable ["uksf_cleanup_excluded", true, true];
 		} forEach _units;
 
         INTEL_CONTAINER = [leader _grp,INTEL_CLASS] call FUNC(addItem);

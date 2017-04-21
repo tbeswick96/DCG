@@ -36,8 +36,7 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 		_player = selectRandom _players;
 
 		if ({_player inArea [_x select 0,_x select 1,_x select 1,0,false,-1]} count GVAR(blacklist) isEqualTo 0) then { // check if player is in a blacklist array
-			_posArray = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,10,0,false] call EFUNC(main,findPosGrid);
-
+			_posArray = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,10,0,false] call EFUNC(main,findPosGrid);			
             if (_posArray isEqualTo []) exitWith {};
 
             _pos = selectRandom _posArray;
@@ -49,7 +48,7 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 
 				if (random 1 < GVAR(vehChance)) then {
 					_grp = [_pos,1,1,EGVAR(main,enemySide),1,true] call EFUNC(main,spawnGroup);
-                    [_grp] call EFUNC(cache,disableCache);
+                    _grp setVariable ["uksf_caching_excluded", true, true];
 
 					[
 						{count units (_this select 0) > 0},
@@ -74,7 +73,7 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 				} else {
 					_count = 4;
 					_grp = [_pos,0,_count,EGVAR(main,enemySide),2] call EFUNC(main,spawnGroup);
-                    [_grp] call EFUNC(cache,disableCache);
+                    _grp setVariable ["uksf_caching_excluded", true, true];
 
 					[
 						{count units (_this select 0) isEqualTo (_this select 2)},

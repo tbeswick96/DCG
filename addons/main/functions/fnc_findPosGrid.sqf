@@ -48,7 +48,7 @@ for "_y" from 0 to _count do {
     };
 };
 
-_ret = _ret select {!(_x inArea [_anchor, _rangeMin, _rangeMin, 0, false, -1])};
+_ret = _ret select {(_x inArea [_anchor, _rangeMin, _rangeMin, 0, false, -1])};
 
 if (_distObj > 0 || {_water > -1}) then {
     _ret = _ret select {[_x,_distObj,_water] call FUNC(isPosSafe)};

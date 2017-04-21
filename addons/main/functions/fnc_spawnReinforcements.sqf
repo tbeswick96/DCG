@@ -77,7 +77,7 @@ _heli lock 3;
 
 private _grp = createGroup _side;
 private _pilot = _grp createUnit [selectRandom _unitPool,[0,0,0], [], 0, "NONE"];
-[_grp] call EFUNC(cache,disableCache);
+_grp setVariable ["uksf_caching_excluded", true, true];
 _pilot assignAsDriver _heli;
 _pilot moveInDriver _heli;
 _pilot disableAI "FSM";
@@ -85,7 +85,7 @@ _pilot setBehaviour "CARELESS";
 _pilot addEventHandler ["GetOutMan",{deleteVehicle (_this select 0)}];
 
 private _grpPatrol = [[0,0,0],0,MAX_CARGO(_heli),_side] call FUNC(spawnGroup);
-[_grpPatrol] call EFUNC(cache,disableCache);
+_grp setVariable ["uksf_caching_excluded", true, true];
 
 // place patrol group in cargo
 [

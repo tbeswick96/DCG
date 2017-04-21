@@ -57,7 +57,7 @@ for "_i" from 0 to (count _cfgLocations) - 1 do {
 	_name = getText (_location >> "name");
 	_position = getArray (_location >> "position");
 	_position set [2,(getTerrainHeightASL _position) max 0];
-	_size = (((getNumber (_location >> "radiusA")) + (getNumber (_location >> "radiusB"))) * 0.5) * GVAR(locationSizeFactor);
+	_size = ((getNumber (_location >> "radiusA")) + (getNumber (_location >> "radiusB"))) * 0.5;
 
 	call {
 		if (toLower _type in _typeLocations) exitWith {
@@ -116,7 +116,7 @@ for "_i" from 0 to (count _cfgLocations) - 1 do {
 } count GVAR(locations);
 
 // create world size position grid
-GVAR(grid) = [EGVAR(main,center),1000,worldSize,0,0,0] call FUNC(findPosGrid);
+GVAR(grid) = [GVAR(center), 1000, worldSize, worldSize, 0, 0] call FUNC(findPosGrid);
 
 [FUNC(handleSafezone), 60, []] call CBA_fnc_addPerFrameHandler;
 [FUNC(handleCleanup), 120, []] call CBA_fnc_addPerFrameHandler;

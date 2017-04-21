@@ -123,7 +123,7 @@ private _maxCount = 0;
 				}, _name, 300] call CBA_fnc_waitAndExecute;
 
 				// setup next occupied location
-				[FUNC(findLocation), [], GVAR(cooldown)] call CBA_fnc_waitAndExecute;
+				[FUNC(findLocation), [], 60] call CBA_fnc_waitAndExecute;
 			};
 		}, INTERVAL, _args] call CBA_fnc_addPerFrameHandler;
 	};

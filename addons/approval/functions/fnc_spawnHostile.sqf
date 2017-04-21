@@ -78,7 +78,7 @@ call {
 
 				_grp = [units _grp] call EFUNC(main,setSide);
 
-                [_grp] call EFUNC(cache,disableCache);
+                _grp setVariable ["uksf_caching_excluded", true, true];
 
 				{
 					_y = _x;
@@ -134,7 +134,7 @@ call {
 
 					_grp = [[_driver]] call EFUNC(main,setSide);
 
-                    [_grp] call EFUNC(cache,disableCache);
+                    _grp setVariable ["uksf_caching_excluded", true, true];
 
 					_unit = leader _grp;
 					_unit removeAllEventHandlers "firedNear";
@@ -183,7 +183,7 @@ call {
 
 		_grp = [[leader _grp]] call EFUNC(main,setSide);
 
-        [_grp] call EFUNC(cache,disableCache);
+        _grp setVariable ["uksf_caching_excluded", true, true];
 
 		private _unit = leader _grp;
 		_unit removeAllEventHandlers "firedNear";

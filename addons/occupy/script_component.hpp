@@ -37,7 +37,7 @@
             _grp, \
             PATROL_UNITCOUNT, \
             {[_this select 0, _this select 1, _this select 2, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "if (random 1 < 0.15) then {this spawn CBA_fnc_searchNearby}", [0,10,15]] call CBA_fnc_taskPatrol}, \
-            [_center,_size], \
+            [ASLtoATL _center,_size], \
             0, \
             0.1 \
         ] call EFUNC(main,splitGroup); \
@@ -60,7 +60,7 @@
             waitUntil {{_x getVariable [ISDRIVER,false]} count units _grp >= 1}; \
             (objectParent leader _grp) addEventHandler ["Fuel",{if !(_this select 1) then {(_this select 0) setFuel 1}}]; \
             SET_UNITVAR(leader _grp); \
-            [_grp, _center, _size, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [10,20,30]] call CBA_fnc_taskPatrol; \
+            [_grp, ASLtoATL _center, _size, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [10,20,30]] call CBA_fnc_taskPatrol; \
             sleep 0.1; \
         } forEach _posArray; \
         INFO("Prep land vehicles finished"); \

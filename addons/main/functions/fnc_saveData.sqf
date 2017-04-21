@@ -38,26 +38,28 @@ if (CHECK_ADDON_2(occupy)) then {
 
     EGVAR(occupy,location) params ["_name","_position","_size","_type"];
 
-    private _infCount = 0;
-    private _vehCount = 0;
-    private _airCount = 0;
+	if (!isNil "_name") then {
+		private _infCount = 0;
+		private _vehCount = 0;
+		private _airCount = 0;
 
-    {
-        if ((driver _x) getVariable [QUOTE(TRIPLES(PREFIX,occupy,unit)),false]) then {
-            if (_x isKindOf "Man") exitWith {
-                _infCount = _infCount + 1;
-            };
-            if (_x isKindOf "LandVehicle") exitWith {
-                _vehCount = _vehCount + 1;
-            };
-            if (_x isKindOf "Air") exitWith {
-                _airCount = _airCount + 1;
-            };
-        };
-        false
-    } count (_position nearEntities [["Man","LandVehicle","Air"],_size*2]);
+		{
+			if ((driver _x) getVariable [QUOTE(TRIPLES(PREFIX,occupy,unit)),false]) then {
+				if (_x isKindOf "Man") exitWith {
+					_infCount = _infCount + 1;
+				};
+				if (_x isKindOf "LandVehicle") exitWith {
+					_vehCount = _vehCount + 1;
+				};
+				if (_x isKindOf "Air") exitWith {
+					_airCount = _airCount + 1;
+				};
+			};
+			false
+		} count (_position nearEntities [["Man","LandVehicle","Air"],_size*2]);
 
-    _data append [_name,_position,_size,_type,[_infCount,_vehCount,_airCount]];
+		_data append [_name,_position,_size,_type,[_infCount,_vehCount,_airCount]];
+	};
 
 	PUSHBACK_DATA(occupy,_data);
 };

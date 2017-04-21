@@ -77,11 +77,7 @@ if (_type isEqualTo 0) exitWith {
 			[_idPFH] call CBA_fnc_removePerFrameHandler;
 		};
 
-		_unit = (selectRandom _unitPool);
-		if (count _pos == 2) then {
-			_pos = _pos select 1;
-		};
-		_unit createUnit [_pos, _grp];
+		(selectRandom _unitPool) createUnit [_pos, _grp];
 
 		_check pushBack 0;
 	}, _delay, [_pos,_grp,_unitPool,_count,_check]] call CBA_fnc_addPerFrameHandler;

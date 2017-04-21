@@ -24,9 +24,7 @@ if !(_data isEqualTo []) exitWith {
 };
 
 private _locations = EGVAR(main,locations) select {!((_x select 1) inArea EGVAR(main,baseLocation))};
-
 if (_locations isEqualTo []) exitWith {
     WARNING("No suitable locations to occupy");
 };
-
 (selectRandom _locations) spawn FUNC(setOccupied);

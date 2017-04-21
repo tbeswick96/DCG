@@ -28,7 +28,8 @@ _vehicles = [];
 _cleanup = [];
 
 if (_position isEqualTo []) then {
-        _roads = (ASLToAGL (selectRandom EGVAR(main,grid))) nearRoads 300;
+	private _pos = (ASLToAGL (selectRandom EGVAR(main,grid)));
+    private _roads = _pos nearRoads 300;
     if !(_roads isEqualTo []) exitWith {
         _position = getPos (selectRandom _roads);
     };
