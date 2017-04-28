@@ -116,7 +116,7 @@ for "_i" from 0 to (count _cfgLocations) - 1 do {
 } count GVAR(locations);
 
 // create world size position grid
-GVAR(grid) = [GVAR(center), 1000, worldSize, worldSize, 0, 0] call FUNC(findPosGrid);
+GVAR(grid) = [GVAR(center), 1000, worldSize, 0, 0, 0] call FUNC(findPosGrid);
 
 [FUNC(handleSafezone), 60, []] call CBA_fnc_addPerFrameHandler;
 [FUNC(handleCleanup), 120, []] call CBA_fnc_addPerFrameHandler;
@@ -130,10 +130,12 @@ if !(isNil {HEADLESSCLIENT}) then {
 };
 
 // save functionality
-if (GVAR(autoSave)) then {
-    [{
-        call FUNC(saveData);
-    }, 1800, []] call CBA_fnc_addPerFrameHandler;
+if (GVAR(autoSave)) then {    
+	[{
+		[{
+			call FUNC(saveData);
+		}, 1800, []] call CBA_fnc_addPerFrameHandler;
+	}, [], 1800] call CBA_fnc_waitAndExecute;
 };
 
 DATA_SAVEPVEH addPublicVariableEventHandler {

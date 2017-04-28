@@ -59,7 +59,7 @@ call {
 	};
 };
 
-_base = [ASLtoAGL _position,_baseStrength] call EFUNC(main,spawnBase);
+_base = [_position,_baseStrength] call EFUNC(main,spawnBase);
 _bRadius = _base select 0;
 _cleanup append (_base select 2);
 

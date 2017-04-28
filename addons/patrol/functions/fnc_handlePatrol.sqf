@@ -36,7 +36,7 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 		_player = selectRandom _players;
 
 		if ({_player inArea [_x select 0,_x select 1,_x select 1,0,false,-1]} count GVAR(blacklist) isEqualTo 0) then { // check if player is in a blacklist array
-			_posArray = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,10,0,false] call EFUNC(main,findPosGrid);			
+			_posArray = [getpos _player,100,PATROL_RANGE,PATROL_MINRANGE,10,0,false] call EFUNC(main,findPosGrid);
             if (_posArray isEqualTo []) exitWith {};
 
             _pos = selectRandom _posArray;

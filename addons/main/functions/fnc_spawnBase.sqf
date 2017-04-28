@@ -65,9 +65,9 @@ if (_base isEqualTo []) then {
 
 private _anchor = ANCHOR createVehicle [0,0,0];
 _anchor setPos _position;
-_anchor setDir random 360;
+_anchor setDir (random 360);
 _anchor setPos [(getpos _anchor) select 0,(getpos _anchor) select 1,0];
-_anchor setVectorUp surfaceNormal getPos _anchor;
+_anchor setVectorUp (surfaceNormal (getPos _anchor));
 
 private _objData = call compile (getText (_base >> "objects"));
 
