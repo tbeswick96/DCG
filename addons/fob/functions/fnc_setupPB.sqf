@@ -6,7 +6,7 @@ Description:
 setup pb on server
 
 Arguments:
-0: unit to assign to curator or position <OBJECT,ARRAY>
+0: unit or position <OBJECT,ARRAY>
 1: name <STRING>
 
 Return:

@@ -6,7 +6,7 @@ Description:
 create FOB on server
 
 Arguments:
-0: unit to assign to curator or position <OBJECT,ARRAY>
+0: unit or position <OBJECT,ARRAY>
 
 Return:
 none
@@ -37,47 +37,20 @@ GVAR(anchor) setPos _pos;
 publicVariable QGVAR(anchor);
 GVAR(anchor) allowDamage false;
 GVAR(anchor) enableSimulation false;
-_name = GVAR(name);
-_marker = createMarker [_name, _pos];
+private _name = GVAR(name);
+private _marker = createMarker [_name, _pos];
 _marker setMarkerShape "ICON";
 _marker setMarkerType "hd_dot";
 _marker setMarkerColor "colorBLUFOR";
 _marker setMarkerText _name;
-SETPVAR(_anchor,GVAR(marker),_marker);
-
-GVAR(curator) addCuratorAddons activatedAddons;
+GVAR(marker) = _name;
 
 // make sure setup occurs at correct position
 [
     {!(FOB_POSITION isEqualTo [0,0,0])},
     {
-        params ["_unit"];
-
         GVAR(respawnPos) = [missionNamespace,FOB_POSITION,GVAR(name)] call BIS_fnc_addRespawnPosition;
-
-        if !(isNull _unit) then {
-            // if unit is already assigned to a curator, save previous curator for later
-            _previousCurator = getAssignedCuratorLogic _unit;
-
-            if !(isNull _previousCurator) then {
-                if !(_previousCurator isEqualTo GVAR(curator)) then {
-                    GVAR(curatorExternal) = _previousCurator;
-                };
-            };
-
-            [GVAR(curator),_unit] call FUNC(handleAssign);
-
-        	// unit does not immediately become owner of curator
-        	[
-        		{getAssignedCuratorUnit GVAR(curator) isEqualTo (_this select 0)},
-        		{
-        			[] remoteExecCall [QFUNC(curatorEH), owner (getAssignedCuratorUnit GVAR(curator)), false];
-        		},
-        		[_unit]
-        	] call CBA_fnc_waitUntilAndExecute;
-
-            [FOB_POSITION,AV_FOB] call EFUNC(approval,addValue);
-        };
+        [FOB_POSITION,AV_FOB] call EFUNC(approval,addValue);
     },
-    [_unit]
+    []
 ] call CBA_fnc_waitUntilAndExecute;

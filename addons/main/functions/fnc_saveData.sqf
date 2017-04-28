@@ -68,7 +68,7 @@ if (CHECK_ADDON_2(fob)) then {
 	private _data = [];
 
 	if !(EGVAR(fob,anchor) isEqualTo objNull) then {
-		{_x addCuratorEditableObjects [allMissionObjects "all", true]} forEach allCurators;
+		{_x addCuratorEditableObjects [allMissionObjects "all", true]; false} count allCurators;
 		_data pushBack (position EGVAR(fob,anchor));
 		{
 			if(!(_x isEqualTo objNull)) then {

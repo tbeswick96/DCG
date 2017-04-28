@@ -27,7 +27,7 @@ PREP(deletePB);
 
 GVAR(respawnPos) = [];
 GVAR(anchor) = objNull;
-GVAR(curatorExternal) = objNull;
+GVAR(marker) = "";
 GVAR(pbanchors) = [objNull,objNull,objNull];
 
 publicVariable QFUNC(initSettings);

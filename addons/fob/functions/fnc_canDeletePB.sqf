@@ -13,5 +13,5 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 
 (count (GVAR(pbanchors) select {(position _x) distance2D (position player) < 10}) > 0) &&
-((serverCommandAvailable "#logout") || (player isEqualTo (getAssignedCuratorUnit GVAR(curator)))) &&
+((serverCommandAvailable "#logout")) &&
 (cameraOn isEqualTo player)
