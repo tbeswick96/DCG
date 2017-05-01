@@ -9,11 +9,8 @@ CHECK_PREINIT;
 ADDON = false;
 
 PREP(initSettings);
-PREP(init);
-PREP(handleAssign);
 PREP(handleCreate);
 PREP(handleDelete);
-PREP(handleTransfer);
 PREP(handleLoadData);
 PREP(handleClient);
 PREP(getKeybind);

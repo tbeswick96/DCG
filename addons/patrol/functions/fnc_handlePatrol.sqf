@@ -71,7 +71,7 @@ if (count GVAR(groups) <= ceil GVAR(groupsMaxCount)) then {
 
 					INFO_1("Spawning vehicle patrol at %1",_pos);
 				} else {
-					_count = 4;
+					private _count = floor (random [4,6,10]);
 					_grp = [_pos,0,_count,EGVAR(main,enemySide),2] call EFUNC(main,spawnGroup);
                     _grp setVariable ["uksf_caching_excluded", true, true];
 

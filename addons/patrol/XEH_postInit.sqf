@@ -16,11 +16,11 @@ CHECK_POSTINIT;
 			(owner HEADLESSCLIENT) publicVariableClient QGVAR(groups);
 			(owner HEADLESSCLIENT) publicVariableClient QGVAR(blacklist);
 			[{
-				[FUNC(handlePatrol), 120, []] remoteExecCall [QUOTE(CBA_fnc_addPerFrameHandler), owner HEADLESSCLIENT, false];
+				[FUNC(handlePatrol), 90, []] remoteExecCall [QUOTE(CBA_fnc_addPerFrameHandler), owner HEADLESSCLIENT, false];
 			}, [], 60] call CBA_fnc_waitAndExecute;
 		} else {
 			[{
-				[FUNC(handlePatrol), 120, []] call CBA_fnc_addPerFrameHandler;
+				[FUNC(handlePatrol), 90, []] call CBA_fnc_addPerFrameHandler;
 			}, [], 60] call CBA_fnc_waitAndExecute;
 		};
 	}
