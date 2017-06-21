@@ -68,7 +68,7 @@ release_dir = ""
 module_root_parent = ""
 # optionals_root = ""
 key_name = "dcg"
-key = "UKSF_Tim"
+key = ""
 dssignfile = ""
 prefix = "dcg"
 pbo_name_prefix = "dcg_"
@@ -1454,5 +1454,3 @@ if __name__ == "__main__":
 
     if ciBuild:
         sys.exit(0)
-
-    input("Press Enter to continue...")
