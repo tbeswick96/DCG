@@ -18,6 +18,7 @@ group
 __________________________________________________________________*/
 #include "script_component.hpp"
 #define MAX_CARGO 4
+#define TIMEOUT 30
 
 private ["_unitPool","_vehPool","_airPool"];
 params [
@@ -71,25 +72,25 @@ call {
 if (_type isEqualTo 0) exitWith {
 	[{
 		params ["_args","_idPFH"];
-		_args params ["_pos","_grp","_unitPool","_count","_check"];
+		_args params ["_pos","_grp","_unitPool","_count","_check", "_time"];
 
-		if (count _check isEqualTo _count) exitWith {
+		if (count _check isEqualTo _count || {time > (_time + TIMEOUT)}) exitWith {
 			[_idPFH] call CBA_fnc_removePerFrameHandler;
 		};
 
 		(selectRandom _unitPool) createUnit [_pos, _grp];
 
 		_check pushBack 0;
-	}, _delay, [_pos,_grp,_unitPool,_count,_check]] call CBA_fnc_addPerFrameHandler;
+	}, _delay, [_pos,_grp,_unitPool,_count,_check,time]] call CBA_fnc_addPerFrameHandler;
 
 	_grp
 };
 
 [{
 	params ["_args","_idPFH"];
-	_args params ["_pos","_grp","_type","_count","_unitPool","_vehPool","_airPool","_check","_cargo","_delay"];
+	_args params ["_pos","_grp","_type","_count","_unitPool","_vehPool","_airPool","_check","_cargo","_delay", "_time"];
 
-	if (count _check isEqualTo _count) exitWith {
+	if (count _check isEqualTo _count || {time > (_time + TIMEOUT)}) exitWith {
 		[_idPFH] call CBA_fnc_removePerFrameHandler;
 	};
 
@@ -116,18 +117,18 @@ if (_type isEqualTo 0) exitWith {
 
 		[{
 			params ["_args","_idPFH"];
-			_args params ["_grp","_unitPool","_veh","_count"];
+			_args params ["_grp","_unitPool","_veh","_count", "_time"];
 
-			if (!(alive _veh) || {count crew _veh >= _count}) exitWith {
+			if (!(alive _veh) || {count crew _veh >= _count} || {time > (_time + TIMEOUT)}) exitWith {
 				[_idPFH] call CBA_fnc_removePerFrameHandler;
 			};
 
 			_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
 			_unit moveInCargo _veh;
-		}, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh)]] call CBA_fnc_addPerFrameHandler;
+		}, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh),time]] call CBA_fnc_addPerFrameHandler;
 	};
 
 	_check pushBack 0;
-}, _delay, [_pos,_grp,_type,_count,_unitPool,_vehPool,_airPool,_check,_cargo,_delay]] call CBA_fnc_addPerFrameHandler;
+}, _delay, [_pos,_grp,_type,_count,_unitPool,_vehPool,_airPool,_check,_cargo,_delay,time]] call CBA_fnc_addPerFrameHandler;
 
 _grp
