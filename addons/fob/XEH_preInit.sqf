@@ -25,7 +25,7 @@ PREP(deletePB);
 GVAR(respawnPos) = [];
 GVAR(anchor) = objNull;
 GVAR(marker) = "";
-GVAR(pbanchors) = [objNull,objNull,objNull];
+GVAR(pbanchors) = [objNull,objNull,objNull,objNull,objNull];
 
 publicVariable QFUNC(initSettings);
 publicVariable QFUNC(getKeybind);
