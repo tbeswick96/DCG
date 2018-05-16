@@ -46,7 +46,7 @@ _anchor setPos _pos;
 publicVariable QGVAR(pbanchors);
 _anchor allowDamage false;
 _anchor enableSimulation false;
-if(_name == "") then {
+if (_name == "") then {
 	_name = (GVAR(pbnames) select _index);
 };
 SETPVAR(_anchor,GVAR(pbname),_name);
