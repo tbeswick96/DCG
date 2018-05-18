@@ -14,11 +14,11 @@ __________________________________________________________________*/
 
 params ["_data"];
 
-if (_data != []) then {
+if (count _data > 0) then {
 	{
 		_x params ["_pos", "_shape", "_type", "_brush", "_size", "_colour", "_alpha", "_dir", "_text"];
 
-		private _marker = createMarker [format ["_USER_DEFINED #0/%1/1", uksf_common_markerID], _pos];
+		private _marker = createMarker [format ["_USER_DEFINED #0/%1/1", EGVAR(main,markerID)], _pos];
 		_marker setMarkerShape _shape;
 		_marker setMarkerType _type;
 		_marker setMarkerBrush _brush;
@@ -27,10 +27,10 @@ if (_data != []) then {
 		_marker setMarkerAlpha _alpha;
 		_marker setMarkerDir _dir;
 		_marker setMarkerText _text;
-		uksf_common_markerID = uksf_common_markerID + 1;
+		EGVAR(main,markerID) = EGVAR(main,markerID) + 1;
 		true
 	} count _data#0;
-	publicVariable "uksf_common_markerID";
+	publicVariable QEGVAR(main,markerID);
 
 	if (count _data == 1) exitWith {};
 	private _anchors = _data#1;
@@ -46,7 +46,7 @@ if (_data != []) then {
 	if (count _data == 2) exitWith {};
 	{
 		_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []]];
-		if(_isMan) then {
+		if (_isMan) then {
 			_side = switch(getNumber (configFile >> "CfgVehicles" >> _type >> "side")) do {
 				case 0: {east};
 				case 1: {west};
@@ -57,7 +57,7 @@ if (_data != []) then {
 			_veh = (createGroup _side) createUnit [_type, [0,0,0], [], 0, "NONE"];
 			_veh setDir _dir;
 			_veh setPosASL _pos;
-			if(count _waypoints > 1) then {
+			if (count _waypoints > 1) then {
 				{
 					_x params ["_index", "_pos", "_name", "_behaviour", "_combatMode", "_formation", "_speed", "_type"];
 					_waypoint = (group _veh) addWaypoint [_pos, 0, _index, _name];
@@ -80,28 +80,28 @@ if (_data != []) then {
 
 			[_veh, _weapons, _magazines, _items, _backpacks] spawn {
 				params ["_veh", "_weapons", "_magazines", "_items", "_backpacks"];
-				if(count (_weapons select 0) > 0) then {
+				if (count (_weapons select 0) > 0) then {
 					clearWeaponCargoGlobal _veh;
 					{
 						_count = (_weapons select 1) select _forEachIndex;
 						_veh addWeaponCargoGlobal [_x, _count];
 					} forEach (_weapons select 0);
 				};
-				if(count (_magazines select 0) > 0) then {
+				if (count (_magazines select 0) > 0) then {
 					clearMagazineCargoGlobal _veh;
 					{
 						_count = (_magazines select 1) select _forEachIndex;
 						_veh addMagazineCargoGlobal [_x, _count];
 					} forEach (_magazines select 0);
 				};
-				if(count (_items select 0) > 0) then {
+				if (count (_items select 0) > 0) then {
 					clearItemCargoGlobal _veh;
 					{
 						_count = (_items select 1) select _forEachIndex;
 						_veh addItemCargoGlobal [_x, _count];
 					} forEach (_items select 0);
 				};
-				if(count (_backpacks select 0) > 0) then {
+				if (count (_backpacks select 0) > 0) then {
 					clearBackpackCargoGlobal _veh;
 					{
 						_count = (_backpacks select 1) select _forEachIndex;

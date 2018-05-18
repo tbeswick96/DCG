@@ -17,8 +17,8 @@
 */
 private["_class","_scope","_picture","_displayName","_vehicleClass","_side","_faction","_superClass"];
 _class = [_this,0,"",[""]] call BIS_fnc_param;
-if(_class isEqualTo "") exitWith {[]}; //Bad class passed.
-if(!isClass (configFile >> "CfgVehicles" >> _class)) exitWith {[]}; //Class doesn't exist in CfgVehicles
+if (_class isEqualTo "") exitWith {[]}; //Bad class passed.
+if (!isClass (configFile >> "CfgVehicles" >> _class)) exitWith {[]}; //Class doesn't exist in CfgVehicles
 
 //Predefine some stuff.
 _scope = -1;

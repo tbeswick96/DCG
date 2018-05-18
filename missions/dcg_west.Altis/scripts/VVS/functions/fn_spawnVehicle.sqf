@@ -11,7 +11,7 @@
 
 disableSerialization;
 private["_position","_direction","_className","_displayName","_spCheck","_cfgInfo","_spClear"];
-if(lnbCurSelRow 38101 isEqualTo -1) exitWith {hint "You did not select a vehicle to spawn!"};
+if (lnbCurSelRow 38101 isEqualTo -1) exitWith {hint "You did not select a vehicle to spawn!"};
 
 _className = lnbData[38101,[(lnbCurSelRow 38101),0]];
 _displayName = lnbData[38101,[(lnbCurSelRow 38101),1]];
@@ -36,10 +36,10 @@ if !(surfaceIsWater _position) then {
 };
 _vehicle setVectorUp [0,0,1];
 
-if((_cfgInfo select 4) isEqualTo "Autonomous") then {
+if ((_cfgInfo select 4) isEqualTo "Autonomous") then {
 	createVehicleCrew _vehicle;
 };
-if(VVS_Checkbox) then {
+if (VVS_Checkbox) then {
 	clearWeaponCargoGlobal _vehicle;
 	clearMagazineCargoGlobal _vehicle;
 	clearItemCargoGlobal _vehicle;

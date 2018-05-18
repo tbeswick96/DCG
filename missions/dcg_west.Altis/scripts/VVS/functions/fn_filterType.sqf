@@ -7,7 +7,7 @@
 */
 private["_filter","_ret","_vehicleList"];
 _filter = [_this,0,"",[""]] call BIS_fnc_param;
-if(_filter isEqualTo "") exitWith {[]};
+if (_filter isEqualTo "") exitWith {[]};
 
 //Setup our array.
 _ret = [];
@@ -27,10 +27,10 @@ _vehicleList = switch(_filter) do
 	default {[]};
 };
 
-if(count _vehicleList isEqualTo 0) exitWith {[]};
+if (count _vehicleList isEqualTo 0) exitWith {[]};
 {
 	_cfgInfo = [_x] call VVS_fnc_cfgInfo;
-	if(count _cfgInfo > 0) then
+	if (count _cfgInfo > 0) then
 	{
 		if (VVS_SideOnly) then
 		{
@@ -43,7 +43,7 @@ if(count _vehicleList isEqualTo 0) exitWith {[]};
 				default {sideUnknown};
 			};
 
-			if(_side isEqualTo playerSide || {_side isEqualTo CIVILIAN}) then
+			if (_side isEqualTo playerSide || {_side isEqualTo CIVILIAN}) then
 			{
 				_ret pushBack _x;
 			};

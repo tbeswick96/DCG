@@ -28,28 +28,28 @@ VVS_pre_Support = [];
 VVS_pre_Ammo = [];
 
 //Skim over and make sure VVS_x isn't built for a pre-made vehicle list.
-/*if(count VVS_Car > 0) then {VVS_pre_Car = VVS_Car;};
-if(count VVS_Air > 0) then {VVS_pre_Car = VVS_Air;};
-if(count VVS_Ship > 0) then {VVS_pre_Car = VVS_Ship;};
-if(count VVS_Submarine > 0) then {VVS_pre_Car = VVS_Submarine;};
-if(count VVS_Armored > 0) then {VVS_pre_Car = VVS_Armored;};
-if(count VVS_Autonomous > 0) then {VVS_pre_Autonomous = VVS_Autonomous;};
-if(count VVS_Support > 0) then {VVS_pre_Support = VVS_Support;};
-if(count VVS_Ammo > 0) then {VVS_pre_Ammo = VVS_Ammo;};*/
+/*if (count VVS_Car > 0) then {VVS_pre_Car = VVS_Car;};
+if (count VVS_Air > 0) then {VVS_pre_Car = VVS_Air;};
+if (count VVS_Ship > 0) then {VVS_pre_Car = VVS_Ship;};
+if (count VVS_Submarine > 0) then {VVS_pre_Car = VVS_Submarine;};
+if (count VVS_Armored > 0) then {VVS_pre_Car = VVS_Armored;};
+if (count VVS_Autonomous > 0) then {VVS_pre_Autonomous = VVS_Autonomous;};
+if (count VVS_Support > 0) then {VVS_pre_Support = VVS_Support;};
+if (count VVS_Ammo > 0) then {VVS_pre_Ammo = VVS_Ammo;};*/
 
-//if(VVS_Premade_List) exitWith {}; //No need to waste CPU processing time as the mission designer already setup a list.
+//if (VVS_Premade_List) exitWith {}; //No need to waste CPU processing time as the mission designer already setup a list.
 
 for "_i" from 0 to (count _Cfg)-1 do
 {
 	_class = _Cfg select _i;
-	if(isClass _class) then
+	if (isClass _class) then
 	{
 		_className = configName _class;
-		if(_className != "") then
+		if (_className != "") then
 		{
 		//	systemChat _className;
 			_cfgInfo = [_className] call VVS_fnc_cfgInfo;
-			if(count _cfgInfo > 0) then {
+			if (count _cfgInfo > 0) then {
 				_scope = _cfgInfo select 1;
 				_picture = _cfgInfo select 2;
 				_displayName = _cfgInfo select 3;

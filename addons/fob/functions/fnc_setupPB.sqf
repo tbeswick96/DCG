@@ -35,7 +35,7 @@ call {
 
 private _index = 0;
 {
-	if(isNull _x) exitWith {
+	if (isNull _x) exitWith {
 		_index = _forEachIndex;
 	};
 } forEach GVAR(pbanchors);

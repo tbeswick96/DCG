@@ -16,7 +16,7 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 	private _anchor = objNull;
 	private _index = 0;
 	{
-		if(!(isNull _x) && (position _x) distance2D (position (_this select 1)) <= 10) then {
+		if (!(isNull _x) && (position _x) distance2D (position (_this select 1)) <= 10) then {
 			_anchor = _x;
 			_index = _forEachIndex;
 		};

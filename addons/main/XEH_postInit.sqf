@@ -130,7 +130,7 @@ if !(isNil {HEADLESSCLIENT}) then {
 };
 
 // save functionality
-if (GVAR(autoSave)) then {    
+if (GVAR(autoSave)) then {
 	[{
 		[{
 			[[], {[] call FUNC(saveMarkers)}] remoteExecCall ["BIS_fnc_call", selectRandom ([] call CBA_fnc_players)];

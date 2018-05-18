@@ -76,6 +76,7 @@ GVAR(objectCleanup) = [];
 GVAR(saveDataCurrent) = [];
 GVAR(debugMarkers) = [];
 GVAR(markers) = [];
+GVAR(markerID) = 100000;
 
 publicVariable QUOTE(ADDON);
 

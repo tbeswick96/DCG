@@ -9,9 +9,9 @@ disableSerialization;
 private["_control"];
 _control = ((findDisplay 38100) displayCtrl 38103);
 
-if(VVS_Checkbox) then {VVS_Checkbox = false;} else {VVS_Checkbox = true;};
+if (VVS_Checkbox) then {VVS_Checkbox = false;} else {VVS_Checkbox = true;};
 
-if(VVS_Checkbox) then
+if (VVS_Checkbox) then
 {
 	hintSilent "Vehicle cargo will be cleared on spawn.";
 	_control ctrlSetText "Yes";
