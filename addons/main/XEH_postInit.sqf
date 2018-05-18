@@ -140,6 +140,7 @@ if (GVAR(autoSave)) then {
 				call FUNC(saveData);
 			}, [], 10, {
 				GVAR(markers) = [];
+				call FUNC(saveData);
 			}] call CBA_fnc_waitUntilAndExecute;
 		}, 1800, []] call CBA_fnc_addPerFrameHandler;
 	}, [], 1800] call CBA_fnc_waitAndExecute;
@@ -153,6 +154,7 @@ DATA_SAVEPVEH addPublicVariableEventHandler {
 		call FUNC(saveData);
 	}, [], 10, {
 		GVAR(markers) = [];
+		call FUNC(saveData);
 	}] call CBA_fnc_waitUntilAndExecute;	
 };
 
