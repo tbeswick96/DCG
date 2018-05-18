@@ -67,37 +67,43 @@ if (CHECK_ADDON_2(occupy)) then {
 if (CHECK_ADDON_2(fob)) then {
 	private _data = [];
 
-	if !(EGVAR(fob,anchor) isEqualTo objNull) then {
+	_data pushBack GVAR(markers);
+
+	if (EGVAR(fob,anchor) != objNull) then {
 		{_x addCuratorEditableObjects [allMissionObjects "all", true]; false} count allCurators;
-		_data pushBack (position EGVAR(fob,anchor));
+
+		private _anchors = [];
+		_anchors pushBack (position EGVAR(fob,anchor));
 		{
-			if(!(_x isEqualTo objNull)) then {
-				_data pushBack [(position _x), GETVAR(_x,EGVAR(fob,pbname),"")];
+			if (!(_x isEqualTo objNull)) then {
+				_anchors pushBack [(position _x), _x getVariable [QEGVAR(fob,pbname), ""]];
 			} else {
-				_data pushBack [[], ""];
+				_anchors pushBack [[], ""];
 			};
 		} forEach (EGVAR(fob,pbanchors));
+		_data pushBack _anchors;
+
 		_dataObj = [];
 		{
 			if (!(_x isKindOf "Land_PenBlack_F") && !(_x isKindOf "Logic")) then {
 				private _inRange = (_x distance2D EGVAR(fob,anchor)) <= EGVAR(fob,range);
-				if(!_inRange) then {
+				if (!_inRange) then {
 					private _obj = _x;
 					{
-						if(!(isNull _x)) then {
-							if((_x distance2D _obj) <= EGVAR(fob,pbrange)) then {
+						if (!(isNull _x)) then {
+							if ((_x distance2D _obj) <= EGVAR(fob,pbrange)) then {
 								_inRange = true;
 							};
 						};
 					} forEach (EGVAR(fob,pbanchors));
 				};
 
-				if(_inRange) then {
-					if(_x isKindOf "Man") then {
-						if(!(isPlayer _x) && alive _x) then {
+				if (_inRange) then {
+					if (_x isKindOf "Man") then {
+						if (!(isPlayer _x) && alive _x) then {
 							private _waypoints = [];
 							{
-								if(_forEachIndex > 0) then {
+								if (_forEachIndex > 0) then {
 									_waypoints pushBack [_x select 1, waypointPosition _x, waypointName _x, waypointBehaviour _x, waypointCombatMode _x, waypointFormation _x, waypointSpeed _x, waypointType _x];
 								};
 							} forEach (waypoints (group _x));
@@ -110,7 +116,6 @@ if (CHECK_ADDON_2(fob)) then {
 			};
 			false
 		} count (allMissionObjects "All");
-
 		_data pushBack _dataObj;
 	};
 

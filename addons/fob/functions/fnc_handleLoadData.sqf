@@ -14,21 +14,36 @@ __________________________________________________________________*/
 
 params ["_data"];
 
-if !(_data isEqualTo []) then {
-	[_data select 0] call FUNC(handleCreate);
-	(_data select 1) params ["_pos", "_name"];
-	if(count _pos > 0) then {
-		[_pos, _name] call FUNC(setupPB);
-	};
-	(_data select 2) params ["_pos", "_name"];
-	if(count _pos > 0) then {
-		[_pos, _name] call FUNC(setupPB);
-	};
-	(_data select 3) params ["_pos", "_name"];
-	if(count _pos > 0) then {
-		[_pos, _name] call FUNC(setupPB);
-	};
+if (_data != []) then {
+	{
+		_x params ["_pos", "_shape", "_type", "_brush", "_size", "_colour", "_alpha", "_dir", "_text"];
 
+		private _marker = createMarker [format ["_USER_DEFINED #0/%1/1", uksf_common_markerID], _pos];
+		_marker setMarkerShape _shape;
+		_marker setMarkerType _type;
+		_marker setMarkerBrush _brush;
+		_marker setMarkerSize _size;
+		_marker setMarkerColor _colour;
+		_marker setMarkerAlpha _alpha;
+		_marker setMarkerDir _dir;
+		_marker setMarkerText _text;
+		uksf_common_markerID = uksf_common_markerID + 1;
+		true
+	} count _data#0;
+	publicVariable "uksf_common_markerID";
+
+	if (count _data == 1) exitWith {};
+	private _anchors = _data#1;
+	[_anchors#0] call FUNC(handleCreate);
+	{
+		_x params ["_pos", "_name"];
+		if (count _pos > 0) then {
+			[_pos, _name] call FUNC(setupPB);
+		};
+		true
+	} count (_anchors select [1, count _anchors - 1]);
+
+	if (count _data == 2) exitWith {};
 	{
 		_x params ["_isMan", "_type", "_pos", "_dir", "_vectorUp", ["_waypoints", []], ["_weapons", []], ["_magazines", []], ["_items", []], ["_backpacks", []]];
 		if(_isMan) then {
@@ -96,5 +111,5 @@ if !(_data isEqualTo []) then {
 			};
 		};
 		false
-	} count (_data select 4);
+	} count _data#2;
 };

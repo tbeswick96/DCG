@@ -133,13 +133,27 @@ if !(isNil {HEADLESSCLIENT}) then {
 if (GVAR(autoSave)) then {    
 	[{
 		[{
-			call FUNC(saveData);
+			[[], {[] call FUNC(saveMarkers)}] remoteExecCall ["BIS_fnc_call", selectRandom ([] call CBA_fnc_players)];
+			[{
+				count GVAR(markers) > 0
+			}, {
+				call FUNC(saveData);
+			}, [], 10, {
+				GVAR(markers) = [];
+			}] call CBA_fnc_waitUntilAndExecute;
 		}, 1800, []] call CBA_fnc_addPerFrameHandler;
 	}, [], 1800] call CBA_fnc_waitAndExecute;
 };
 
 DATA_SAVEPVEH addPublicVariableEventHandler {
-	call FUNC(saveData);
+	[[], {[] call FUNC(saveMarkers)}] remoteExecCall ["BIS_fnc_call", selectRandom ([] call CBA_fnc_players)];
+	[{
+		count GVAR(markers) > 0
+	}, {
+		call FUNC(saveData);
+	}, [], 10, {
+		GVAR(markers) = [];
+	}] call CBA_fnc_waitUntilAndExecute;	
 };
 
 DATA_DELETEPVEH addPublicVariableEventHandler {

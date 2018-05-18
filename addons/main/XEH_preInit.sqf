@@ -44,6 +44,7 @@ PREP(setOwner);
 PREP(setSide);
 PREP(setAnim);
 PREP(getUnitCount);
+PREP(saveMarkers);
 PREP(setTimer);
 PREP(setUnitDamaged);
 PREP(setSurrender);
@@ -74,11 +75,13 @@ GVAR(markerCleanup) = [];
 GVAR(objectCleanup) = [];
 GVAR(saveDataCurrent) = [];
 GVAR(debugMarkers) = [];
+GVAR(markers) = [];
 
 publicVariable QUOTE(ADDON);
 
 // functions required on all machines
 publicVariable QFUNC(initSettings);
+publicVariable QFUNC(saveMarkers);
 publicVariable QFUNC(setAction);
 publicVariable QFUNC(setAnim);
 publicVariable QFUNC(removeAction);
