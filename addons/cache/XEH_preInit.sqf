@@ -6,12 +6,5 @@ __________________________________________________________________*/
 
 PREINIT;
 
-PREP(initSettings);
-PREP(handleGroups);
 PREP(enable);
 PREP(disable);
-
-// headless client exit 
-if (!isServer) exitWith {};
-
-SETTINGS_INIT;

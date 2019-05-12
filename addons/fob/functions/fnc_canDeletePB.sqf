@@ -12,6 +12,6 @@ none
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-(count (GVAR(pbanchors) select {(position _x) distance2D (position player) < 10}) > 0) &&
-((serverCommandAvailable "#logout")) &&
-(cameraOn isEqualTo player)
+count (GVAR(pbAnchors) select {(position _x) distance2D (position player) < 10}) > 0 &&
+{(serverCommandAvailable "#logout") &&
+{cameraOn isEqualTo player}}

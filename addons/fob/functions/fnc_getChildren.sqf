@@ -15,25 +15,16 @@ __________________________________________________________________*/
 private ["_action"];
 private _actions = [];
 
-    _action = [QGVAR(create), FOB_CREATE_NAME, "", {FOB_CREATE_STATEMENT}, {FOB_CREATE_COND}, {}, []] call ace_interact_menu_fnc_createAction;
-    _actions pushBack [_action, [], player];
+_action = [QGVAR(create), FOB_CREATE_NAME, "", {FOB_CREATE_STATEMENT}, {FOB_CREATE_COND}, {}, []] call ace_interact_menu_fnc_createAction;
+_actions pushBack [_action, [], player];
 
-    // _action = [QGVAR(transfer), FOB_TRANSFER_NAME, "", {FOB_TRANSFER_STATEMENT}, {FOB_TRANSFER_COND}, {}, []] call ace_interact_menu_fnc_createAction;
-    // _actions pushBack [_action, [], player];
+_action = [QGVAR(delete), FOB_DELETE_NAME, "", {FOB_DELETE_STATEMENT}, {FOB_DELETE_COND}, {}, []] call ace_interact_menu_fnc_createAction;
+_actions pushBack [_action, [], player];
 
-    _action = [QGVAR(control), FOB_CONTROL_NAME, "", {FOB_CONTROL_STATEMENT}, {FOB_CONTROL_COND}, {}, []] call ace_interact_menu_fnc_createAction;
-    _actions pushBack [_action, [], player];
+_action = [QGVAR(pbBuild), PB_DEPLOY_NAME, "", {PB_DEPLOY_STATEMENT}, {PB_DEPLOY_COND}, {}, []] call ace_interact_menu_fnc_createAction;
+_actions pushBack [_action, [], player];
 
-    _action = [QGVAR(delete), FOB_DELETE_NAME, "", {FOB_DELETE_STATEMENT}, {FOB_DELETE_COND}, {}, []] call ace_interact_menu_fnc_createAction;
-    _actions pushBack [_action, [], player];
-
-    _action = [QGVAR(build), FOB_BUILD_NAME, "", {FOB_BUILD_STATEMENT}, {FOB_BUILD_COND}, {}, []] call ace_interact_menu_fnc_createAction;
-    _actions pushBack [_action, [], player];
-
-	_action = [QGVAR(pbBuild), PB_DEPLOY_NAME, "", {PB_DEPLOY_STATEMENT}, {PB_DEPLOY_COND}, {}, []] call ace_interact_menu_fnc_createAction;
-	_actions pushBack [_action, [], player];
-
-	_action = [QGVAR(pbDelete), PB_DISMANTLE_NAME, "", {PB_DISMANTLE_STATEMENT}, {PB_DISMANTLE_COND}, {}, []] call ace_interact_menu_fnc_createAction;
-	_actions pushBack [_action, [], player];
+_action = [QGVAR(pbDelete), PB_DISMANTLE_NAME, "", {PB_DISMANTLE_STATEMENT}, {PB_DISMANTLE_COND}, {}, []] call ace_interact_menu_fnc_createAction;
+_actions pushBack [_action, [], player];
 
 _actions

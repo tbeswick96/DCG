@@ -16,12 +16,9 @@ __________________________________________________________________*/
 if !(isServer) exitWith {};
 
 params [
-    ["_grp",grpNull,[grpNull]]
+    ["_group",grpNull,[grpNull]]
 ];
 
-_grp setVariable [QGVAR(disableGroup),true];
-
-_grp enableDynamicSimulation false;
-TRACE_1("disable dynamic simulation",_grp);
+["uksf_caching_disableCache", [_group]] call CBA_fnc_serverEvent;
 
 nil

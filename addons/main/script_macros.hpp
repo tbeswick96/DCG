@@ -113,7 +113,7 @@
 #define AP_MAN ((AP_MAX*0.001)*EGVAR(approval,multiplier))
 #define AP_CIV ((AP_MAX*0.05)*EGVAR(approval,multiplier))
 #define AP_FOB ((AP_MAX*0.01)*EGVAR(approval,multiplier))
-#define AP_PB ((AV_MAX*0.005)*EGVAR(approval,multiplier))
+#define AP_PB ((AP_MAX*0.005)*EGVAR(approval,multiplier))
 #define AP_VILLAGE ((AP_MAX*0.05)*EGVAR(approval,multiplier))
 #define AP_CITY ((AP_MAX*0.1)*EGVAR(approval,multiplier))
 #define AP_CAPITAL ((AP_MAX*0.15)*EGVAR(approval,multiplier))

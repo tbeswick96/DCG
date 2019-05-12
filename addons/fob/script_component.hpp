@@ -3,8 +3,8 @@
 
 #include "\d\dcg\addons\main\script_mod.hpp"
 
-#define DEBUG_MODE_FULL
-#define DISABLE_COMPILE_CACHE
+// #define DEBUG_MODE_FULL
+// #define DISABLE_COMPILE_CACHE
 
 #include "\d\dcg\addons\main\script_macros.hpp"
 
@@ -24,10 +24,6 @@
     }, [], 9] call CBA_fnc_waitAndExecute
 
 #define FOB_CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player)} && {((getPosATL player) select 2) < 10} && {!(COMPARE_STR(animationState player,FOB_CREATE_ANIM))} && {[player] call FUNC(isAllowedOwner)}
-#define FOB_CREATE_KEYCODE \
-    if (FOB_CREATE_COND) then { \
-        FOB_CREATE_STATEMENT \
-    }
 
 #define FOB_DELETE_NAME "Dismantle FOB"
 #define FOB_DELETE_STATEMENT \
@@ -39,17 +35,23 @@
         [QGVAR(delete)] \
     ] spawn EFUNC(main,displayGUIMessage)
 #define FOB_DELETE_COND GVAR(anchor) distance2D (position player) < 10 && {cameraOn isEqualTo player} && {!(visibleMap)}
-#define FOB_DELETE_KEYCODE \
-    if (FOB_DELETE_COND) then { \
-        FOB_DELETE_STATEMENT \
-    }
 
-#define PB_DEPLOY_ID QUOTE(DOUBLES(ADDON,deployPB))
 #define PB_DEPLOY_NAME "Deploy PB"
-#define PB_DEPLOY_STATEMENT call FUNC(deployPB)
+#define PB_DEPLOY_STATEMENT \
+    [player,FOB_CREATE_ANIM] call EFUNC(main,setAnim); \
+    [{ \
+        ["PB Deployed",true] call EFUNC(main,displayText); \
+        [QGVAR(setupPB),[player]] call CBA_fnc_serverEvent; \
+    }, [], 9] call CBA_fnc_waitAndExecute
 #define PB_DEPLOY_COND call FUNC(canDeployPB)
 
-#define PB_DISMANTLE_ID QUOTE(DOUBLES(ADDON,deletePB))
 #define PB_DISMANTLE_NAME "Dismantle PB"
-#define PB_DISMANTLE_STATEMENT call FUNC(deletePB)
+#define PB_DISMANTLE_STATEMENT \
+    [ \
+        "Are you sure you want to dismantle PB?", \
+        TITLE, \
+        "PB dismantled.", \
+        {[_this select 0, []] call CBA_fnc_serverEvent}, \
+        [QGVAR(deletePB)] \
+    ] spawn EFUNC(main,displayGUIMessage)
 #define PB_DISMANTLE_COND call FUNC(canDeletePB)

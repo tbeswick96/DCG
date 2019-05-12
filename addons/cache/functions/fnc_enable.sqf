@@ -19,9 +19,6 @@ params [
     ["_grp",grpNull,[grpNull]]
 ];
 
-_grp setVariable [QGVAR(disableGroup),false];
-
-_grp enableDynamicSimulation true;
-TRACE_1("enable dynamic simulation",_grp);
+_grp setVariable ["uksf_caching_excluded", false, true];
 
 nil

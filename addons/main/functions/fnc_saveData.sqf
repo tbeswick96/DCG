@@ -92,7 +92,7 @@ if (CHECK_ADDON_2(fob)) then {
 			} else {
 				_anchors pushBack [[], ""];
 			};
-		} forEach (EGVAR(fob,pbanchors));
+		} forEach (EGVAR(fob,pbAnchors));
 		_data pushBack _anchors;
 
 		_dataObj = [];
@@ -107,7 +107,7 @@ if (CHECK_ADDON_2(fob)) then {
 								_inRange = true;
 							};
 						};
-					} forEach (EGVAR(fob,pbanchors));
+					} forEach (EGVAR(fob,pbAnchors));
 				};
 
 				if (_inRange) then {

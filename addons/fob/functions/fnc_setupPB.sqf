@@ -38,12 +38,12 @@ private _index = 0;
 	if (isNull _x) exitWith {
 		_index = _forEachIndex;
 	};
-} forEach GVAR(pbanchors);
+} forEach GVAR(pbAnchors);
 
 private _anchor = "Land_PenBlack_F" createVehicle [0,0,0];
-GVAR(pbanchors) set [_index, _anchor];
+GVAR(pbAnchors) set [_index, _anchor];
 _anchor setPos _pos;
-publicVariable QGVAR(pbanchors);
+publicVariable QGVAR(pbAnchors);
 _anchor allowDamage false;
 _anchor enableSimulation false;
 if (_name == "") then {
@@ -59,7 +59,7 @@ _marker setMarkerText _name;
 SETPVAR(_anchor,GVAR(pbmarker),_marker);
 
 if !(isNull _unit) then {
-	[getPosASL _anchor,AV_PB] call EFUNC(approval,addValue);
+	[getPosASL _anchor,AP_PB] call EFUNC(approval,addValue);
 };
 
 if (_index == 0) then {

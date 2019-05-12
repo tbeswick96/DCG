@@ -14,6 +14,4 @@ if (!isServer) exitWith {};
 
     [QGVAR(enableGroup), {[_this] call FUNC(enable)}] call CBA_fnc_addEventHandler;
     [QGVAR(disableGroup), {[_this] call FUNC(disable)}] call CBA_fnc_addEventHandler;
-
-    ["AllVehicles", "init", FUNC(handleGroups), nil, nil, true] call CBA_fnc_addClassEventHandler;
 }] call CBA_fnc_addEventHandler;

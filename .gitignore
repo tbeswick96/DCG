@@ -4,3 +4,4 @@ release/*
 texHeaders.bin
 *.biprivatekey
 Thumbs.db
+.vscode/ipch/
