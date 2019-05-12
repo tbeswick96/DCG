@@ -40,7 +40,7 @@ private _index = 0;
 	};
 } forEach GVAR(pbanchors);
 
-_anchor = "Land_PenBlack_F" createVehicle [0,0,0];
+private _anchor = "Land_PenBlack_F" createVehicle [0,0,0];
 GVAR(pbanchors) set [_index, _anchor];
 _anchor setPos _pos;
 publicVariable QGVAR(pbanchors);
@@ -60,4 +60,14 @@ SETPVAR(_anchor,GVAR(pbmarker),_marker);
 
 if !(isNull _unit) then {
 	[getPosASL _anchor,AV_PB] call EFUNC(approval,addValue);
+};
+
+if (_index == 0) then {
+	[{
+		params ["_anchor"];
+		!((getPos _anchor) isEqualTo [0,0,0])
+	}, {
+		params ["_anchor", "_name"];
+		GVAR(pbRespawnPos) = [missionNamespace, getPos _anchor, _name] call BIS_fnc_addRespawnPosition;
+	}, [_anchor, _name]] call CBA_fnc_waitUntilAndExecute;
 };

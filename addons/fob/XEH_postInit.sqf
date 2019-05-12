@@ -26,6 +26,9 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 
 	[getPosASL _anchor,AV_PB*-1] call EFUNC(approval,addValue);
 	deleteVehicle _anchor;
+	if (_index == 0) then {
+		GVAR(pbRespawnPos) call BIS_fnc_removeRespawnPosition;
+	};
 
 	GVAR(pbanchors) set [_index, objNull];
 };

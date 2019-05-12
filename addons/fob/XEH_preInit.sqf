@@ -26,6 +26,7 @@ GVAR(respawnPos) = [];
 GVAR(anchor) = objNull;
 GVAR(marker) = "";
 GVAR(pbanchors) = [objNull,objNull,objNull,objNull,objNull];
+GVAR(pbRespawnPos) = [];
 
 publicVariable QFUNC(initSettings);
 publicVariable QFUNC(getKeybind);
