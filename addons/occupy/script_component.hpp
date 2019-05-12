@@ -3,14 +3,13 @@
 
 #include "\d\dcg\addons\main\script_mod.hpp"
 
-// #define DEBUG_MODE_FULL
-// #define DISABLE_COMPILE_CACHE
+#define DEBUG_MODE_FULL
+#define DISABLE_COMPILE_CACHE
 
 #include "\d\dcg\addons\main\script_macros.hpp"
 
-#define UNITVAR QUOTE(DOUBLES(ADDON,unit))
-#define SET_UNITVAR(OBJ) (OBJ) setVariable [UNITVAR,true]
-#define GET_UNITVAR(OBJ) (OBJ) getVariable [UNITVAR,false]
+#define SET_UNITVAR(OBJ) (OBJ) setVariable [QGVAR(saveEntity),true]
+#define GET_UNITVAR(OBJ) (OBJ) getVariable [QGVAR(saveEntity),false]
 #define SPAWN_DELAY 1
 #define PATROL_UNITCOUNT 2
 #define ITERATIONS 3000
@@ -57,7 +56,7 @@
         if (_posArray isEqualTo []) then { WARNING("Cannot find suitable positions for vehicles") }; \
         { \
             _grp = [ASLtoAGL _x,1,1,EGVAR(main,enemySide),SPAWN_DELAY,true] call EFUNC(main,spawnGroup); \
-            waitUntil {{_x getVariable [ISDRIVER,false]} count units _grp >= 1}; \
+            waitUntil {{_x getVariable [QEGVAR(main,isDriver),false]} count units _grp >= 1}; \
             (objectParent leader _grp) addEventHandler ["Fuel",{if !(_this select 1) then {(_this select 0) setFuel 1}}]; \
             SET_UNITVAR(leader _grp); \
             [_grp, ASLtoATL _center, _size, 4, "MOVE", "SAFE", "YELLOW", "LIMITED", "STAG COLUMN", "", [10,20,30]] call CBA_fnc_taskPatrol; \
@@ -71,7 +70,7 @@
         params ["_center","_count"]; \
         for "_i" from 1 to _count do { \
             _grp = [ASLtoAGL _center,2,1,EGVAR(main,enemySide),SPAWN_DELAY] call EFUNC(main,spawnGroup); \
-            waitUntil {{_x getVariable [ISDRIVER,false]} count units _grp >= 1}; \
+            waitUntil {{_x getVariable [QEGVAR(main,isDriver),false]} count units _grp >= 1}; \
             (objectParent leader _grp) addEventHandler ["Fuel",{if !(_this select 1) then {(_this select 0) setFuel 1}}]; \
             SET_UNITVAR(leader _grp); \
             _wp = _grp addWaypoint [_center, 0]; \
@@ -92,6 +91,6 @@
 
 #define PREP_SNIPER(POS,COUNT,SIZE) \
     if (GVAR(sniper)) then { \
-    	[POS,ceil random COUNT,SIZE,SIZE+500] call EFUNC(main,spawnSniper); \
+        [POS,ceil random COUNT,SIZE,SIZE+500] call EFUNC(main,spawnSniper); \
         INFO("Prep snipers finished"); \
     }

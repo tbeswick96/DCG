@@ -4,32 +4,28 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_POSTINIT;
+POSTINIT;
 
-PVEH_QUESTION addPublicVariableEventHandler {(_this select 1) call FUNC(handleQuestion)};
-PVEH_HINT addPublicVariableEventHandler {[_this select 1,0] call FUNC(handleHint)};
-PVEH_HALT addPublicVariableEventHandler {[_this select 1] spawn FUNC(handleHalt)};
-PVEH_AVADD addPublicVariableEventHandler {
-    (_this select 1) call FUNC(addValue);
-    LOG_1("Client add AV: %1",_this);
-};
+["CBA_settingsInitialized", {
+    if (!EGVAR(main,enable) || {!GVAR(enable)}) exitWith {LOG(MSG_EXIT)};
 
-[
-	{DOUBLES(PREFIX,main)},
-	{
-		_data = QUOTE(ADDON) call EFUNC(main,loadDataAddon);
-		[_data] call FUNC(handleLoadData);
+    // debug 
+    if !([EGVAR(main,locations)] call CBA_fnc_isHash) exitWith {
+        ERROR_MSG("hash does not exist!!!");
+    };
 
-		/*[{
-			[FUNC(handleHostile), GVAR(hostileCooldown), []] call CBA_fnc_addPerFrameHandler
-		}, [], GVAR(hostileCooldown)] call CBA_fnc_waitAndExecute;*/
+    [QGVAR(stop), {_this call FUNC(handleStop)}] call CBA_fnc_addEventHandler;
 
-		[[],{
-			if (hasInterface) then {
-                call FUNC(handleClient);
-			};
- 		}] remoteExecCall [QUOTE(BIS_fnc_call),0,true];
-	}
-] call CBA_fnc_waitUntilAndExecute;
+    // headless client exit 
+    if (!isServer) exitWith {};
 
-ADDON = true;
+    [QGVAR(question), {_this call FUNC(handleQuestion)}] call CBA_fnc_addEventHandler;
+    [QGVAR(hint), {_this call FUNC(handleHint)}] call CBA_fnc_addEventHandler;
+    [QGVAR(add), {
+        _this call FUNC(addValue);
+        TRACE_1("client add value",_this);
+    }] call CBA_fnc_addEventHandler;
+
+    call FUNC(init);
+    remoteExecCall [QFUNC(initClient),0,true];
+}] call CBA_fnc_addEventHandler;

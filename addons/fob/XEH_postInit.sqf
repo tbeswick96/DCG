@@ -4,14 +4,20 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_POSTINIT;
+POSTINIT;
 
-call FUNC(init);
+// headless client exit 
+if (!isServer) exitWith {};
 
-PVEH_CREATE addPublicVariableEventHandler {[_this select 1] call FUNC(handleCreate)};
-PVEH_DELETE addPublicVariableEventHandler {[_this select 1] call FUNC(handleDelete)};
+["CBA_settingsInitialized", {
+    if (!EGVAR(main,enable) || {!GVAR(enable)}) exitWith {LOG(MSG_EXIT)};
 
-PVEH_DEPLOYPB addPublicVariableEventHandler {[_this select 1, ""] call FUNC(setupPB)};
+    [QGVAR(create), {_this call FUNC(handleCreate)}] call CBA_fnc_addEventHandler;
+    [QGVAR(delete), {call FUNC(handleDelete)}] call CBA_fnc_addEventHandler;
+    [QGVAR(transfer), {_this call FUNC(handleTransfer)}] call CBA_fnc_addEventHandler;
+    [QGVAR(assign), {_this call FUNC(handleAssign)}] call CBA_fnc_addEventHandler;
+    // TODO: MOVE PB TO CBA EVENTS
+    PVEH_DEPLOYPB addPublicVariableEventHandler {[_this select 1, ""] call FUNC(setupPB)};
 PVEH_DELETEPB addPublicVariableEventHandler {
 	private _anchor = objNull;
 	private _index = 0;
@@ -33,18 +39,7 @@ PVEH_DELETEPB addPublicVariableEventHandler {
 	GVAR(pbanchors) set [_index, objNull];
 };
 
-[
-	{DOUBLES(PREFIX,main)},
-	{
-		_data = QUOTE(ADDON) call EFUNC(main,loadDataAddon);
-		[_data] call FUNC(handleLoadData);
-
-		[[],{
-			if (hasInterface) then {
-				call FUNC(handleClient);
-			};
- 		}] remoteExecCall [QUOTE(BIS_fnc_call),0,true];
-	}
-] call CBA_fnc_waitUntilAndExecute;
-
-ADDON = true;
+    call FUNC(init);
+    call FUNC(handleLoadData);
+    remoteExecCall [QFUNC(initClient),0,true];
+}] call CBA_fnc_addEventHandler;

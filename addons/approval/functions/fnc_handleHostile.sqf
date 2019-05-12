@@ -8,7 +8,7 @@ handle hostile unit spawns
 Arguments:
 
 Return:
-none
+nothing
 __________________________________________________________________*/
 #include "script_component.hpp"
 
@@ -18,13 +18,16 @@ if !(_players isEqualTo []) then {
     private _player = selectRandom _players;
     private _pos = getPos _player;
 
-    if (!(_pos inArea EGVAR(main,baseLocation)) && {alive _player} && {((getPos player) select 2) < 10}) then {
-    	if (random 1 > AV_CONVERT2(_pos)) then {
-    		_ret = [_player] call FUNC(spawnHostile);
+    if (alive _player && {(_pos select 2) < 10} && {!([_pos] call EFUNC(main,inSafezones))}) then {
+        // convert approval value to hostile probability
+        if (PROBABILITY(AP_CONVERT2(_pos))) then {
+            private _ret = [_player] call FUNC(spawnHostile);
 
-            if (GVAR(notify) && {_ret}) then {
+            if (GVAR(hostileHint) && {_ret}) then {
                 ["Aerial recon shows hostile civilian activity in your region!", true] remoteExecCall [QEFUNC(main,displayText), allPlayers, false];
             };
-    	};
+        };
     };
 };
+
+nil

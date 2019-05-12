@@ -4,18 +4,14 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_PREINIT;
-
-ADDON = false;
+PREINIT;
 
 PREP(initSettings);
 PREP(findLocation);
-PREP(handleLoadData);
+PREP(init);
 PREP(handleOccupied);
 PREP(setOccupied);
 
 GVAR(location) = [];
-
-publicVariable QFUNC(initSettings);
 
 SETTINGS_INIT;

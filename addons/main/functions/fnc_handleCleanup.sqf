@@ -8,35 +8,56 @@ handle cleanup
 Arguments:
 
 Return:
-none
+nothing
 __________________________________________________________________*/
 #include "script_component.hpp"
-#define CLEAN_DIST 500
+#define CLEAN_DIST 250
+
+if (GVAR(cleanup) isEqualTo []) exitWith {};
+
+private _cleanupNow = [];
+private _cleanupLater = [];
 
 {
-	deleteGroup _x; // will only delete local empty groups
-	false
-} count allGroups;
-
-if !(GVAR(markerCleanup) isEqualTo []) then {
-	for "_i" from (count GVAR(markerCleanup) - 1) to 0 step -1 do {
-		deleteMarker (GVAR(markerCleanup) select _i);
-		GVAR(markerCleanup) deleteAt _i;
-	};
-};
-
-if !(GVAR(objectCleanup) isEqualTo []) then {
-	GVAR(objectCleanup) = GVAR(objectCleanup) select {!isNull _x}; // remove null elements
-
-	for "_i" from (count GVAR(objectCleanup) - 1) to 0 step -1 do {
-		_obj = GVAR(objectCleanup) select _i;
-        if (_obj getVariable [QGVAR(forceCleanup),false] || {[getPos _obj,CLEAN_DIST] call EFUNC(main,getNearPlayers) isEqualTo []}) then {
-            if (_obj isKindOf "LandVehicle" || {_obj isKindOf "Air"} || {_obj isKindOf "Ship"}) then {
-                {deleteVehicle _x} forEach (crew _obj);
-                deleteVehicle _obj;
-    		} else {
-    			deleteVehicle _obj;
-    		};
+    switch (typeName _x) do {
+        case "OBJECT": {
+            if !(isNull _x) then {
+                if (_x getVariable [QGVAR(forceCleanup),false] || {[getPosATL _x,CLEAN_DIST] call EFUNC(main,getNearPlayers) isEqualTo []}) then {
+                    _cleanupNow pushBack _x;
+                } else {
+                    _cleanupLater pushBack _x;
+                };
+            };
         };
-	};
-};
+        case "GROUP": {
+            if !(isNull _x) then {
+                if (_x getVariable [QGVAR(forceCleanup),false] || {[getPosATL leader _x,CLEAN_DIST] call EFUNC(main,getNearPlayers) isEqualTo []}) then {
+                    _cleanupNow pushBack _x;
+                } else {
+                    _cleanupLater pushBack _x;
+                };
+            };            
+        };
+        case "LOCATION": {
+            if !(isNull _x) then {
+                _cleanupNow pushBack _x;
+            };            
+        };
+        case "STRING": {
+            if (CHECK_MARKER(_x)) then {
+               _cleanupNow pushBack _x; 
+            };
+        };
+        default { 
+            WARNING_1("bad type passed to cleanup handler: %1",typeName _x);    
+        };
+    };
+} forEach GVAR(cleanup);
+
+TRACE_4("",count GVAR(cleanup),count _cleanupNow,count _cleanupLater,GVAR(cleanup));
+
+_cleanupNow call CBA_fnc_deleteEntity;
+
+GVAR(cleanup) = _cleanupLater;
+
+nil

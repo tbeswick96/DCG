@@ -4,14 +4,18 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_PREINIT;
-
-ADDON = false;
+PREINIT;
 
 PREP(initSettings);
 PREP(restoreLoadout);
+PREP(handleClient);
 
-publicVariable QFUNC(initSettings);
+GVAR(handleDisconnectID) = -1;
+
+// headless client exit 
+if (!isServer) exitWith {};
+
 publicVariable QFUNC(restoreLoadout);
+publicVariable QFUNC(handleClient);
 
 SETTINGS_INIT;

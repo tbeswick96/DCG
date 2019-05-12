@@ -3,7 +3,7 @@ Author:
 Nicholas Clark (SENSEI)
 
 Description:
-finds a position of a certain terrain type. If the terrain type is "house", the function returns an array including the house object and position
+finds a positionASL of a certain terrain type. If the terrain type is "house", the function returns an array including the house object and position
 
 Arguments:
 0: center position <ARRAY>
@@ -21,55 +21,54 @@ __________________________________________________________________*/
 #define GRAD 0.275
 
 params [
-	["_anchor",[0,0,0],[[]]],
-	["_range",100,[0]],
-	["_terrain","",[""]],
-	["_check",0,[0]],
-	["_rural",false,[false]]
+    ["_anchor",[],[[]]],
+    ["_range",100,[0]],
+    ["_terrain","",[""]],
+    ["_check",0,[0]],
+    ["_rural",false,[false]]
 ];
 
 private _ret = [];
 private _expression = "";
 
 call {
-	if (COMPARE_STR(_terrain,"meadow")) exitWith {
-		_expression = "(1 + meadow) * (1 - forest) * (1 - sea)";
-	};
-	if (COMPARE_STR(_terrain,"forest")) exitWith {
-		_expression = "(1 + forest + trees) * (1 - sea)";
-	};
-	if (COMPARE_STR(_terrain,"house")) exitWith {
-		_expression = "(1 + houses) * (1 - sea)";
-	};
-	if (COMPARE_STR(_terrain,"hill")) exitWith {
-		_expression = "(1 + hills) * (1 - sea)";
-	};
+    if (COMPARE_STR(_terrain,"meadow")) exitWith {
+        _expression = EX_MEADOW;
+    };
+    if (COMPARE_STR(_terrain,"forest")) exitWith {
+        _expression = EX_FOREST;
+    };
+    if (COMPARE_STR(_terrain,"house")) exitWith {
+        _expression = EX_HOUSES;
+    };
+    if (COMPARE_STR(_terrain,"hill")) exitWith {
+        _expression = EX_HILL;
+    };
 };
 
-if (_terrain isEqualTo "" || {_expression isEqualTo ""}) exitWith {
-	WARNING("Cannot find position, expression is empty");
+if (COMPARE_STR(_terrain,"") || {COMPARE_STR(_expression,"")}) exitWith {
+    WARNING("Cannot find position, expression is empty");
 };
 
 private _places = selectBestPlaces [_anchor,_range,_expression,100,20];
 
 _places = if !(_rural) then {
-	_places select {(_x select 1) > 0 && {!((_x select 0) inArea EGVAR(main,baseLocation))}};
+    _places select {(_x select 1) > 0 && {!([_x select 0] call FUNC(inSafezones))}};
 } else {
-	_places select {(_x select 1) > 0 && {((nearestLocations [(_x select 0), ["NameVillage","NameCity","NameCityCapital"], DIST]) isEqualTo [])} && {!((_x select 0) inArea EGVAR(main,baseLocation))}};
+    _places select {(_x select 1) > 0 && {((nearestLocations [(_x select 0), ["NameVillage","NameCity","NameCityCapital"], DIST]) isEqualTo [])} && {!([_x select 0] call FUNC(inSafezones))}};
 };
 
 {
-	private _pos = _x select 0;
-	_pos set [2,getTerrainHeightASL _pos];
+    if !(_terrain isEqualTo "house") then {
+        if (_check > 0 && {!([_x select 0,_check,0,GRAD] call FUNC(isPosSafe))}) exitWith {};
 
-	if !(_terrain isEqualTo "house") then {
-		if (_check > 0 && {!([_pos,_check,0,GRAD] call FUNC(isPosSafe))}) exitWith {};
-		_ret = _pos;
-	} else {
-		_ret = [_pos,DIST_HOUSE] call FUNC(findPosHouse);
-	};
+        _ret =+ _x select 0;
+        _ret set [2,ASLZ(_ret)];
+    } else {
+        _ret = [_x select 0,DIST_HOUSE] call FUNC(findPosHouse);
+    };
 
-	if !(_ret isEqualTo []) exitWith {};
+    if !(_ret isEqualTo []) exitWith {};
 } forEach _places;
 
 _ret

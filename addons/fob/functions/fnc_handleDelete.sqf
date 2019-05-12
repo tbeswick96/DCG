@@ -12,7 +12,7 @@ none
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-[FOB_POSITION,AV_FOB*-1] call EFUNC(approval,addValue);
+[FOB_POSITION,AP_FOB*-1] call EFUNC(approval,addValue);
 deleteMarker GVAR(marker);
 GVAR(respawnPos) call BIS_fnc_removeRespawnPosition;
 deleteVehicle GVAR(anchor);

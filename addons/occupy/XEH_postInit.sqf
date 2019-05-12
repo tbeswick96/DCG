@@ -4,14 +4,10 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_POSTINIT;
+POSTINIT;
 
-[
-	{DOUBLES(PREFIX,main)},
-	{
-		_data = QUOTE(ADDON) call EFUNC(main,loadDataAddon);
-		[_data] call FUNC(handleLoadData);
-	}
-] call CBA_fnc_waitUntilAndExecute;
+["CBA_settingsInitialized", {
+    if (!EGVAR(main,enable) || {!GVAR(enable)}) exitWith {LOG(MSG_EXIT)};
 
-ADDON = true;
+    call FUNC(init);
+}] call CBA_fnc_addEventHandler;

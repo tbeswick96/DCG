@@ -4,16 +4,14 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_PREINIT;
-
-ADDON = false;
+PREINIT;
 
 PREP(initSettings);
 PREP(handlePatrol);
 
 GVAR(groups) = [];
-GVAR(blacklist) = [];
 
-publicVariable QFUNC(initSettings);
+// headless client exit 
+if (!isServer) exitWith {};
 
 SETTINGS_INIT;

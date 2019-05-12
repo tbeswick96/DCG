@@ -11,25 +11,17 @@ Return:
 bool
 __________________________________________________________________*/
 #include "script_component.hpp"
+#define CATEGORY_HOSTILE [COMPONENT_NAME,"Hostile Entity Settings"]
 
 [
-    QGVAR(enable), // Internal setting name, should always contain a tag! This will be the global variable which takes the value of the setting.
-    "CHECKBOX", // setting type
-    format ["Enable %1", COMPONENT_NAME], // Pretty name shown inside the ingame settings menu. Can be stringtable entry.
-    COMPONENT_NAME, // Pretty name of the category where the setting can be found. Can be stringtable entry.
-    true, // data for this setting
-    true, // "global" flag. Set this to true to always have this setting synchronized between all clients in multiplayer
-    {} // function that will be executed once on mission start and every time the setting is changed.
-] call CBA_Settings_fnc_init;
-
-[
-    QGVAR(notify),
+    QGVAR(enable),
     "CHECKBOX",
-    ["Enable Hostile Notification","Notify players when hostile entity spawns."],
+    format ["Enable %1", COMPONENT_NAME],
     COMPONENT_NAME,
     true,
-    false,
-    {}
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;
 
 [
@@ -43,21 +35,31 @@ __________________________________________________________________*/
         1,
         1
     ],
-    false,
+    true,
+    {}
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(hostileHint),
+    "CHECKBOX",
+    ["Enable Hostile Notification","Notify players when hostile entities spawn."],
+    CATEGORY_HOSTILE,
+    true,
+    true,
     {}
 ] call CBA_Settings_fnc_init;
 
 [
     QGVAR(hostileCooldown),
     "SLIDER",
-    ["Hostile Spawn Cooldown","Time in seconds between possible hostile spawns."],
-    COMPONENT_NAME,
+    ["Hostile Spawn Cooldown","Time in seconds between possible hostile entity spawns."],
+    CATEGORY_HOSTILE,
     [
         300,
         3600,
         900,
         0
     ],
-    false,
+    true,
     {}
 ] call CBA_Settings_fnc_init;

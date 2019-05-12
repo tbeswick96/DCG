@@ -14,9 +14,11 @@ boolean
 __________________________________________________________________*/
 #include "script_component.hpp"
 
+if !(isMultiplayer) exitWith {};
+
 params [
-	["_unit", objNull, [objNull]],
-	["_killer", objNull, [objNull]]
+    ["_unit", objNull, [objNull]],
+    ["_killer", objNull, [objNull]]
 ];
 
 // ACE workaround, https://github.com/acemod/ACE3/issues/3790
@@ -25,42 +27,30 @@ if (isNull _killer || {_unit isEqualTo _killer}) then {
 };
 
 if (isNull _unit || {isNull _killer} || {_killer isEqualTo _unit} || {side _killer isEqualTo CIVILIAN}) exitWith {
-	INFO_2("Exit handleKilled with killer: %1, victim: %2",_killer,_unit);
+    TRACE_2("Exit handleKilled",_killer,_unit);
     false
 };
 
-private _unitValue = 0;
+private _unitValue = call {
+    if (_unit isKindOf "CAManBase" && {!(side group _unit isEqualTo CIVILIAN)}) exitWith {AP_MAN};
+    if (_unit isKindOf "CAManBase" && {side group _unit isEqualTo CIVILIAN}) exitWith {AP_CIV};
+    if (_unit isKindOf "Car") exitWith {AP_CAR};
+    if (_unit isKindOf "Tank") exitWith {AP_TANK};
+    if (_unit isKindOf "Air") exitWith {AP_AIR};
+    if (_unit isKindOf "Ship") exitWith {AP_SHIP};
 
-call {
-    if (_unit isKindOf "Man" && {!(side group _unit isEqualTo CIVILIAN)}) exitWith {
-		_unitValue = AV_MAN;
-	};
-    if (_unit isKindOf "Man" && {side group _unit isEqualTo CIVILIAN}) exitWith {
-        _unitValue = AV_CIV;
-    };
-	if (_unit isKindOf "Car") exitWith {
-		_unitValue = AV_CAR;
-	};
-	if (_unit isKindOf "Tank") exitWith {
-		_unitValue = AV_TANK;
-	};
-	if (_unit isKindOf "Air") exitWith {
-		_unitValue = AV_AIR;
-	};
-	if (_unit isKindOf "Ship") exitWith {
-		_unitValue = AV_SHIP;
-	};
+    0
 };
 
-if (side group _unit isEqualTo EGVAR(main,playerSide) || {side group _unit isEqualTo CIVILIAN}) then {
-	_unitValue = _unitValue * -1;
+// subtract value if unit not enemy
+if !(side group _unit isEqualTo EGVAR(main,enemySide)) then {
+    _unitValue = _unitValue * -1;
 };
 
 if (isServer) then {
-	[getPos _unit, _unitValue] call FUNC(addValue);
+    [getPos _unit, _unitValue] call FUNC(addValue);
 } else {
-	missionNamespace setVariable [PVEH_AVADD,[getPos _unit, _unitValue]];
-	publicVariableServer PVEH_AVADD;
+    [QGVAR(hint), [getPos _unit, _unitValue]] call CBA_fnc_serverEvent;
 };
 
 true

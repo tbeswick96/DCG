@@ -12,14 +12,16 @@ bool
 __________________________________________________________________*/
 #include "script_component.hpp"
 
+// @todo add settings: allow rain, allow fog
 [
-    QGVAR(enable), // Internal setting name, should always contain a tag! This will be the global variable which takes the value of the setting.
-    "CHECKBOX", // setting type
-    format ["Enable %1", COMPONENT_NAME], // Pretty name shown inside the ingame settings menu. Can be stringtable entry.
-    COMPONENT_NAME, // Pretty name of the category where the setting can be found. Can be stringtable entry.
-    true, // data for this setting
-    true, // "global" flag. Set this to true to always have this setting synchronized between all clients in multiplayer
-    {} // function that will be executed once on mission start and every time the setting is changed.
+    QGVAR(enable),
+    "CHECKBOX",
+    format ["Enable %1", COMPONENT_NAME],
+    COMPONENT_NAME,
+    true,
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;
 
 [
@@ -32,14 +34,15 @@ __________________________________________________________________*/
         ["Random","January","February","March","April","May","June","July","August","September","October","November","December"],
         0
     ],
-    false,
-    {}
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;
 
 [
-    QGVAR(time),
+    QGVAR(hour),
     "SLIDER",
-    ["Time of Day","Hour of the day in 24hr format."],
+    ["Hour","Hour of the day in 24hr format. A random hour will be set if the value is below 0."],
     COMPONENT_NAME,
     [
         -1,
@@ -47,6 +50,56 @@ __________________________________________________________________*/
         -1,
         0
     ],
-    false,
+    true,
+    {
+        GVAR(hour) = floor _this;
+    },
+    true
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(variance),
+    "SLIDER",
+    ["Forecast Variance","Determines how far the weather forecast will deviate from the initial weather."],
+    COMPONENT_NAME,
+    [
+        1,
+        5,
+        1,
+        2
+    ],
+    true,
     {}
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(cloudsOverride),
+    "SLIDER",
+    ["Probability of Clouds","A measure of the probability that mostly cloudy or overcast conditions will occur. The probability is map dependent if the value is below 0."],
+    COMPONENT_NAME,
+    [
+        -1,
+        1,
+        -1,
+        2
+    ],
+    true,
+    {},
+    true
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(precipitationOverride),
+    "SLIDER",
+    ["Probability of Precipitation","A measure of the probability that precipitation will occur. The probability is map dependent if the value is below 0."],
+    COMPONENT_NAME,
+    [
+        -1,
+        1,
+        -1,
+        2
+    ],
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;

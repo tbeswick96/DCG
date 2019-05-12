@@ -22,14 +22,14 @@ private _pos = [];
 private _type = "";
 
 call {
-	if (_center isEqualType objNull) exitWith {
-		_unit = _center;
-		_pos = _center modelToWorld [0,3,0];
-	};
-	if (_center isEqualType []) exitWith {
-		_unit = objNull;
-		_pos = _center;
-	};
+    if (_center isEqualType objNull) exitWith {
+        _unit = _center;
+        _pos = _center modelToWorld [0,3,0];
+    };
+    if (_center isEqualType []) exitWith {
+        _unit = objNull;
+        _pos = _center;
+    };
 };
 
 GVAR(anchor) = "Land_PenBlack_F" createVehicle [0,0,0];
@@ -50,7 +50,7 @@ GVAR(marker) = _name;
     {!(FOB_POSITION isEqualTo [0,0,0])},
     {
         GVAR(respawnPos) = [missionNamespace,FOB_POSITION,GVAR(name)] call BIS_fnc_addRespawnPosition;
-        [FOB_POSITION,AV_FOB] call EFUNC(approval,addValue);
+        [FOB_POSITION,AP_FOB] call EFUNC(approval,addValue);
     },
     []
 ] call CBA_fnc_waitUntilAndExecute;

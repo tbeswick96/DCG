@@ -4,26 +4,15 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_POSTINIT;
+POSTINIT;
 
-[
-	{DOUBLES(PREFIX,main)},
-	{
-		GVAR(blacklist) pushBack [locationPosition EGVAR(main,baseLocation),EGVAR(main,baseRadius)]; // add main base to blacklist
+// headless client exit 
+if (!isServer) exitWith {};
 
-		if (!isNil {HEADLESSCLIENT} && {!(CHECK_ADDON_1("acex_headless"))}) then { // let ace handle transfer if enabled
-			(owner HEADLESSCLIENT) publicVariableClient QFUNC(handlePatrol);
-			(owner HEADLESSCLIENT) publicVariableClient QGVAR(groups);
-			(owner HEADLESSCLIENT) publicVariableClient QGVAR(blacklist);
-			[{
-				[FUNC(handlePatrol), 90, []] remoteExecCall [QUOTE(CBA_fnc_addPerFrameHandler), owner HEADLESSCLIENT, false];
-			}, [], 60] call CBA_fnc_waitAndExecute;
-		} else {
-			[{
-				[FUNC(handlePatrol), 90, []] call CBA_fnc_addPerFrameHandler;
-			}, [], 60] call CBA_fnc_waitAndExecute;
-		};
-	}
-] call CBA_fnc_waitUntilAndExecute;
+["CBA_settingsInitialized", {
+    if (!EGVAR(main,enable) || {!GVAR(enable)}) exitWith {LOG(MSG_EXIT)};
 
-ADDON = true;
+    [{
+        [FUNC(handlePatrol), GVAR(cooldown), []] call CBA_fnc_addPerFrameHandler;
+    }, [], GVAR(cooldown)] call CBA_fnc_waitAndExecute;
+}] call CBA_fnc_addEventHandler;

@@ -13,56 +13,71 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 
 [
-    QGVAR(enable), // Internal setting name, should always contain a tag! This will be the global variable which takes the value of the setting.
-    "CHECKBOX", // setting type
-    format ["Enable %1", COMPONENT_NAME], // Pretty name shown inside the ingame settings menu. Can be stringtable entry.
-    COMPONENT_NAME, // Pretty name of the category where the setting can be found. Can be stringtable entry.
-    true, // data for this setting
-    true, // "global" flag. Set this to true to always have this setting synchronized between all clients in multiplayer
-    {} // function that will be executed once on mission start and every time the setting is changed.
+    QGVAR(enable),
+    "CHECKBOX",
+    format ["Enable %1", COMPONENT_NAME],
+    COMPONENT_NAME,
+    true,
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;
 
 [
-    QGVAR(multiplier),
-    "LIST",
-    ["Civilian Count","Amount of civilian units spawned in a location."],
+    QGVAR(blacklist),
+    "EDITBOX",
+    ["Blacklisted Locations","Exclude locations by listing names. Names must be separated by a comma and partial names are allowed."],
     COMPONENT_NAME,
-    [
-        [1,1.5],
-        ["Low","High"],
-        0
-    ],
-    false,
-    {}
+    "pier,airbase,air base,airfield,terminal",
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;
 
 [
     QGVAR(spawnDist),
     "SLIDER",
-    ["Spawn Distance","Distance from location center that units will spawn."],
+    ["Spawn Distance","Civilian entities will spawn when a player is within this distance of a location."],
     COMPONENT_NAME,
     [
-        300,
-        1000,
-        400,
+        1,
+        2000,
+        250,
         0
     ],
-    false,
-    {}
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;
 
 [
-    QGVAR(vehMaxCount),
+    QGVAR(unitLimit),
     "SLIDER",
-    ["Max Vehicle Count","Max number of active civilian vehicles."],
+    ["Unit Limit","Limits the number of civilian units per location."],
     COMPONENT_NAME,
     [
         0,
-        10,
-        5,
+        32,
+        16,
         0
     ],
-    false,
+    true,
+    {},
+    true
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(vehLimit),
+    "SLIDER",
+    ["Vehicle Limit","Limits the number of spawned civilian vehicles."],
+    COMPONENT_NAME,
+    [
+        0,
+        16,
+        8,
+        0
+    ],
+    true,
     {}
 ] call CBA_Settings_fnc_init;
 
@@ -72,11 +87,12 @@ __________________________________________________________________*/
     ["Vehicle Cooldown","Time in seconds between potential vehicle spawns."],
     COMPONENT_NAME,
     [
-        300,
+        60,
         3600,
-        600,
+        300,
         0
     ],
-    false,
-    {}
+    true,
+    {},
+    true
 ] call CBA_Settings_fnc_init;

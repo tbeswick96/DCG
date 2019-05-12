@@ -12,7 +12,7 @@ none
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-params ["_data"];
+private _data = [QUOTE(ADDON)] call EFUNC(main,loadDataAddon);
 
 if (count _data > 0) then {
 	{

@@ -6,24 +6,28 @@ Description:
 handle loading data
 
 Arguments:
-0: data <ARRAY>
 
 Return:
-none
+nothing
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-params ["_data"];
+private _data = [QUOTE(ADDON)] call FUNC(loadDataAddon);
 
 if !(_data isEqualTo []) then {
-	{
-		_x params ["_type","_pos","_dir","_vector"];
+    // @todo add support for loading units
+    {
+        _x params ["_type","_pos","_dir","_vector","_vars"];
 
-		_veh = _type createVehicle [0,0,0];
-		_veh setDir _dir;
-		_veh setPosASL _pos;
-		_veh setVectorUp _vector;
+        private _veh = _type createVehicle DEFAULT_SPAWNPOS;
 
-		false
-	} count _data;
+        {
+            _veh setVariable [_x select 0, _x select 1, false];
+        } forEach _vars;
+
+        _veh setDir _dir;
+        [_veh,_pos] call FUNC(setPosSafe);
+    } forEach _data;
 };
+
+nil

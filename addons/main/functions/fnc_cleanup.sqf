@@ -3,26 +3,31 @@ Author:
 Nicholas Clark (SENSEI)
 
 Description:
-add to cleanup loop, does not support nested arrays
+add to cleanup loop
 
 Arguments:
-0: item to cleanup <ARRAY, STRING, OBJECT>
+0: entity <ARRAY, STRING, OBJECT, LOCATION, GROUP>
 
 Return:
-none
+nothing
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-if (typeName _this isEqualTo "ARRAY") exitWith {
-	if (typeName (_this select 0) isEqualTo "STRING") then {
-		GVAR(markerCleanup) append _this;
-	} else {
-		GVAR(objectCleanup) append _this;
-	};
+[_this] params [
+    ["_entity", objNull, [objNull, grpNull, locationNull, "", []]]
+];
+
+if (_entity isEqualType []) then {
+    {
+        if !(_x isEqualType []) then {
+            GVAR(cleanup) pushBack _x;
+        } else {
+            _x call FUNC(cleanup);
+            WARNING_1("multi-dimensional array passed to %1",QGVAR(cleanup))
+        };
+    } forEach _entity;
+} else {
+    GVAR(cleanup) pushBack _entity;
 };
-if (typeName _this isEqualTo "STRING") exitWith {
-	GVAR(markerCleanup) pushBack _this;
-};
-if (typeName _this isEqualTo "OBJECT") exitWith {
-	GVAR(objectCleanup) pushBack _this;
-};
+
+nil

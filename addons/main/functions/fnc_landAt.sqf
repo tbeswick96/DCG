@@ -13,24 +13,22 @@ Arguments:
 4: code params <ARRAY>
 
 Return:
-none
+nothing
 __________________________________________________________________*/
 #include "script_component.hpp"
-#define VAR_LANDED QUOTE(DOUBLES(ADDON,landAt))
-#define VAR_CANCEL QUOTE(DOUBLES(ADDON,cancelLandAt))
 
 params [
-	["_heli",objNull,[objNull]],
-	["_pos",[0,0,0],[[]]],
-	["_type","LAND",[""]],
-	["_onComplete",{},[{}]],
-	["_params",[],[[]]]
+    ["_heli",objNull,[objNull]],
+    ["_pos",[0,0,0],[[]]],
+    ["_type","LAND",[""]],
+    ["_onComplete",{},[{}]],
+    ["_params",[],[[]]]
 ];
 
-_heli setVariable [VAR_LANDED,false];
-_heli setVariable [VAR_CANCEL,false];
+_heli setVariable [QGVAR(landAt),false];
+_heli setVariable [QGVAR(cancelLandAt),false];
 
-private _helipad = "Land_HelipadEmpty_F" createVehicle [0,0,0];
+private _helipad = "Land_HelipadEmpty_F" createVehicle DEFAULT_SPAWNPOS;
 _helipad setPos _pos;
 _heli doMove _pos;
 
@@ -44,11 +42,11 @@ _heli animate ["dvere1_posunZ", 0];
 _heli animate ["dvere2_posunZ", 0];
 
 [
-    {unitReady (driver (_this select 0)) || {!alive (_this select 0)} || {(_this select 0) getVariable [VAR_CANCEL,false]}},
+    {unitReady (driver (_this select 0)) || {!alive (_this select 0)} || {(_this select 0) getVariable [QGVAR(cancelLandAt),false]}},
     {
         params ["_heli","_pos","_type","_onComplete","_params","_helipad"];
 
-        if (!alive _heli || {_heli getVariable [VAR_CANCEL,false]}) exitWith {};
+        if (!alive _heli || {_heli getVariable [QGVAR(cancelLandAt),false]}) exitWith {};
 
         // if object obstructing LZ, command SHOULD redirect heli to empty position
         _heli land _type;
@@ -56,11 +54,11 @@ _heli animate ["dvere2_posunZ", 0];
 
         // run completion code when heli lands
         [
-            {isTouchingGround (_this select 0) || {!alive (_this select 0)} || {(_this select 0) getVariable [VAR_CANCEL,false]}},
+            {isTouchingGround (_this select 0) || {!alive (_this select 0)} || {(_this select 0) getVariable [QGVAR(cancelLandAt),false]}},
             {
                 params ["_heli","_onComplete","_params","_helipad"];
 
-                if (!alive _heli || {_heli getVariable [VAR_CANCEL,false]}) exitWith {};
+                if (!alive _heli || {_heli getVariable [QGVAR(cancelLandAt),false]}) exitWith {};
 
                 _heli animateDoor ["door_R", 1];
                 _heli animateDoor ["door_L", 1];
@@ -72,19 +70,19 @@ _heli animate ["dvere2_posunZ", 0];
 
                 // check if heli has actually landed, sometimes heli will touch ground and rise to a hover if object is interferring with LZ
                 [
-        			{
+                    {
                         params ["_heli","_onComplete","_params","_helipad"];
 
                         if (isTouchingGround _heli) then {
-                            _heli setVariable [VAR_LANDED,true];
+                            _heli setVariable [QGVAR(landAt),true];
                             _params = [_heli] + _params;
                             _params call _onComplete;
                             deleteVehicle _helipad;
                         };
-        			},
-        			[_heli,_onComplete,_params,_helipad],
-        			1.5
-        		] call CBA_fnc_waitAndExecute;
+                    },
+                    [_heli,_onComplete,_params,_helipad],
+                    1.5
+                ] call CBA_fnc_waitAndExecute;
             },
             [_heli,_onComplete,_params,_helipad]
         ] call CBA_fnc_waitUntilAndExecute;

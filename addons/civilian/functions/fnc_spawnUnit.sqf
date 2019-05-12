@@ -3,65 +3,48 @@ Author:
 Nicholas Clark (SENSEI)
 
 Description:
-spawn civilians
+spawn units in settlement
 
 Arguments:
-0: position to spawn civilians <ARRAY>
-1: number of units to spawn <NUMBER>
-2: name of location <STRING>
+0: spawn location <LOCATION>
 
 Return:
-none
+nothing
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-params ["_pos","_count","_name","_size"];
+params [
+    ["_location",locationNull,[locationNull]]
+];
 
-missionNamespace setVariable [LOCATION_ID(_name),true];
+private ["_units","_position"];
 
-private _units = [];
-private _buildings = _pos nearObjects ["House", _size min 200];
+_units = [];
 
-_buildings = _buildings select {
-    !((_x buildingPos -1) isEqualTo [])
+for "_i" from 0 to ((_location getVariable [QGVAR(unitCount),0]) - 1) do {
+    // get random house position
+    _position = selectRandom (selectRandom (_location getVariable [QGVAR(buildingPositions),[]]));
+
+    _agent = createAgent [selectRandom EGVAR(main,unitsCiv),DEFAULT_SPAWNPOS,[],0,"CAN_COLLIDE"];
+    _agent setPosASL (AGLToASL _position); 
+
+    // init code
+    _agent call (_location getVariable [QGVAR(onCreate),{}]);
+    _agent addEventHandler ["Deleted", _location getVariable [QGVAR(onDelete),{}]]; 
+
+    // panic event
+    // @todo add panic check for unit approval questioning
+    _agent addEventHandler ["FiredNear", {
+        params ["_unit", "_firer", "_distance"];
+
+        if !(_unit getVariable [QGVAR(panic),false]) then {
+            [QGVAR(panic),[_unit,1]] call CBA_fnc_localEvent;
+        };  
+    }];
+    _units pushBack _agent;
 };
 
-private _grp = [[0,0,0],0,_count,CIVILIAN,1.25] call EFUNC(main,spawnGroup);
+// save reference to all units in location
+_location setVariable [QGVAR(units),_units];
 
-_grp setVariable ["uksf_caching_excluded", true, true];
-
-[
-	{count units (_this select 0) >= (_this select 2)},
-	{
-        params ["_grp","_pos","_count","_size","_buildings","_name"];
-
-        {
-            if !(_buildings isEqualTo []) then {
-                _pos = selectRandom ((selectRandom _buildings) buildingPos -1);
-            };
-
-            _x setPos _pos;
-
-            _id = [_x,_pos,_size] call FUNC(setPatrol);
-
-            _x addEventHandler ["firedNear",format ["
-                [%1] call CBA_fnc_removePerFrameHandler;
-                (_this select 0) removeEventHandler [""firedNear"", _thisEventHandler];
-                (_this select 0) setUnitPos ""DOWN"";
-                doStop (_this select 0);
-            ",_id]];
-        } forEach units _grp;
-
-        [{
-            params ["_args","_idPFH"];
-            _args params ["_pos","_name","_units"];
-
-            if (([_pos,GVAR(spawnDist),ZDIST] call EFUNC(main,getNearPlayers)) isEqualTo []) exitWith {
-                [_idPFH] call CBA_fnc_removePerFrameHandler;
-                _units call EFUNC(main,cleanup);
-                missionNamespace setVariable [LOCATION_ID(_name),false];
-            };
-        }, HANDLER_DELAY, [_pos,_name,units _grp]] call CBA_fnc_addPerFrameHandler;
-	},
-	[_grp,_pos,_count,_size,_buildings,_name]
-] call CBA_fnc_waitUntilAndExecute;
+nil

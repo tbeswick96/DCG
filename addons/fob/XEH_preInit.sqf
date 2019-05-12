@@ -4,15 +4,16 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_PREINIT;
-
-ADDON = false;
+PREINIT;
 
 PREP(initSettings);
+PREP(init);
+PREP(initClient);
+PREP(handleAssign);
 PREP(handleCreate);
 PREP(handleDelete);
 PREP(handleLoadData);
-PREP(handleClient);
+PREP(handleRecon);
 PREP(getKeybind);
 PREP(getChildren);
 PREP(isAllowedOwner);
@@ -28,11 +29,18 @@ GVAR(marker) = "";
 GVAR(pbanchors) = [objNull,objNull,objNull,objNull,objNull];
 GVAR(pbRespawnPos) = [];
 
-publicVariable QFUNC(initSettings);
+// headless client exit 
+if (!isServer) exitWith {};
+
+// define location via remoteExec instead of publicVariable to avoid SimpleSerialization warning
+[[],{
+    GVAR(location) = locationNull;
+}] remoteExecCall [QUOTE(call),0];
+
 publicVariable QFUNC(getKeybind);
 publicVariable QFUNC(getChildren);
 publicVariable QFUNC(isAllowedOwner);
-publicVariable QFUNC(handleClient);
+publicVariable QFUNC(initClient);
 publicVariable QFUNC(deployPB);
 publicVariable QFUNC(canDeployPB);
 publicVariable QFUNC(canDeletePB);

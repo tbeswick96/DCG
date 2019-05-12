@@ -20,115 +20,99 @@ __________________________________________________________________*/
 #define MAX_CARGO 4
 #define TIMEOUT 30
 
-private ["_unitPool","_vehPool","_airPool"];
 params [
-	["_pos",[0,0,0],[[]]],
-	["_type",0,[0]],
-	["_count",1,[0]],
-	["_side",GVAR(enemySide),[sideUnknown]],
-	["_delay",1,[0]],
-	["_cargo",false,[false]]
+    ["_pos",[],[[]]],
+    ["_type",0,[0]],
+    ["_count",1,[0]],
+    ["_side",GVAR(enemySide),[sideUnknown]],
+    ["_delay",1,[0]],
+    ["_cargo",false,[false]]
 ];
 
 private _grp = if (_side isEqualTo "SUICIDE") then {
-		createGroup EAST
-	} else {
-		createGroup _side
-	};
+	createGroup EAST
+} else {
+	createGroup _side
+};
 private _drivers = [];
 private _check = [];
+private _unitPool = [_side,0] call FUNC(getPool);
+private _vehPool = [_side,1] call FUNC(getPool);
+private _airPool = [_side,2] call FUNC(getPool);
 
-_grp deleteGroupWhenEmpty true;
+// add group to cache system
+[QEGVAR(cache,enableGroup),_grp] call CBA_fnc_serverEvent;
 
+// don't consider height to simplify spawning
 _pos =+ _pos;
 _pos resize 2;
 
-call {
-	if (_side isEqualTo EAST) exitWith {
-		_unitPool = GVAR(unitPoolEast);
-		_vehPool = GVAR(vehPoolEast);
-		_airPool = GVAR(airPoolEast);
-	};
-	if (_side isEqualTo WEST) exitWith {
-		_unitPool = GVAR(unitPoolWest);
-		_vehPool = GVAR(vehPoolWest);
-		_airPool = GVAR(airPoolWest);
-	};
-	if (_side isEqualTo CIVILIAN) exitWith {
-		_unitPool = GVAR(unitPoolCiv);
-		_vehPool = GVAR(vehPoolCiv);
-		_airPool = GVAR(airPoolCiv);
-	};
-	if (_side isEqualTo "SUICIDE") exitWith {
-		_unitPool = GVAR(suicidePool);
-	};
-    if (_side isEqualTo RESISTANCE) exitWith {
-        _unitPool = GVAR(unitPoolInd);
-    	_vehPool = GVAR(vehPoolInd);
-    	_airPool = GVAR(airPoolInd);
-	};
-};
-
 if (_type isEqualTo 0) exitWith {
-	[{
-		params ["_args","_idPFH"];
-		_args params ["_pos","_grp","_unitPool","_count","_check", "_time"];
+    [{
+        params ["_args","_idPFH"];
+        _args params ["_pos","_grp","_unitPool","_count","_check", "_time"];
 
-		if (count _check isEqualTo _count || {time > (_time + TIMEOUT)}) exitWith {
-			[_idPFH] call CBA_fnc_removePerFrameHandler;
-		};
+        if (count _check isEqualTo _count || {time > (_time + TIMEOUT)}) exitWith {
+            [_idPFH] call CBA_fnc_removePerFrameHandler;
+        };
 
-		(selectRandom _unitPool) createUnit [_pos, _grp];
+        (selectRandom _unitPool) createUnit [_pos, _grp];
 
-		_check pushBack 0;
-	}, _delay, [_pos,_grp,_unitPool,_count,_check,time]] call CBA_fnc_addPerFrameHandler;
+        _check pushBack 0;
+    }, _delay, [_pos,_grp,_unitPool,_count,_check,time]] call CBA_fnc_addPerFrameHandler;
 
-	_grp
+    _grp
 };
 
 [{
-	params ["_args","_idPFH"];
-	_args params ["_pos","_grp","_type","_count","_unitPool","_vehPool","_airPool","_check","_cargo","_delay", "_time"];
+    params ["_args","_idPFH"];
+    _args params ["_pos","_grp","_type","_count","_unitPool","_vehPool","_airPool","_check","_cargo","_delay", "_time"];
 
-	if (count _check isEqualTo _count || {time > (_time + TIMEOUT)}) exitWith {
-		[_idPFH] call CBA_fnc_removePerFrameHandler;
-	};
+    if (count _check isEqualTo _count || {time > (_time + TIMEOUT)}) exitWith {
+        [_idPFH] call CBA_fnc_removePerFrameHandler;
+    };
 
-	private "_veh";
+    private ["_veh"];
 
-	if (_type isEqualTo 1) then {
-		_veh = createVehicle [selectRandom _vehPool, _pos, [], 0, "NONE"];
-		_veh setVectorUp surfaceNormal getPos _veh;
-	} else {
-		_veh = createVehicle [selectRandom _airPool, _pos, [], 100, "FLY"];
-	};
+    if (_type isEqualTo 1) then {
+        _veh = createVehicle [selectRandom _vehPool, _pos, [], 0, "NONE"];
+        _veh setVectorUp surfaceNormal getPos _veh;
+    } else {
+        _veh = createVehicle [selectRandom _airPool, _pos, [], 100, "FLY"];
+    };
 
-	_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
-	_unit setVariable [ISDRIVER,true];
-	_unit moveInDriver _veh;
+    /*
+        a temporary group is created with 'createVehicleCrew'
+        any event that triggers on group creation will run twice
+    */
+    
+    // use createVehicleCrew to populate vehicles, so DCG's faction/filter settings do not interfere
+    createVehicleCrew _veh;
+    crew _veh joinSilent _grp;
+    _grp addVehicle _veh;
+    _veh setUnloadInCombat [true,true];
+    
+    // save reference to vehicle
+    (driver _veh) setVariable [QGVAR(assignedVehicle),assignedVehicle _driver,false];
 
-	if ((_veh emptyPositions "gunner") > 0) then {
-		_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
-		_unit moveInGunner _veh;
-	};
+    if (_cargo) then {
+        [{
+            params ["_args","_idPFH"];
+            _args params ["_grp","_unitPool","_veh","_count", "_time"];
 
-	if (_cargo) then {
-        _veh setUnloadInCombat [true,false];
+            if (!(alive _veh) || {count crew _veh >= _count} || {time > (_time + TIMEOUT)}) exitWith {
+                [_idPFH] call CBA_fnc_removePerFrameHandler;
+            };
 
-		[{
-			params ["_args","_idPFH"];
-			_args params ["_grp","_unitPool","_veh","_count", "_time"];
+            _unit = _grp createUnit [selectRandom _unitPool, DEFAULT_SPAWNPOS, [], 0, "CAN_COLLIDE"];
 
-			if (!(alive _veh) || {count crew _veh >= _count} || {time > (_time + TIMEOUT)}) exitWith {
-				[_idPFH] call CBA_fnc_removePerFrameHandler;
-			};
+            // assign units before 'moveIn' so they dont momentarily dismount
+            _unit assignAsCargo _veh;
+            _unit moveInCargo _veh;
+        }, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh),time]] call CBA_fnc_addPerFrameHandler;
+    };
 
-			_unit = _grp createUnit [selectRandom _unitPool, [0,0,0], [], 0, "NONE"];
-			_unit moveInCargo _veh;
-		}, _delay, [_grp,_unitPool,_veh,((_veh emptyPositions "cargo") min MAX_CARGO) + (count crew _veh),time]] call CBA_fnc_addPerFrameHandler;
-	};
-
-	_check pushBack 0;
+    _check pushBack 0;
 }, _delay, [_pos,_grp,_type,_count,_unitPool,_vehPool,_airPool,_check,_cargo,_delay,time]] call CBA_fnc_addPerFrameHandler;
 
 _grp

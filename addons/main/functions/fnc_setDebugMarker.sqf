@@ -6,13 +6,16 @@ Description:
 send marker to debug handler
 
 Arguments:
+0: marker <STRING>
 
 Return:
-none
+nothing
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-private _marker = _this select 0;
+(_this select 0) setMarkerAlpha 0;
+GVAR(debugMarkers) pushBack (_this select 0);
 
-_marker setMarkerAlpha 0;
-GVAR(debugMarkers) pushBack _marker;
+[QGVAR(debugMarkers),[]] call CBA_fnc_serverEvent;
+
+nil

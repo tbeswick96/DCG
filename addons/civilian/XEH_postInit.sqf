@@ -4,25 +4,23 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_POSTINIT;
+POSTINIT;
 
-[
-	{DOUBLES(PREFIX,main)},
-	{
-        [FUNC(handleUnit), HANDLER_DELAY, EGVAR(main,locations)] call CBA_fnc_addPerFrameHandler;
-        [FUNC(handleVehicle), GVAR(vehCooldown), []] call CBA_fnc_addPerFrameHandler;
+// headless client exit 
+if (!isServer) exitWith {};
 
-        {
-            _mrk = createMarker [LOCATION_ID(_x select 0),_x select 1];
-            _mrk setMarkerColor ([CIVILIAN,true] call BIS_fnc_sideColor);
-            _mrk setMarkerShape "ELLIPSE";
-            _mrk setMarkerBrush "Solid";
-            _mrk setMarkerSize [GVAR(spawnDist),GVAR(spawnDist)];
-            [_mrk] call EFUNC(main,setDebugMarker);
+["CBA_settingsInitialized", {
+    if (!EGVAR(main,enable) || {!GVAR(enable)}) exitWith {LOG(MSG_EXIT)};
 
-            false
-        } count EGVAR(main,locations);
-	}
-] call CBA_fnc_waitUntilAndExecute;
+    // eventhandlers
+    [QGVAR(commandeer), {[_this] call FUNC(commandeer)}] call CBA_fnc_addEventHandler;
+    [QGVAR(panic), {_this call FUNC(setPanic)}] call CBA_fnc_addEventHandler;
+    
+    // must run before handlers
+    call FUNC(parseLocations);
 
-ADDON = true;
+    // handlers
+    [FUNC(handleLocation), 2] call CBA_fnc_addPerFrameHandler;
+    [FUNC(handleVehicle), GVAR(vehCooldown)] call CBA_fnc_addPerFrameHandler;
+    // [FUNC(handleAnimal), 300] call CBA_fnc_addPerFrameHandler;
+}] call CBA_fnc_addEventHandler;

@@ -4,20 +4,26 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_PREINIT;
-
-ADDON = false;
+PREINIT;
 
 PREP(initSettings);
-PREP(handleUnit);
+PREP(parseLocations);
+PREP(handleLocation);
 PREP(handleVehicle);
+PREP(handleAnimal);
+PREP(handlePatrol);
 PREP(spawnUnit);
 PREP(spawnVehicle);
-PREP(setPatrol);
+PREP(spawnAmbient);
+PREP(setPanic);
+PREP(commandeer);
 
+GVAR(locations) = [];
 GVAR(drivers) = [];
-GVAR(blacklist) = [];
+GVAR(animalCount) = 0;
 
-publicVariable QFUNC(initSettings);
+// headless client exit 
+if (!isServer) exitWith {};
 
 SETTINGS_INIT;
+   

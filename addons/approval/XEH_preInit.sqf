@@ -4,27 +4,27 @@ Nicholas Clark (SENSEI)
 __________________________________________________________________*/
 #include "script_component.hpp"
 
-CHECK_PREINIT;
-
-ADDON = false;
+PREINIT;
 
 PREP(initSettings);
+PREP(init);
+PREP(initClient);
 PREP(addValue);
-PREP(getValue);
 PREP(getRegion);
-PREP(handleLoadData);
 PREP(handleKilled);
-PREP(handleClient);
 PREP(handleQuestion);
 PREP(handleHostile);
 PREP(handleHint);
-PREP(handleHalt);
+PREP(handleStop);
 PREP(spawnHostile);
 
 GVAR(regions) = [];
 
-publicVariable QFUNC(initSettings);
+// headless client exit 
+if (!isServer) exitWith {};
+
 publicVariable QFUNC(handleKilled);
-publicVariable QFUNC(handleClient);
+publicVariable QFUNC(initClient);
 
 SETTINGS_INIT;
+    
