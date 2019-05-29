@@ -18,28 +18,29 @@ POSTINIT;
         BASE setPos (getMarkerPos QUOTE(BASE));
         publicVariable QUOTE(BASE);
     };
-
-    // if base object created from marker or created in editor, create base location
-    if !(isNil QUOTE(BASE)) then {
-        CREATE_BASE;
-        {
+    [{
+        // if base object created from marker or created in editor, create base location
+        if !(isNil QUOTE(BASE)) then {
             CREATE_BASE;
-        } remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
-        private _marker = createMarker [GVAR(baseName), position GVAR(baseLocation)];
-        _marker setMarkerShape "ICON";
-        _marker setMarkerType "hd_dot";
-        _marker setMarkerColor "colorBLUFOR";
-        _marker setMarkerText GVAR(baseName);
-    };
+            {
+                CREATE_BASE;
+            } remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
+            private _marker = createMarker [GVAR(baseName), position GVAR(baseLocation)];
+            _marker setMarkerShape "ICON";
+            _marker setMarkerType "hd_dot";
+            _marker setMarkerColor "colorBLUFOR";
+            _marker setMarkerText GVAR(baseName);
+        };
 
-    if (isNull GVAR(baseLocation)) then {
-        CREATE_DEFAULTBASE;
-        {
+        if (isNull GVAR(baseLocation)) then {
             CREATE_DEFAULTBASE;
-        } remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
+            {
+                CREATE_DEFAULTBASE;
+            } remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
 
-        WARNING_2("Base object '%1' does not exist. Base location created at %2",BASE,DEFAULTPOS);
-    };
+            WARNING_2("Base object '%1' does not exist. Base location created at %2",BASE,DEFAULTPOS);
+        };
+    }, [], 1] call CBA_fnc_waitAndExecute;
 
     // eventhandlers
     [QGVAR(saveData), FUNC(saveData)] call CBA_fnc_addEventHandler;

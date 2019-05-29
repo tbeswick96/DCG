@@ -21,7 +21,7 @@
         [QGVAR(create),[player]] call CBA_fnc_serverEvent; \
     }, [], 9] call CBA_fnc_waitAndExecute
 
-#define FOB_CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player) && {!([position player] call EFUNC(main,inSafezones)) && {((getPosATL player) select 2) < 10 && {!(COMPARE_STR(animationState player,FOB_CREATE_ANIM)) && {[player] call FUNC(isAllowedOwner)}}}}}
+#define FOB_CREATE_COND !(FOB_DEPLOYED) && {isNull (objectParent player) && {(markerPos EGVAR(main,baseName)) distance2D (position player) > 2000 && {((getPosATL player) select 2) < 10 && {!(COMPARE_STR(animationState player,FOB_CREATE_ANIM)) && {[player] call FUNC(isAllowedOwner)}}}}}
 
 #define FOB_DELETE_NAME "Dismantle FOB"
 #define FOB_DELETE_STATEMENT \
