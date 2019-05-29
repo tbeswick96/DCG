@@ -51,3 +51,55 @@ __________________________________________________________________*/
     true,
     {}
 ] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(pbrange),
+    "SLIDER",
+    "Patrol Base Range",
+    COMPONENT_NAME,
+    [
+        20,
+        250,
+        100,
+        0
+    ],
+    true,
+    {}
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(pbrange),
+    "SLIDER",
+    "Patrol Base Range",
+    COMPONENT_NAME,
+    [
+        20,
+        250,
+        100,
+        0
+    ],
+    true,
+    {}
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(name),
+    "EDITBOX",
+    "FOB Name",
+    COMPONENT_NAME,
+    "FOB Tiger",
+    true,
+    {},
+    true
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(pbnames),
+    "EDITBOX",
+    ["PB Names", "Maximum 5, separate by commas with no spaces between (copy the default)"],
+    COMPONENT_NAME,
+    "PB Leopard,PB Jaguar,PB Cougar,PB Cheetah,PB Lynx",
+    true,
+    {},
+    true
+] call CBA_Settings_fnc_init;

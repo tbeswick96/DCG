@@ -27,11 +27,6 @@ GVAR(pbRespawnPos) = [];
 // headless client exit 
 if (!isServer) exitWith {};
 
-// define location via remoteExec instead of publicVariable to avoid SimpleSerialization warning
-[[],{
-    GVAR(location) = locationNull;
-}] remoteExecCall [QUOTE(call),0];
-
 publicVariable QFUNC(getChildren);
 publicVariable QFUNC(isAllowedOwner);
 publicVariable QFUNC(initClient);

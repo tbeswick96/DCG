@@ -69,7 +69,8 @@ if (count GVAR(groups) <= ceil GVAR(groupLimit)) then {
 
                     INFO_1("Spawning vehicle patrol at %1",_pos);
                 } else {
-                    _grp = [_pos,0,floor ((random (6 - 3)) + 3),EGVAR(main,enemySide),2] call EFUNC(main,spawnGroup);
+                    private _count = floor ((random (6 - 3)) + 3);
+                    _grp = [_pos, 0, _count, EGVAR(main,enemySide), 2] call EFUNC(main,spawnGroup);
                     [QEGVAR(cache,disableGroup),_grp] call CBA_fnc_serverEvent;
 
                     // get waypoint position
@@ -81,10 +82,10 @@ if (count GVAR(groups) <= ceil GVAR(groupLimit)) then {
 					[
 						{count units (_this select 0) isEqualTo (_this select 2)},
 						{
-							params ["_grp","_player","_count"];
+							params ["_grp", "_player", "_count", "_posWP"];
 
                             // set waypoint around target player
-                            private _wp = _grp addWaypoint [_posWP,0];
+                            private _wp = _grp addWaypoint [_posWP, 0];
                             _wp setWaypointCompletionRadius 100;
                             _wp setWaypointBehaviour GVAR(mode);
                             _wp setWaypointFormation "STAG COLUMN";
@@ -94,7 +95,7 @@ if (count GVAR(groups) <= ceil GVAR(groupLimit)) then {
                                 format ["[this, this, %1, 5, ""MOVE"", %2, ""YELLOW"", %3, ""STAG COLUMN"", """", [0,0,0]] call CBA_fnc_taskPatrol;",PATROL_RANGE, QGVAR(mode), QGVAR(speed)]
                             ];
 						},
-						[_grp,_player,_count]
+						[_grp, _player, _count, _posWP]
 					] call CBA_fnc_waitUntilAndExecute;
 
                     INFO_1("spawning infantry patrol at %1",_pos);

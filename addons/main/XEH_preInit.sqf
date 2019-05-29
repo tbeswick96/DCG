@@ -13,7 +13,6 @@ PREP(initSafezones);
 PREP(initClient);
 PREP(displayText);
 PREP(displayGUIMessage);
-PREP(handleHCConnected);
 PREP(handleLoadData);
 PREP(handleCleanup);
 PREP(handleSettingChange);
@@ -32,7 +31,6 @@ PREP(getAnimModelData);
 PREP(getNearPlayers);
 PREP(getPool);
 PREP(getUnitCount);
-PREP(sendToHC);
 PREP(setAction);
 PREP(setOwner);
 PREP(setSide);
@@ -62,7 +60,6 @@ PREP(removeAmbientAnim);
 PREP(saveData);
 PREP(loadDataScenario);
 PREP(loadDataAddon);
-PREP(armory);
 PREP(cleanup);
 PREP(debug);
 PREP(splitGroup);
@@ -106,9 +103,6 @@ PREP_VOR(pointerSet);
 PREP_VOR(pointerGet);
 PREP_VOR(boundEdge);
 
-// headless client variables 
-GVAR(HC) = objNull;
-
 // settings variables 
 GVAR(settingsInitFinished) = false;
 GVAR(runAtSettingsInitialized) = [];
@@ -138,8 +132,6 @@ GVAR(runAtSettingsInitialized) = [];
 // headless client exit 
 if (!isServer) exitWith {};
 
-[QGVAR(HCConnected), FUNC(handleHCConnected)] call CBA_fnc_addEventHandler;
-
 // cleanup variables
 GVAR(cleanup) = [];
 
@@ -149,6 +141,7 @@ GVAR(locals) = [];
 GVAR(hills) = [];
 GVAR(marines) = [];
 GVAR(radius) = worldSize*0.5;
+GVAR(baseLocation) = locationNull;
 GVAR(center) = [GVAR(radius),GVAR(radius)];
 GVAR(center) set [2,ASLZ(GVAR(center))];
 GVAR(grid) = [GVAR(center),worldSize/round(worldSize/1000),worldSize,0,0,0] call FUNC(findPosGrid);
@@ -192,7 +185,6 @@ publicVariable QFUNC(setAction);
 publicVariable QFUNC(removeAction);
 publicVariable QFUNC(displayText);
 publicVariable QFUNC(displayGUIMessage);
-publicVariable QFUNC(armory);
 publicVariable QFUNC(initClient);
 publicVariable QFUNC(handleSettingChange);
 

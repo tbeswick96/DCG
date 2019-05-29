@@ -13,7 +13,7 @@ __________________________________________________________________*/
 #include "script_component.hpp"
 
 (!(isNull GVAR(anchor))) &&
-{(locationPosition EGVAR(main,baseLocation)) distance2D (position player) > 2000 &&
+{!([position player] call EFUNC(main,inSafezones)) &&
 {(position GVAR(anchor)) distance2D (position player) > 500 &&
 {count (GVAR(pbAnchors) select {isNull _x}) > 0 &&
 {isNull (objectParent player) &&

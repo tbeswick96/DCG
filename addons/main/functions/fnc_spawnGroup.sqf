@@ -29,11 +29,7 @@ params [
     ["_cargo",false,[false]]
 ];
 
-private _grp = if (_side isEqualTo "SUICIDE") then {
-	createGroup EAST
-} else {
-	createGroup _side
-};
+private _grp =  createGroup _side;
 private _drivers = [];
 private _check = [];
 private _unitPool = [_side,0] call FUNC(getPool);

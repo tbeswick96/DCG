@@ -18,12 +18,20 @@ params [
 ];
 
 if !(_data isEqualTo []) exitWith {
-    if !([_data select 1] call EFUNC(main,inSafezones)) then { 
+    if !([_data#1] call EFUNC(main,inSafezones)) then { 
         _data spawn FUNC(setOccupied);
     };
 };
+
 // @todo something here is making occupy addon run twice
-private _locations = EGVAR(main,locations) select {!([_x select 1] call EFUNC(main,inSafezones))};
+private _locations = [];
+[EGVAR(main,locations), {
+    if (!([_value#0] call EFUNC(main,inSafezones))) then {
+        private _location = [_key];
+        _location append _value;
+        _locations pushBack _location;
+    };
+}] call CBA_fnc_hashEachPair;
 
 if (_locations isEqualTo []) exitWith {
     WARNING("No suitable locations to occupy");

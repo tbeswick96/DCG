@@ -47,7 +47,7 @@ publicVariable QGVAR(pbAnchors);
 _anchor allowDamage false;
 _anchor enableSimulation false;
 if (_name == "") then {
-	_name = (GVAR(pbnames) select _index);
+	_name = ((GVAR(pbnames) splitString ",") select _index);
 };
 SETPVAR(_anchor,GVAR(pbname),_name);
 

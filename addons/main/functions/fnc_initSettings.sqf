@@ -1,3 +1,4 @@
+#include "script_component.hpp"
 /*
 Author:
 Nicholas Clark (SENSEI)
@@ -10,7 +11,6 @@ Arguments:
 Return:
 bool
 __________________________________________________________________*/
-#include "script_component.hpp"
 #define ERROR_SAMESIDE format ["%1 cannot be equal to %2!",QGVAR(enemySide),QGVAR(playerSide)]
 #define CATEGORY_FACTION [COMPONENT_NAME,"Faction Settings"]
 #define CATEGORY_SAVE [COMPONENT_NAME,"Save System Settings"]
@@ -240,12 +240,50 @@ __________________________________________________________________*/
 ] call CBA_Settings_fnc_init;
 
 [
-    QGVAR(enableHC),
-    "CHECKBOX",
-    "Enable Headless Client",
-    CATEGORY_HC,
+    QGVAR(baseRadius),
+    "SLIDER",
+    ["Main Operating Base Radius","Base radius."],
+    COMPONENT_NAME,
+    [
+        100,
+        2000,
+        (worldSize*0.05) min 2000,
+        0
+    ],
     false,
+    {}
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(baseName),
+    "EDITBOX",
+    "Main Base Name",
+    COMPONENT_NAME,
+    "MOB Lion",
     true,
-    {},
-    true
+    {}
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(staticPoolEastString),
+    "EDITBOX",
+    ["Static Pool East","Class names for East statics. Names must be separated by a comma and wrapped in single quotes."],
+    CATEGORY_FACTION,
+    "['O_static_AT_F','O_GMG_01_F','O_GMG_01_high_F','O_GMG_01_A_F','O_HMG_01_F','O_HMG_01_high_F','O_HMG_01_A_F']",
+    true,
+    {
+        GVAR(staticPoolEast) = call compile GVAR(staticPoolEastString);
+    }
+] call CBA_Settings_fnc_init;
+
+[
+    QGVAR(mortarPoolEastString),
+    "EDITBOX",
+    ["Mortar Pool East","Class names for East mortars. Names must be separated by a comma and wrapped in single quotes."],
+    CATEGORY_FACTION,
+    "[]'O_Mortar_01_F']",
+    true,
+    {
+        GVAR(mortarPoolEast) = call compile GVAR(mortarPoolEastString);
+    }
 ] call CBA_Settings_fnc_init;

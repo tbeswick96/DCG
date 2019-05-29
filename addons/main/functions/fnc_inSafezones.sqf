@@ -1,3 +1,4 @@
+#include "script_component.hpp"
 /*
 Author:
 Nicholas Clark (SENSEI)
@@ -11,7 +12,6 @@ Arguments:
 Return:
 boolean
 __________________________________________________________________*/
-#include "script_component.hpp"
 
 params [
     ["_entity", objNull, [objNull, grpNull, locationNull, "", []]]
@@ -31,23 +31,23 @@ switch (typeName _entity) do {
             if !(_entity isEqualType []) then {
                 _ret = [_entity] call FUNC(inSafezones);
             } else {
-                _ret = (GVAR(safezoneTriggers) findIf {_entity inArea _x}) > -1
+                _ret = _entity inArea GVAR(baseLocation)
             };
 
             [false,true] select _ret;
         } forEach _entity;
     };
     case "OBJECT" : {
-        (GVAR(safezoneTriggers) findIf {_entity inArea _x}) > -1
+        _entity inArea GVAR(baseLocation)
     };
     case "GROUP" : {
-        (GVAR(safezoneTriggers) findIf {getPos leader _entity inArea _x}) > -1  
+        (getPos leader _entity) inArea GVAR(baseLocation)
     };
     case "LOCATION" : {
-        (GVAR(safezoneTriggers) findIf {locationPosition _entity inArea _x}) > -1
+        (locationPosition _entity) inArea GVAR(baseLocation)
     };
     case "STRING" : {
-        (GVAR(safezoneTriggers) findIf {getMarkerPos _entity inArea _x}) > -1 
+        (getMarkerPos _entity) inArea GVAR(baseLocation)
     };
     default {};
 };

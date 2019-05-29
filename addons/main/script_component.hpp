@@ -19,6 +19,14 @@
     #define DEBUG_ADDON 0
 #endif
 
+#define BASE DOUBLES(PREFIX,base)
+#define DEFAULTPOS [-5000,-5000]
+#define CREATE_BASE \
+	GVAR(baseLocation) = createLocation ["NameCity", getPos BASE, GVAR(baseRadius), GVAR(baseRadius)]; \
+	GVAR(baseLocation) setText ""; \
+	GVAR(baseLocation) attachObject BASE
+#define CREATE_DEFAULTBASE GVAR(baseLocation) = createLocation ["NameCity", DEFAULTPOS, 10, 10]
+
 // save macros 
 #define SAVE_SETVAR(VAR1) profileNamespace setVariable [QGVAR(saveData),VAR1]
 #define SAVE_GETVAR profileNamespace getVariable [QGVAR(saveData),[]]

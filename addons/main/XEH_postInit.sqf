@@ -1,34 +1,45 @@
+#include "script_component.hpp"
 /*
 Author:
 Nicholas Clark (SENSEI)
 __________________________________________________________________*/
-#include "script_component.hpp"
-
 POSTINIT;
 
 // eventhandlers
 ["CBA_settingsInitialized", {
     if !(GVAR(enable)) exitWith {LOG(MSG_EXIT)};
 
-    // headless client setup
-    if (isServer) then {
-        // disable if ace headless addon detected 
-        if (GVAR(enableHC) && {!(CHECK_ADDON_1(acex_headless))}) then {
-            ["AllVehicles", "init", FUNC(sendToHC), nil, nil, true] call CBA_fnc_addClassEventHandler;
-
-            addMissionEventHandler ["HandleDisconnect", {
-                if (_this#0 isEqualTo GVAR(HC)) then {
-                    GVAR(HC) = objNull;
-                    INFO("headless client disconnected");
-                };
-            }];
-        };
-    } else {
-        [QGVAR(HCConnected), [player]] call CBA_fnc_serverEvent;
-    };
-
     // headless client exit 
     if (!isServer) exitWith {};
+
+    // if marker exist, create base object on marker position
+    if (CHECK_MARKER(QUOTE(BASE))) then {
+        BASE = "Land_HelipadEmpty_F" createVehicle [0,0,0];
+        BASE setPos (getMarkerPos QUOTE(BASE));
+        publicVariable QUOTE(BASE);
+    };
+
+    // if base object created from marker or created in editor, create base location
+    if !(isNil QUOTE(BASE)) then {
+        CREATE_BASE;
+        {
+            CREATE_BASE;
+        } remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
+        private _marker = createMarker [GVAR(baseName), position GVAR(baseLocation)];
+        _marker setMarkerShape "ICON";
+        _marker setMarkerType "hd_dot";
+        _marker setMarkerColor "colorBLUFOR";
+        _marker setMarkerText GVAR(baseName);
+    };
+
+    if (isNull GVAR(baseLocation)) then {
+        CREATE_DEFAULTBASE;
+        {
+            CREATE_DEFAULTBASE;
+        } remoteExecCall [QUOTE(BIS_fnc_call),-2,true];
+
+        WARNING_2("Base object '%1' does not exist. Base location created at %2",BASE,DEFAULTPOS);
+    };
 
     // eventhandlers
     [QGVAR(saveData), FUNC(saveData)] call CBA_fnc_addEventHandler;
